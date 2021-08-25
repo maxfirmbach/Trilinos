@@ -264,15 +264,21 @@ namespace Tpetra {
 
       // Call the appropriate method to perform the actual multiplication.
       if (call_FillComplete_on_result && newFlag) {
-        if (transposeR && &R == &P)
+        if (transposeR && &R == &P) {
+          std::cout << "Using PT_A_P_newmatrix" << std::endl;
           MMdetails::mult_PT_A_P_newmatrix(Aview, Pview, *Actemp, label, params);
-        else
+        } else {
+          std::cout << "Using R_A_P_newmatrix" << std::endl;
           MMdetails::mult_R_A_P_newmatrix(Rview, Aview, Pview, *Actemp, label, params);
+        }
       } else if (call_FillComplete_on_result) {
-        if (transposeR && &R == &P)
+        if (transposeR && &R == &P) {
+          std::cout << "Using PT_A_P_reuse" << std::endl;
           MMdetails::mult_PT_A_P_reuse(Aview, Pview, *Actemp, label, params);
-        else
+        } else {
+          std::cout << "Using R_A_P_reuse" << std::endl;
           MMdetails::mult_R_A_P_reuse(Rview, Aview, Pview, *Actemp, label, params);
+        }
       } else {
         // mfh 27 Sep 2016: Is this the "slow" case?  This
         // "CrsWrapper_CrsMatrix" thing could perhaps be made to support
@@ -296,8 +302,10 @@ namespace Tpetra {
         //     }
         // Not implemented
         if (transposeR && &R == &P)
+          std::cout << "Using PT_A_P_newmatrix" << std::endl;
           MMdetails::mult_PT_A_P_newmatrix(Aview, Pview, *Actemp, label, params);
         else
+          std::cout << "Using R_A_P_newmatrix" << std::endl;
           MMdetails::mult_R_A_P_newmatrix(Rview, Aview, Pview, *Actemp, label, params);
       }
 

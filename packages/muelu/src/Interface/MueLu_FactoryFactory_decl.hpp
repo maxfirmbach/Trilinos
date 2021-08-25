@@ -135,6 +135,7 @@
 #include "MueLu_SmootherFactory.hpp"
 #include "MueLu_StructuredAggregationFactory.hpp"
 #include "MueLu_StructuredLineDetectionFactory.hpp"
+#include "MueLu_StructuredRAPFactory.hpp"
 #include "MueLu_SubBlockAFactory.hpp"
 #ifdef HAVE_MUELU_TEKO
 #include "MueLu_TekoSmoother.hpp"
@@ -293,6 +294,7 @@ namespace MueLu {
       if (factoryName == "SemiCoarsenPFactory")                   return Build2<SemiCoarsenPFactory>                   (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "StructuredAggregationFactory")          return Build2<StructuredAggregationFactory>          (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "StructuredLineDetectionFactory")        return Build2<StructuredLineDetectionFactory>        (paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "StructuredRAPFactory")                  return Build2<StructuredRAPFactory>                  (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "SubBlockAFactory")                      return Build2<SubBlockAFactory>                      (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "TentativePFactory")                     return Build2<TentativePFactory>                     (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "ToggleCoordinatesTransferFactory")      return BuildToggleCoordinatesTransferFactory         (paramList, factoryMapIn, factoryManagersIn);

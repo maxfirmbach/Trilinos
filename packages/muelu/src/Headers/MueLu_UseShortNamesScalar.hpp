@@ -317,6 +317,9 @@ typedef MueLu::StructuredAggregationFactory<Scalar,LocalOrdinal,GlobalOrdinal,No
 #ifdef MUELU_STRUCTUREDLINEDETECTIONFACTORY_SHORT
 typedef MueLu::StructuredLineDetectionFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> StructuredLineDetectionFactory;
 #endif
+#ifdef MUELU_STRUCTUREDRAPFACTORY_SHORT
+typedef MueLu::StructuredRAPFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> StructuredRAPFactory;
+#endif
 #ifdef MUELU_SUBBLOCKAFACTORY_SHORT
 typedef MueLu::SubBlockAFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> SubBlockAFactory;
 #endif
