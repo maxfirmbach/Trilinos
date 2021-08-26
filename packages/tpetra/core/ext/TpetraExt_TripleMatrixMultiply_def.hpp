@@ -301,12 +301,13 @@ namespace Tpetra {
         //         C.fillComplete(Bprime->getDomainMap(), Aprime->getRangeMap());
         //     }
         // Not implemented
-        if (transposeR && &R == &P)
+        if (transposeR && &R == &P) {
           std::cout << "Using PT_A_P_newmatrix" << std::endl;
           MMdetails::mult_PT_A_P_newmatrix(Aview, Pview, *Actemp, label, params);
-        else
+        } else {
           std::cout << "Using R_A_P_newmatrix" << std::endl;
           MMdetails::mult_R_A_P_newmatrix(Rview, Aview, Pview, *Actemp, label, params);
+        }
       }
 
       if (needs_final_export) {

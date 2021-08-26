@@ -147,13 +147,13 @@ namespace MueLu {
        
     // set the crs pattern into the graph with local Indices
     colind->push_back(0); colind->push_back(1);
-    rowptr[1] = rowptr[0]+2
+    rowptr[1] = rowptr[0]+2;
     for(int rowIdx=1; rowIdx<ncoarse-1; rowIdx++) {
       colind->push_back(rowIdx-1); colind->push_back(rowIdx); colind->push_back(rowIdx+1);
-      rowptr[rowIdx+1]=rowptr[rowIdx]+3
+      rowptr[rowIdx+1]=rowptr[rowIdx]+3;
     }
     colind->push_back(ncoarse-2); colind->push_back(ncoarse-1);
-    rowptr[ncoarse]=rowptr[ncoarse-1]+2
+    rowptr[ncoarse]=rowptr[ncoarse-1]+2;
     
     std::cout << "Graph indices created!" << std::endl;
     const ArrayRCP<LO> test = arcp(colind);
@@ -396,138 +396,184 @@ namespace MueLu {
     auto colMap = P->getColMap();
     RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, colMap, maxNnzOnRow, paramList);
 
+    const ArrayRCP<LO> colind(dim*dim*(dim*8+(ncoarse-dim)*12)+dim*(ncoarse-dim)*(dim*12+(ncoarse-dim)*18));
     const ArrayRCP<size_t> rowptr(dim*ncoarse*ncoarse+1);
     rowptr[0] = 0;
-    const RCP<std::vector<LO>> colind = rcp(new std::vector<LO>);
 
     // set the crs pattern into the graph
-    for(int rowIdx=0; rowIdx<dim*ncoarse; rowIdx=rowIdx+dim) {
-      if(rowIdx==0) {
+    int end1 = dim*ncoarse;
+    int if1  = dim*ncoarse-dim;
+    for(int rowIdx=0; rowIdx<end1; rowIdx=rowIdx+dim) {
+      if(rowIdx == 0) {
         for(int ndof=0; ndof<dim; ndof++) {
-          /*          
-          myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx, rowIdx+1, rowIdx+2, rowIdx+3,
-                                                                              rowIdx+dim*ncoarse, rowIdx+dim*ncoarse+1, rowIdx+dim*ncoarse+2, rowIdx+dim*ncoarse+3}) );
-          */
-          colind->push_back(rowIdx); colind->push_back(rowIdx+1); colind->push_back(rowIdx+2); colind->push_back(rowIdx+3);
-          colind->push_back(rowIdx+dim*ncoarse); colind->push_back(rowIdx+dim*ncoarse+1); colind->push_back(rowIdx+dim*ncoarse+2); colind->push_back(rowIdx+dim*ncoarse+3);
-
+          int k = rowptr[rowIdx+ndof];
           rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+8;
+          colind[k]   = rowIdx;
+          colind[k+1] = rowIdx+1;
+          colind[k+2] = rowIdx+2;
+          colind[k+3] = rowIdx+3;
+          colind[k+4] = rowIdx+dim*ncoarse;
+          colind[k+5] = rowIdx+dim*ncoarse+1;
+          colind[k+6] = rowIdx+dim*ncoarse+2;
+          colind[k+7] = rowIdx+dim*ncoarse+3;          
         }
       }
-      else if(rowIdx==dim*ncoarse-dim) {
+      else if(rowIdx == if1) {
         for(int ndof=0; ndof<dim; ndof++) {
-          /*
-          myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-2, rowIdx-1, rowIdx, rowIdx+1,
-                                                                              rowIdx+dim*ncoarse-2, rowIdx+dim*ncoarse-1, rowIdx+dim*ncoarse, rowIdx+dim*ncoarse+1}) );
-          */
-          colind->push_back(rowIdx-2); colind->push_back(rowIdx-1); colind->push_back(rowIdx); colind->push_back(rowIdx+1);
-          colind->push_back(rowIdx+dim*ncoarse-2); colind->push_back(rowIdx+dim*ncoarse-1); colind->push_back(rowIdx+dim*ncoarse); colind->push_back(rowIdx+dim*ncoarse+1);
+          int k = rowptr[rowIdx+ndof];
           rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+8;
+          colind[k]   = rowIdx-2;
+          colind[k+1] = rowIdx-1;
+          colind[k+2] = rowIdx;
+          colind[k+3] = rowIdx+1;
+          colind[k+4] = rowIdx+dim*ncoarse-2;
+          colind[k+5] = rowIdx+dim*ncoarse-1;
+          colind[k+6] = rowIdx+dim*ncoarse;
+          colind[k+7] = rowIdx+dim*ncoarse+1;        
         }
       }
       else {
         for(int ndof=0; ndof<dim; ndof++) {
-          /*
-          myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+3,
-                                                                              rowIdx+dim*ncoarse-2, rowIdx+dim*ncoarse-1, rowIdx+dim*ncoarse,
-                                                                              rowIdx+dim*ncoarse+1, rowIdx+dim*ncoarse+2, rowIdx+dim*ncoarse+3}) );
-          */
-          colind->push_back(rowIdx-2); colind->push_back(rowIdx-1); colind->push_back(rowIdx); colind->push_back(rowIdx+1); colind->push_back(rowIdx+2); colind->push_back(rowIdx+3);
-          colind->push_back(rowIdx+dim*ncoarse-2); colind->push_back(rowIdx+dim*ncoarse-1); colind->push_back(rowIdx+dim*ncoarse);
-          colind->push_back(rowIdx+dim*ncoarse+1); colind->push_back(rowIdx+dim*ncoarse+2); colind->push_back(rowIdx+dim*ncoarse+3);
+          int k = rowptr[rowIdx+ndof];
           rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+12;
+          colind[k]    = rowIdx-2;
+          colind[k+1]  = rowIdx-1;
+          colind[k+2]  = rowIdx;
+          colind[k+3]  = rowIdx+1;
+          colind[k+4]  = rowIdx+2;
+          colind[k+5]  = rowIdx+3;
+          colind[k+6]  = rowIdx+dim*ncoarse-2;
+          colind[k+7]  = rowIdx+dim*ncoarse-1;
+          colind[k+8]  = rowIdx+dim*ncoarse;
+          colind[k+9]  = rowIdx+dim*ncoarse+1;
+          colind[k+10] = rowIdx+dim*ncoarse+2;
+          colind[k+11] = rowIdx+dim*ncoarse+3;
         }
       }
     }
 
-    for(int i=1; i<ncoarse-1; i++) { // loop over blocks
-      for(int j=0; j<dim*ncoarse; j=j+2) { // loop over inside
+    int end2 = ncoarse-1;
+    int end3 = dim*ncoarse;
+    for(int i=1; i<end2; i++) { // loop over blocks
+      for(int j=0; j<end3; j=j+2) { // loop over inside
         int rowIdx = i*dim*ncoarse+j;
-        if(j==0) {
+        if(j == 0) {
           for(int ndof=0; ndof<dim; ndof++) {
-            /*
-            myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-dim*ncoarse, rowIdx-dim*ncoarse+1, rowIdx-dim*ncoarse+2, rowIdx-dim*ncoarse+3,
-                                                                                rowIdx, rowIdx+1, rowIdx+2, rowIdx+3,
-                                                                                rowIdx+dim*ncoarse, rowIdx+dim*ncoarse+1, rowIdx+dim*ncoarse+2, rowIdx+dim*ncoarse+3}) );
-            */
-            colind->push_back(rowIdx-dim*ncoarse); colind->push_back(rowIdx-dim*ncoarse+1); colind->push_back(rowIdx-dim*ncoarse+2); colind->push_back(rowIdx-dim*ncoarse+3);
-            colind->push_back(rowIdx); colind->push_back(rowIdx+1); colind->push_back(rowIdx+2); colind->push_back(rowIdx+3);
-            colind->push_back(rowIdx+dim*ncoarse); colind->push_back(rowIdx+dim*ncoarse+1); colind->push_back(rowIdx+dim*ncoarse+2); colind->push_back(rowIdx+dim*ncoarse+3);
+            int k = rowptr[rowIdx+ndof];
             rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+12;
+            colind[k]    = rowIdx-dim*ncoarse;
+            colind[k+1]  = rowIdx-dim*ncoarse+1;
+            colind[k+2]  = rowIdx-dim*ncoarse+2;
+            colind[k+3]  = rowIdx-dim*ncoarse+3;
+            colind[k+4]  = rowIdx;
+            colind[k+5]  = rowIdx+1;
+            colind[k+6]  = rowIdx+2;
+            colind[k+7]  = rowIdx+3;
+            colind[k+8]  = rowIdx+dim*ncoarse;
+            colind[k+9]  = rowIdx+dim*ncoarse+1;
+            colind[k+10] = rowIdx+dim*ncoarse+2;
+            colind[k+11] = rowIdx+dim*ncoarse+3;            
           }
         }
-        else if(j==dim*ncoarse-dim) {
+        else if(j == if1) {
           for(int ndof=0; ndof<dim; ndof++) {
-            /*
-            myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-dim*ncoarse-2, rowIdx-dim*ncoarse-1, rowIdx-dim*ncoarse, rowIdx-dim*ncoarse+1,
-                                                                                rowIdx-2, rowIdx-1, rowIdx, rowIdx+1,
-                                                                                rowIdx+dim*ncoarse-2, rowIdx+dim*ncoarse-1, rowIdx+dim*ncoarse, rowIdx+dim*ncoarse+1}) );
-            */
-            colind->push_back(rowIdx-dim*ncoarse-2); colind->push_back(rowIdx-dim*ncoarse-1); colind->push_back(rowIdx-dim*ncoarse); colind->push_back(rowIdx-dim*ncoarse+1);
-            colind->push_back(rowIdx-2); colind->push_back(rowIdx-1); colind->push_back(rowIdx); colind->push_back(rowIdx+1);
-            colind->push_back(rowIdx+dim*ncoarse-2); colind->push_back(rowIdx+dim*ncoarse-1); colind->push_back(rowIdx+dim*ncoarse); colind->push_back(rowIdx+dim*ncoarse+1);
+            int k = rowptr[rowIdx+ndof];
             rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+12;
+            colind[k]    = rowIdx-dim*ncoarse-2;
+            colind[k+1]  = rowIdx-dim*ncoarse-1;
+            colind[k+2]  = rowIdx-dim*ncoarse;
+            colind[k+3]  = rowIdx-dim*ncoarse+1;
+            colind[k+4]  = rowIdx-2;
+            colind[k+5]  = rowIdx-1;
+            colind[k+6]  = rowIdx;
+            colind[k+7]  = rowIdx+1;
+            colind[k+8]  = rowIdx+dim*ncoarse-2;
+            colind[k+9]  = rowIdx+dim*ncoarse-1;
+            colind[k+10] = rowIdx+dim*ncoarse;
+            colind[k+11] = rowIdx+dim*ncoarse+1;            
           }
         } 
         else {
           for(int ndof=0; ndof<dim; ndof++) {
-            /*
-            myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-dim*ncoarse-2, rowIdx-dim*ncoarse-1, rowIdx-dim*ncoarse, rowIdx-dim*ncoarse+1, rowIdx-dim*ncoarse+2,
-                                                                                rowIdx-dim*ncoarse+3, rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+3, rowIdx+dim*ncoarse-2,
-                                                                                rowIdx+dim*ncoarse-1, rowIdx+dim*ncoarse, rowIdx+dim*ncoarse+1, rowIdx+dim*ncoarse+2, rowIdx+dim*ncoarse+3}) );
-            */
-            colind->push_back(rowIdx-dim*ncoarse-2); colind->push_back(rowIdx-dim*ncoarse-1); colind->push_back(rowIdx-dim*ncoarse); colind->push_back(rowIdx-dim*ncoarse+1);
-            colind->push_back(rowIdx-dim*ncoarse+2); colind->push_back(rowIdx-dim*ncoarse+3); colind->push_back(rowIdx-2); colind->push_back(rowIdx-1);
-            colind->push_back(rowIdx); colind->push_back(rowIdx+1); colind->push_back(rowIdx+2); colind->push_back(rowIdx+3); colind->push_back(rowIdx+dim*ncoarse-2);
-            colind->push_back(rowIdx+dim*ncoarse-1); colind->push_back(rowIdx+dim*ncoarse); colind->push_back(rowIdx+dim*ncoarse+1); colind->push_back(rowIdx+dim*ncoarse+2);
-            colind->push_back(rowIdx+dim*ncoarse+3);
+            int k = rowptr[rowIdx+ndof];
             rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+18;
+            colind[k]    = rowIdx-dim*ncoarse-2;
+            colind[k+1]  = rowIdx-dim*ncoarse-1;
+            colind[k+2]  = rowIdx-dim*ncoarse;
+            colind[k+3]  = rowIdx-dim*ncoarse+1;
+            colind[k+4]  = rowIdx-dim*ncoarse+2;
+            colind[k+5]  = rowIdx-dim*ncoarse+3;
+            colind[k+6]  = rowIdx-2;
+            colind[k+7]  = rowIdx-1;
+            colind[k+8]  = rowIdx;
+            colind[k+9]  = rowIdx+1;
+            colind[k+10] = rowIdx+2;
+            colind[k+11] = rowIdx+3;
+            colind[k+12] = rowIdx+dim*ncoarse-2;
+            colind[k+13] = rowIdx+dim*ncoarse-1;
+            colind[k+14] = rowIdx+dim*ncoarse;
+            colind[k+15] = rowIdx+dim*ncoarse+1;
+            colind[k+16] = rowIdx+dim*ncoarse+2;
+            colind[k+17] = rowIdx+dim*ncoarse+3;
           }
         }
       }
     }
 
-    for(int rowIdx=dim*ncoarse*ncoarse-dim*ncoarse; rowIdx<dim*ncoarse*ncoarse; rowIdx=rowIdx+dim) {
-      if(rowIdx==dim*ncoarse*ncoarse-dim*ncoarse) {
+    int end4 = dim*ncoarse*ncoarse;
+    int if2  = dim*ncoarse*ncoarse-dim*ncoarse;
+    int if3  = dim*ncoarse*ncoarse-dim;
+    for(int rowIdx=dim*ncoarse*ncoarse-dim*ncoarse; rowIdx<end4; rowIdx=rowIdx+dim) {
+      if(rowIdx == if2) {
         for(int ndof=0; ndof<dim; ndof++) {
-          /*
-          myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-dim*ncoarse, rowIdx-dim*ncoarse+1, rowIdx-dim*ncoarse+2, rowIdx-dim*ncoarse+3,
-                                                                              rowIdx, rowIdx+1, rowIdx+2, rowIdx+3}) );
-          */
-          colind->push_back(rowIdx-dim*ncoarse); colind->push_back(rowIdx-dim*ncoarse+1); colind->push_back(rowIdx-dim*ncoarse+2); colind->push_back(rowIdx-dim*ncoarse+3);
-          colind->push_back(rowIdx); colind->push_back(rowIdx+1); colind->push_back(rowIdx+2); colind->push_back(rowIdx+3);
+          int k = rowptr[rowIdx+ndof];
           rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+8;
+          colind[k]   = rowIdx-dim*ncoarse;
+          colind[k+1] = rowIdx-dim*ncoarse+1;
+          colind[k+2] = rowIdx-dim*ncoarse+2;
+          colind[k+3] = rowIdx-dim*ncoarse+3;
+          colind[k+4] = rowIdx;
+          colind[k+5] = rowIdx+1;
+          colind[k+6] = rowIdx+2;
+          colind[k+7] = rowIdx+3;
         }
       }
-      else if(rowIdx==dim*ncoarse*ncoarse-dim) {
+      else if(rowIdx == if3) {
         for(int ndof=0; ndof<dim; ndof++) {
-          /*
-          myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-dim*ncoarse-2, rowIdx-dim*ncoarse-1, rowIdx-dim*ncoarse, rowIdx-dim*ncoarse+1,
-                                                                              rowIdx-2, rowIdx-1, rowIdx, rowIdx+1 }) );
-          */
-          colind->push_back(rowIdx-dim*ncoarse-2); colind->push_back(rowIdx-dim*ncoarse-1); colind->push_back(rowIdx-dim*ncoarse); colind->push_back(rowIdx-dim*ncoarse+1);
-          colind->push_back(rowIdx-2); colind->push_back(rowIdx-1); colind->push_back(rowIdx); colind->push_back(rowIdx+1);
+          int k = rowptr[rowIdx+ndof];
           rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+8;
+          colind[k]   = rowIdx-dim*ncoarse-2;
+          colind[k+1] = rowIdx-dim*ncoarse-1;
+          colind[k+2] = rowIdx-dim*ncoarse;
+          colind[k+3] = rowIdx-dim*ncoarse+1;
+          colind[k+4] = rowIdx-2;
+          colind[k+5] = rowIdx-1;
+          colind[k+6] = rowIdx;
+          colind[k+7] = rowIdx+1;         
         }
       }
       else {
         for(int ndof=0; ndof<dim; ndof++) {
-          /*
-          myGraph->insertLocalIndices(rowIdx+ndof, Array<LO>(std::vector<LO>{rowIdx-dim*ncoarse-2, rowIdx-dim*ncoarse-1, rowIdx-dim*ncoarse,
-                                                                              rowIdx-dim*ncoarse+1, rowIdx-dim*ncoarse+2, rowIdx-dim*ncoarse+3,
-                                                                              rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+3}) );
-          */
-          colind->push_back(rowIdx-dim*ncoarse-2); colind->push_back(rowIdx-dim*ncoarse-1); colind->push_back(rowIdx-dim*ncoarse);
-          colind->push_back(rowIdx-dim*ncoarse+1); colind->push_back(rowIdx-dim*ncoarse+2); colind->push_back(rowIdx-dim*ncoarse+3);
-          colind->push_back(rowIdx-2); colind->push_back(rowIdx-1); colind->push_back(rowIdx); colind->push_back(rowIdx+1); colind->push_back(rowIdx+2); colind->push_back(rowIdx+3);
+          int k = rowptr[rowIdx+ndof];
           rowptr[rowIdx+ndof+1] = rowptr[rowIdx+ndof]+12;
+          colind[k]    = rowIdx-dim*ncoarse-2;
+          colind[k+1]  = rowIdx-dim*ncoarse-1;
+          colind[k+2]  = rowIdx-dim*ncoarse;
+          colind[k+3]  = rowIdx-dim*ncoarse+1;
+          colind[k+4]  = rowIdx-dim*ncoarse+2;
+          colind[k+5]  = rowIdx-dim*ncoarse+3;
+          colind[k+6]  = rowIdx-2;
+          colind[k+7]  = rowIdx-1;
+          colind[k+8]  = rowIdx;
+          colind[k+9]  = rowIdx+1;
+          colind[k+10] = rowIdx+2;
+          colind[k+11] = rowIdx+3;          
         }
       }    
     }
 
     std::cout << "Graph indices created!" << std::endl;
-    const ArrayRCP<LO> test = arcp(colind);
-    myGraph->setAllIndices(rowptr, test);
+    myGraph->setAllIndices(rowptr, colind);
 
     myGraph->fillComplete();
     std::cout << "Graph is created and filled!" << std::endl;
