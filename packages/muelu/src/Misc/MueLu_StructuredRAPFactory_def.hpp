@@ -86,9 +86,9 @@ namespace MueLu {
     SET_VALID_ENTRY("rap: relative diagonal floor");  
     SET_VALID_ENTRY("rap: structure type"); // set by user to define matrix structure (e.g. Laplace2D)
 #undef  SET_VALID_ENTRY
-    validParamList->set< RCP<const FactoryBase> >("A",                   null, "Generating factory of the matrix A used during the prolongator smoothing process");
-    validParamList->set< RCP<const FactoryBase> >("P",                   null, "Prolongator factory");
-    validParamList->set< RCP<const FactoryBase> >("R",                   null, "Restrictor factory");
+    validParamList->set< RCP<const FactoryBase> >("A", null, "Generating factory of the matrix A used during the prolongator smoothing process");
+    validParamList->set< RCP<const FactoryBase> >("P", null, "Prolongator factory");
+    validParamList->set< RCP<const FactoryBase> >("R", null, "Restrictor factory");
     
     validParamList->set<RCP<const FactoryBase> >("numDimensions",                Teuchos::null,
                                                  "Number of spacial dimensions in the problem.");
@@ -129,7 +129,7 @@ namespace MueLu {
   // Here do the pattern determination ...
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
   void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetLaplace1D(RCP<Matrix>& Ac, RCP<Matrix> P,
-                                                                              	Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
+                                                                              	     Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
   {         
     // Define some containers for the compressed row storage
     int ncoarse = lCoarseNodesPerDim[0];
@@ -141,26 +141,31 @@ namespace MueLu {
     auto colMap = P->getColMap();
     RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, colMap, maxNnzOnRow, paramList);
     
+    int end = 4+(ncoarse-2)*3;
+    const ArrayRCP<LO> colind(end);
     const ArrayRCP<size_t> rowptr(ncoarse+1);
     rowptr[0] = 0;
-    const RCP<std::vector<LO>> colind = rcp(new std::vector<LO>);
-       
+
     // set the crs pattern into the graph with local Indices
-    colind->push_back(0); colind->push_back(1);
-    rowptr[1] = rowptr[0]+2;
+    rowptr[1] = rowptr[0]+2;    
+    colind[0] = 0;
+    colind[1] = 1;
     for(int rowIdx=1; rowIdx<ncoarse-1; rowIdx++) {
-      colind->push_back(rowIdx-1); colind->push_back(rowIdx); colind->push_back(rowIdx+1);
-      rowptr[rowIdx+1]=rowptr[rowIdx]+3;
+      int k = rowptr[rowIdx];
+      rowptr[rowIdx+1] = rowptr[rowIdx]+3;
+      colind[k]   = rowIdx-1;
+      colind[k+1] = rowIdx;
+      colind[k+2] = rowIdx+1;
     }
-    colind->push_back(ncoarse-2); colind->push_back(ncoarse-1);
-    rowptr[ncoarse]=rowptr[ncoarse-1]+2;
+    rowptr[ncoarse] = rowptr[ncoarse-1]+2;
+    colind[end-2] = ncoarse-2;
+    colind[end-1] = ncoarse-1;
     
     std::cout << "Graph indices created!" << std::endl;
-    const ArrayRCP<LO> test = arcp(colind);
-    myGraph->setAllIndices(rowptr, test);
+    myGraph->setAllIndices(rowptr, colind);
 
-    myGraph->fillComplete();
     std::cout << "Graph is created and filled!" << std::endl;
+    myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
     Ac = MatrixFactory::Build(myGraph, paramList); 
@@ -177,40 +182,98 @@ namespace MueLu {
   
     // get graph container  
     auto rowMap = P->getDomainMap();
-    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, maxNnzOnRow);
+    auto colMap = P->getColMap();
+    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, colMap, maxNnzOnRow, paramList);
+
+    const ArrayRCP<LO> colind(4*3+2*(ncoarse-2)*4+(ncoarse-2)*2*4+(ncoarse-2)*(ncoarse-2)*5); // TODO: is this correct?
+    const ArrayRCP<size_t> rowptr(ncoarse*ncoarse+1);
+    rowptr[0] = 0;
     
     // set the crs pattern into the graph
-    for(int rowIdx=0; rowIdx<ncoarse; rowIdx++)
-    {
-      if(rowIdx==0)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx, rowIdx+1, rowIdx+ncoarse)) );
-      else if(rowIdx==ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-1, rowIdx, rowIdx+ncoarse)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-1, rowIdx, rowIdx+1, rowIdx+ncoarse)) );
+    for(int rowIdx=0; rowIdx<ncoarse; rowIdx++) {
+      if(rowIdx==0) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+3;
+        colind[k]   = rowIdx;
+        colind[k+1] = rowIdx+1;
+        colind[k+2] = rowIdx+ncoarse;
+      }      
+      else if(rowIdx==ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+3;
+        colind[k]   = rowIdx-1;
+        colind[k+1] = rowIdx;
+        colind[k+2] = rowIdx+ncoarse;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+        colind[k]   = rowIdx-1;
+        colind[k+1] = rowIdx;
+        colind[k+2] = rowIdx+1;
+        colind[k+3] = rowIdx+ncoarse;
+      }
     }
     for(int i=1; i<ncoarse-1; i++) { // loop over blocks
       for(int j=0; j<ncoarse; j++) { // loop over inside
         int rowIdx = i*ncoarse+j;
-        if(j==0)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx, rowIdx+1, rowIdx+ncoarse)) );
-        else if(j==ncoarse-1)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx-1, rowIdx, rowIdx+ncoarse)) );
-        else
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx-1, rowIdx, rowIdx+1, rowIdx+ncoarse)) ); 
+        if(j==0) {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+          colind[k]   = rowIdx-ncoarse;
+          colind[k+1] = rowIdx;
+          colind[k+2] = rowIdx+1;
+          colind[k+3] = rowIdx+ncoarse;
+        }
+        else if(j==ncoarse-1) {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+          colind[k]   = rowIdx-ncoarse;
+          colind[k+1] = rowIdx-1;
+          colind[k+2] = rowIdx;
+          colind[k+3] = rowIdx+ncoarse;
+        }
+        else {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+          colind[k]   = rowIdx-ncoarse;
+          colind[k+1] = rowIdx-1;
+          colind[k+2] = rowIdx;
+          colind[k+3] = rowIdx+1;
+          colind[k+4] = rowIdx+ncoarse; 
+        }
       }
     }
     for(int rowIdx=ncoarse*ncoarse-ncoarse; rowIdx<ncoarse*ncoarse; rowIdx++) {
-      if(rowIdx==ncoarse*ncoarse-ncoarse)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx, rowIdx+1)) );
-      else if(rowIdx==ncoarse*ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx-1, rowIdx)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx-1, rowIdx, rowIdx+1)) );
+      if(rowIdx==ncoarse*ncoarse-ncoarse) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+3;
+        colind[k]   = rowIdx-ncoarse;
+        colind[k+1] = rowIdx;
+        colind[k+2] = rowIdx+1;
+      }
+      else if(rowIdx==ncoarse*ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+3;
+        colind[k]   = rowIdx-ncoarse;
+        colind[k+1] = rowIdx-1;
+        colind[k+2] = rowIdx;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+        colind[k]   = rowIdx-ncoarse;
+        colind[k+1] = rowIdx-1;
+        colind[k+2] = rowIdx;
+        colind[k+3] = rowIdx+1;
+      }
     }
 
-    myGraph->fillComplete();
+    std::cout << "Graph indices created!" << std::endl;
+    myGraph->setAllIndices(rowptr, colind);
+
     std::cout << "Graph is created and filled!" << std::endl;
+    myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
     Ac = MatrixFactory::Build(myGraph, paramList); 
@@ -218,7 +281,7 @@ namespace MueLu {
   
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
   void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetStar2D(RCP<Matrix>& Ac, RCP<Matrix> P,
-                                                                              	     Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
+                                                                              	  Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
   {    
     // Define some containers for the compressed row storage
     int ncoarse = lCoarseNodesPerDim[0];
@@ -227,41 +290,115 @@ namespace MueLu {
   
     // get graph container  
     auto rowMap = P->getDomainMap();
-    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, maxNnzOnRow);
+    auto colMap = P->getColMap();
+    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, colMap, maxNnzOnRow, paramList);
+
+    const ArrayRCP<LO> colind(4*4+2*(ncoarse-2)*6+(ncoarse-2)*2*6+(ncoarse-2)*(ncoarse-2)*9); // TODO: is this correct?
+    const ArrayRCP<size_t> rowptr(ncoarse*ncoarse+1);
+    rowptr[0] = 0;
     
     // set the crs pattern into the graph
     for(int rowIdx=0; rowIdx<ncoarse; rowIdx++)
     {
-      if(rowIdx==0)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx, rowIdx+1, rowIdx+ncoarse, rowIdx+ncoarse+1)) );
-      else if(rowIdx==ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-1, rowIdx, rowIdx+ncoarse-1, rowIdx+ncoarse)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-1, rowIdx, rowIdx+1, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1)) );
+      if(rowIdx==0) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+        colind[k]   = rowIdx;
+        colind[k+1] = rowIdx+1;
+        colind[k+2] = rowIdx+ncoarse;
+        colind[k+3] = rowIdx+ncoarse+1;
+      }
+      else if(rowIdx==ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+        colind[k]   = rowIdx-1;
+        colind[k+1] = rowIdx;
+        colind[k+2] = rowIdx+ncoarse-1;
+        colind[k+3] = rowIdx+ncoarse;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+        colind[k]   = rowIdx-1;
+        colind[k+1] = rowIdx;
+        colind[k+2] = rowIdx+1;
+        colind[k+3] = rowIdx+ncoarse-1;
+        colind[k+4] = rowIdx+ncoarse;
+        colind[k+5] = rowIdx+ncoarse+1;
+      }
     }
     for(int i=1; i<ncoarse-1; i++) { // loop over blocks
       for(int j=0; j<ncoarse; j++) { // loop over inside
         int rowIdx = i*ncoarse+j;
-        if(j==0)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx, rowIdx+1, rowIdx+ncoarse, rowIdx+ncoarse+1)) );
-        else if(j==ncoarse-1)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-1, rowIdx, rowIdx+ncoarse-1, rowIdx+ncoarse)) );
-        else
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-1, rowIdx, rowIdx+1,
-                                                                            rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1)) ); 
+        if(j==0) {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+          colind[k]   = rowIdx-ncoarse;
+          colind[k+1] = rowIdx-ncoarse+1;
+          colind[k+2] = rowIdx;
+          colind[k+3] = rowIdx+1;
+          colind[k+4] = rowIdx+ncoarse;
+          colind[k+5] = rowIdx+ncoarse+1;
+        }
+        else if(j==ncoarse-1) {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+          colind[k]   = rowIdx-ncoarse-1;
+          colind[k+1] = rowIdx-ncoarse;
+          colind[k+2] = rowIdx-1;
+          colind[k+3] = rowIdx;
+          colind[k+4] = rowIdx+ncoarse-1;
+          colind[k+5] = rowIdx+ncoarse;
+        }
+        else {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+9;
+          colind[k]   = rowIdx-ncoarse-1;
+          colind[k+1] = rowIdx-ncoarse;
+          colind[k+2] = rowIdx-ncoarse+1;
+          colind[k+3] = rowIdx-1;
+          colind[k+4] = rowIdx;
+          colind[k+5] = rowIdx+1;
+          colind[k+6] = rowIdx+ncoarse-1;
+          colind[k+7] = rowIdx+ncoarse;
+          colind[k+8] = rowIdx+ncoarse+1;
+        }
       }
     }
     for(int rowIdx=ncoarse*ncoarse-ncoarse; rowIdx<ncoarse*ncoarse; rowIdx++) {
-      if(rowIdx==ncoarse*ncoarse-ncoarse)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx, rowIdx+1)) );
-      else if(rowIdx==ncoarse*ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-1, rowIdx)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-1, rowIdx, rowIdx+1)) );
+      if(rowIdx==ncoarse*ncoarse-ncoarse) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+        colind[k]   = rowIdx-ncoarse;
+        colind[k+1] = rowIdx-ncoarse+1;
+        colind[k+2] = rowIdx;
+        colind[k+3] = rowIdx+1;
+      }
+      else if(rowIdx==ncoarse*ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+        colind[k]   = rowIdx-ncoarse-1;
+        colind[k+1] = rowIdx-ncoarse;
+        colind[k+2] = rowIdx-1;
+        colind[k+3] = rowIdx;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+        colind[k]   = rowIdx-ncoarse-1;
+        colind[k+1] = rowIdx-ncoarse;
+        colind[k+2] = rowIdx-ncoarse+1;
+        colind[k+3] = rowIdx-1;
+        colind[k+4] = rowIdx;
+        colind[k+5] = rowIdx+1;
+      }
     }
 
-    myGraph->fillComplete();
+    std::cout << "Graph indices created!" << std::endl;
+    myGraph->setAllIndices(rowptr, colind);
+
     std::cout << "Graph is created and filled!" << std::endl;
+    myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
     Ac = MatrixFactory::Build(myGraph, paramList); 
@@ -271,6 +408,8 @@ namespace MueLu {
   void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetBigStar2D(RCP<Matrix>& Ac, RCP<Matrix> P,
                                                                               	     Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
   {
+    // Something goes wrong here!
+
     // Define some containers for the compressed row storage
     int ncoarse = lCoarseNodesPerDim[0];
     int maxNnzOnRow = 21; // nnzOnRow is here ~21 for BigStar2D
@@ -278,104 +417,459 @@ namespace MueLu {
   
     // get graph container  
     auto rowMap = P->getDomainMap();
-    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, maxNnzOnRow);
+    auto colMap = P->getColMap();
+    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, colMap, maxNnzOnRow, paramList);
+
+    const ArrayRCP<LO> colind((4*8+4*11+2*13*(ncoarse-4))+(2*11+2*15+2*18*(ncoarse-4))
+                               +(ncoarse-4)*2*13+(ncoarse-4)*2*18+(ncoarse-4)*(ncoarse-4)*21); // TODO: is this correct?
+    const ArrayRCP<size_t> rowptr(ncoarse*ncoarse+1);
+    rowptr[0] = 0;
     
     // set the crs pattern into the graph
-    for(int rowIdx=0; rowIdx<ncoarse; rowIdx++)
-    {
-      if(rowIdx==0)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );
-      else if(rowIdx==1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2,
-                                                                          rowIdx+2*ncoarse-1, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );  
-      else if(rowIdx==ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2, rowIdx-1, rowIdx, rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse)) );
-      else if(rowIdx==ncoarse-2)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1,
-                                                                          rowIdx+2*ncoarse-1, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, 
-                                                                          rowIdx+ncoarse+2, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );
+    for(int rowIdx=0; rowIdx<ncoarse; rowIdx++) {
+      if(rowIdx==0) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+        colind[k]   = rowIdx;
+        colind[k+1] = rowIdx+1;
+        colind[k+2] = rowIdx+2;
+        colind[k+3] = rowIdx+ncoarse;
+        colind[k+4] = rowIdx+ncoarse+1;
+        colind[k+5] = rowIdx+ncoarse+2;
+        colind[k+6] = rowIdx+2*ncoarse;
+        colind[k+7] = rowIdx+2*ncoarse+1;
+      }
+      else if(rowIdx==1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-1;
+        colind[k+1]  = rowIdx;
+        colind[k+2]  = rowIdx+1;
+        colind[k+3]  = rowIdx+2;
+        colind[k+4]  = rowIdx+ncoarse-1;
+        colind[k+5]  = rowIdx+ncoarse;
+        colind[k+6]  = rowIdx+ncoarse+1;
+        colind[k+7]  = rowIdx+ncoarse+2;
+        colind[k+8]  = rowIdx+2*ncoarse-1;
+        colind[k+9]  = rowIdx+2*ncoarse;
+        colind[k+10] = rowIdx+2*ncoarse+1;
+      }  
+      else if(rowIdx==ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+        colind[k]   = rowIdx-2;
+        colind[k+1] = rowIdx-1;
+        colind[k+2] = rowIdx;
+        colind[k+3] = rowIdx+ncoarse-2;
+        colind[k+4] = rowIdx+ncoarse-1;
+        colind[k+5] = rowIdx+ncoarse;
+        colind[k+6] = rowIdx+2*ncoarse-1;
+        colind[k+7] = rowIdx+2*ncoarse;
+      }
+      else if(rowIdx==ncoarse-2) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-2;
+        colind[k+1]  = rowIdx-1;
+        colind[k+2]  = rowIdx;
+        colind[k+3]  = rowIdx+1;
+        colind[k+4]  = rowIdx+ncoarse-2;
+        colind[k+5]  = rowIdx+ncoarse-1;
+        colind[k+6]  = rowIdx+ncoarse;
+        colind[k+7]  = rowIdx+ncoarse+1;
+        colind[k+8]  = rowIdx+2*ncoarse-1;
+        colind[k+9]  = rowIdx+2*ncoarse;
+        colind[k+10] = rowIdx+2*ncoarse+1;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+13;
+        colind[k]    = rowIdx-2;
+        colind[k+1]  = rowIdx-1;
+        colind[k+2]  = rowIdx;
+        colind[k+3]  = rowIdx+1;
+        colind[k+4]  = rowIdx+2;
+        colind[k+5]  = rowIdx+ncoarse-2;
+        colind[k+6]  = rowIdx+ncoarse-1;
+        colind[k+7]  = rowIdx+ncoarse;
+        colind[k+8]  = rowIdx+ncoarse+1; 
+        colind[k+9]  = rowIdx+ncoarse+2;
+        colind[k+10] = rowIdx+2*ncoarse-1;
+        colind[k+11] = rowIdx+2*ncoarse;
+        colind[k+12] = rowIdx+2*ncoarse+1;
+      }
     }
-    for(int rowIdx=ncoarse; rowIdx<2*ncoarse; rowIdx++)
-    {
-      if(rowIdx==ncoarse)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2, rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse, rowIdx+ncoarse+1,
-                                                                          rowIdx+ncoarse+2, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );
-      else if(rowIdx==ncoarse+1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2,
-                                                                          rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );  
-      else if(rowIdx==2*ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-2, rowIdx-1, rowIdx, rowIdx+ncoarse-2, rowIdx+ncoarse-1,
-                                                                          rowIdx+ncoarse, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse)) );
-      else if(rowIdx==2*ncoarse-2)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, 
-                                                                          rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(std::vector<GO>{rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2, rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2,
-                                                                       rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse, 
-                                                                       rowIdx+2*ncoarse+1}) );
+    for(int rowIdx=ncoarse; rowIdx<2*ncoarse; rowIdx++) {
+      if(rowIdx==ncoarse) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-ncoarse;
+        colind[k+1]  = rowIdx-ncoarse+1;
+        colind[k+2]  = rowIdx-ncoarse+2;
+        colind[k+3]  = rowIdx;
+        colind[k+4]  = rowIdx+1;
+        colind[k+5]  = rowIdx+2;
+        colind[k+6]  = rowIdx+ncoarse;
+        colind[k+7]  = rowIdx+ncoarse+1;
+        colind[k+8]  = rowIdx+ncoarse+2;
+        colind[k+9]  = rowIdx+2*ncoarse;
+        colind[k+10] = rowIdx+2*ncoarse+1;
+      }
+      else if(rowIdx==ncoarse+1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+15;
+        colind[k]    = rowIdx-ncoarse-1;
+        colind[k+1]  = rowIdx-ncoarse;
+        colind[k+2]  = rowIdx-ncoarse+1;
+        colind[k+3]  = rowIdx-ncoarse+2;
+        colind[k+4]  = rowIdx-1;
+        colind[k+5]  = rowIdx;
+        colind[k+6]  = rowIdx+1;
+        colind[k+7]  = rowIdx+2;
+        colind[k+8]  = rowIdx+ncoarse-1;
+        colind[k+9]  = rowIdx+ncoarse;
+        colind[k+10] = rowIdx+ncoarse+1;
+        colind[k+11] = rowIdx+ncoarse+2;
+        colind[k+12] = rowIdx+2*ncoarse-1;
+        colind[k+13] = rowIdx+2*ncoarse;
+        colind[k+14] = rowIdx+2*ncoarse+1;
+      }
+      else if(rowIdx==2*ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-ncoarse-2;
+        colind[k+1]  = rowIdx-ncoarse-1;
+        colind[k+2]  = rowIdx-ncoarse;
+        colind[k+3]  = rowIdx-2;
+        colind[k+4]  = rowIdx-1;
+        colind[k+5]  = rowIdx;
+        colind[k+6]  = rowIdx+ncoarse-2;
+        colind[k+7]  = rowIdx+ncoarse-1;
+        colind[k+8]  = rowIdx+ncoarse;
+        colind[k+9]  = rowIdx+2*ncoarse-1;
+        colind[k+10] = rowIdx+2*ncoarse;
+      }
+      else if(rowIdx==2*ncoarse-2) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+15;        
+        colind[k]    = rowIdx-ncoarse-2;
+        colind[k+1]  = rowIdx-ncoarse-1;
+        colind[k+2]  = rowIdx-ncoarse;
+        colind[k+3]  = rowIdx-ncoarse+1;
+        colind[k+4]  = rowIdx-2;
+        colind[k+5]  = rowIdx-1;
+        colind[k+6]  = rowIdx;
+        colind[k+7]  = rowIdx+1; 
+        colind[k+8]  = rowIdx+ncoarse-2;
+        colind[k+9]  = rowIdx+ncoarse-1;
+        colind[k+10] = rowIdx+ncoarse;
+        colind[k+11] = rowIdx+ncoarse+1;
+        colind[k+12] = rowIdx+2*ncoarse-1;
+        colind[k+13] = rowIdx+2*ncoarse;
+        colind[k+14] = rowIdx+2*ncoarse+1;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+        colind[k]    = rowIdx-ncoarse-2;
+        colind[k+1]  = rowIdx-ncoarse-1;
+        colind[k+2]  = rowIdx-ncoarse;
+        colind[k+3]  = rowIdx-ncoarse+1;
+        colind[k+4]  = rowIdx-ncoarse+2;
+        colind[k+5]  = rowIdx-2;
+        colind[k+6]  = rowIdx-1;
+        colind[k+7]  = rowIdx;
+        colind[k+8]  = rowIdx+1;
+        colind[k+9]  = rowIdx+2;
+        colind[k+10] = rowIdx+ncoarse-2;
+        colind[k+11] = rowIdx+ncoarse-1;
+        colind[k+12] = rowIdx+ncoarse;
+        colind[k+13] = rowIdx+ncoarse+1;
+        colind[k+14] = rowIdx+ncoarse+2;
+        colind[k+15] = rowIdx+2*ncoarse-1;
+        colind[k+16] = rowIdx+2*ncoarse;
+        colind[k+17] = rowIdx+2*ncoarse+1;
+      }
     }
     for(int i=2; i<ncoarse-2; i++) { // loop over blocks
       for(int j=0; j<ncoarse; j++) { // loop over inside
         int rowIdx = i*ncoarse+j;
-        if(j==0)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2, rowIdx, rowIdx+1, rowIdx+2,
-                                                                            rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1)) );
-        else if(j==1)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(std::vector<GO>{rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2,
-                                                                         rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2, rowIdx+2*ncoarse-1,
-                                                                         rowIdx+2*ncoarse, rowIdx+2*ncoarse+1}) );
-        else if(j==ncoarse-1)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-2, rowIdx-1, rowIdx,
-                                                                            rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse)) );
-        else if(j==ncoarse-2)
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(std::vector<GO>{rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1,
-                                                                         rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+2*ncoarse-1,
-                                                                         rowIdx+2*ncoarse, rowIdx+2*ncoarse+1}) );
-        else
-          myGraph->insertGlobalIndices(rowIdx, Array<GO>(std::vector<GO>{rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1,
-                                                                         rowIdx-ncoarse+2, rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse,
-                                                                         rowIdx+ncoarse+1, rowIdx+ncoarse+2, rowIdx+2*ncoarse-1, rowIdx+2*ncoarse, rowIdx+2*ncoarse+1}) ); 
+        if(j==0) {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+13;
+          colind[k]    = rowIdx-2*ncoarse;
+          colind[k+1]  = rowIdx-2*ncoarse+1;
+          colind[k+2]  = rowIdx-ncoarse;
+          colind[k+3]  = rowIdx-ncoarse+1;
+          colind[k+4]  = rowIdx-ncoarse+2;
+          colind[k+5]  = rowIdx;
+          colind[k+6]  = rowIdx+1;
+          colind[k+7]  = rowIdx+2;
+          colind[k+8]  = rowIdx+ncoarse;
+          colind[k+9]  = rowIdx+ncoarse+1;
+          colind[k+10] = rowIdx+ncoarse+2;
+          colind[k+11] = rowIdx+2*ncoarse;
+          colind[k+12] = rowIdx+2*ncoarse+1;
+        }
+        else if(j==1) {
+           int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+          colind[k]    = rowIdx-2*ncoarse-1;
+          colind[k+1]  = rowIdx-2*ncoarse;
+          colind[k+2]  = rowIdx-2*ncoarse+1;
+          colind[k+3]  = rowIdx-ncoarse-1;
+          colind[k+4]  = rowIdx-ncoarse;
+          colind[k+5]  = rowIdx-ncoarse+1;
+          colind[k+6]  = rowIdx-ncoarse+2;
+          colind[k+7]  = rowIdx-1;
+          colind[k+8]  = rowIdx;
+          colind[k+9]  = rowIdx+1;
+          colind[k+10] = rowIdx+2;
+          colind[k+11] = rowIdx+ncoarse-1;
+          colind[k+12] = rowIdx+ncoarse;
+          colind[k+13] = rowIdx+ncoarse+1;
+          colind[k+14] = rowIdx+ncoarse+2;
+          colind[k+15] = rowIdx+2*ncoarse-1;
+          colind[k+16] = rowIdx+2*ncoarse;
+          colind[k+17] = rowIdx+2*ncoarse+1;
+        }
+        else if(j==ncoarse-1) {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+13;
+          colind[k]    = rowIdx-2*ncoarse-1;
+          colind[k+1]  = rowIdx-2*ncoarse;
+          colind[k+2]  = rowIdx-ncoarse-2;
+          colind[k+3]  = rowIdx-ncoarse-1;
+          colind[k+4]  = rowIdx-ncoarse;
+          colind[k+5]  = rowIdx-2;
+          colind[k+6]  = rowIdx-1;
+          colind[k+7]  = rowIdx;
+          colind[k+8]  = rowIdx+ncoarse-2;
+          colind[k+9]  = rowIdx+ncoarse-1;
+          colind[k+10] = rowIdx+ncoarse;
+          colind[k+11] = rowIdx+2*ncoarse-1;
+          colind[k+12] = rowIdx+2*ncoarse;
+        }
+        else if(j==ncoarse-2) {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+          colind[k]    = rowIdx-2*ncoarse-1;
+          colind[k+2]  = rowIdx-2*ncoarse;
+          colind[k+3]  = rowIdx-2*ncoarse+1;
+          colind[k+4]  = rowIdx-ncoarse-2;
+          colind[k+5]  = rowIdx-ncoarse-1;
+          colind[k+6]  = rowIdx-ncoarse;
+          colind[k+7]  = rowIdx-ncoarse+1;
+          colind[k+8]  = rowIdx-2;
+          colind[k+9]  = rowIdx-1;
+          colind[k+10] = rowIdx;
+          colind[k+11] = rowIdx+1;
+          colind[k+12] = rowIdx+ncoarse-2;
+          colind[k+13] = rowIdx+ncoarse-1;
+          colind[k+14] = rowIdx+ncoarse;
+          colind[k+15] = rowIdx+ncoarse+1;
+          colind[k+16] = rowIdx+2*ncoarse-1;
+          colind[k+17] = rowIdx+2*ncoarse;
+          colind[k+18] = rowIdx+2*ncoarse+1;
+        }
+        else {
+          int k = rowptr[rowIdx];
+          rowptr[rowIdx+1] = rowptr[rowIdx]+21;
+          colind[k]    = rowIdx-2*ncoarse-1;
+          colind[k+1]  = rowIdx-2*ncoarse;
+          colind[k+2]  = rowIdx-2*ncoarse+1;
+          colind[k+3]  = rowIdx-ncoarse-2;
+          colind[k+4]  = rowIdx-ncoarse-1;
+          colind[k+5]  = rowIdx-ncoarse;
+          colind[k+6]  = rowIdx-ncoarse+1;
+          colind[k+7]  = rowIdx-ncoarse+2;
+          colind[k+8]  = rowIdx-2;
+          colind[k+9]  = rowIdx-1;
+          colind[k+10] = rowIdx;
+          colind[k+11] = rowIdx+1;
+          colind[k+12] = rowIdx+2;
+          colind[k+13] = rowIdx+ncoarse-2;
+          colind[k+14] = rowIdx+ncoarse-1;
+          colind[k+15] = rowIdx+ncoarse;
+          colind[k+16] = rowIdx+ncoarse+1;
+          colind[k+17] = rowIdx+ncoarse+2;
+          colind[k+18] = rowIdx+2*ncoarse-1;
+          colind[k+19] = rowIdx+2*ncoarse;
+          colind[k+20] = rowIdx+2*ncoarse+1;
+        }
       }
     }
-    for(int rowIdx=ncoarse*ncoarse-2*ncoarse; rowIdx<ncoarse*ncoarse-ncoarse; rowIdx++)
-    {
-      if(rowIdx==ncoarse*ncoarse-2*ncoarse)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2, rowIdx, rowIdx+1, rowIdx+2,
-                                                                          rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2)) );
-      else if(rowIdx==ncoarse*ncoarse-2*ncoarse+1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2,
-        								                                                  rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1, rowIdx+ncoarse+2)) );  
-      else if(rowIdx==ncoarse*ncoarse-ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-2, rowIdx-1, rowIdx,
-                                                                          rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse)) );
-      else if(rowIdx==ncoarse*ncoarse-ncoarse-2)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1,
-                                                                          rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse, rowIdx+ncoarse+1)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(std::vector<GO>{rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1,
-                                                                       rowIdx-ncoarse+2, rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2, rowIdx+ncoarse-2, rowIdx+ncoarse-1, rowIdx+ncoarse,
-                                                                       rowIdx+ncoarse+1, rowIdx+ncoarse+2}) );
+    for(int rowIdx=ncoarse*ncoarse-2*ncoarse; rowIdx<ncoarse*ncoarse-ncoarse; rowIdx++) {
+      if(rowIdx==ncoarse*ncoarse-2*ncoarse) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-2*ncoarse;
+        colind[k+1]  = rowIdx-2*ncoarse+1;
+        colind[k+2]  = rowIdx-ncoarse;
+        colind[k+3]  = rowIdx-ncoarse+1;
+        colind[k+4]  = rowIdx-ncoarse+2;
+        colind[k+5]  = rowIdx;
+        colind[k+6]  = rowIdx+1;
+        colind[k+7]  = rowIdx+2;
+        colind[k+8]  = rowIdx+ncoarse;
+        colind[k+9]  = rowIdx+ncoarse+1;
+        colind[k+10] = rowIdx+ncoarse+2;
+      }
+      else if(rowIdx==ncoarse*ncoarse-2*ncoarse+1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+15;
+        colind[k]    = rowIdx-2*ncoarse-1;
+        colind[k+1]  = rowIdx-2*ncoarse;
+        colind[k+2]  = rowIdx-2*ncoarse+1;
+        colind[k+3]  = rowIdx-ncoarse-1;
+        colind[k+4]  = rowIdx-ncoarse;
+        colind[k+5]  = rowIdx-ncoarse+1;
+        colind[k+6]  = rowIdx-ncoarse+2;
+        colind[k+7]  = rowIdx-1;
+        colind[k+8]  = rowIdx;
+        colind[k+9]  = rowIdx+1;
+        colind[k+10] = rowIdx+2;
+        colind[k+11] = rowIdx+ncoarse-1;
+        colind[k+12] = rowIdx+ncoarse;
+        colind[k+13] = rowIdx+ncoarse+1;
+        colind[k+14] = rowIdx+ncoarse+2;
+      }
+      else if(rowIdx==ncoarse*ncoarse-ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-2*ncoarse-1;
+        colind[k+1]  = rowIdx-2*ncoarse;
+        colind[k+2]  = rowIdx-ncoarse-2;
+        colind[k+3]  = rowIdx-ncoarse-1;
+        colind[k+4]  = rowIdx-ncoarse;
+        colind[k+5]  = rowIdx-2;
+        colind[k+6]  = rowIdx-1;
+        colind[k+7]  = rowIdx;
+        colind[k+8]  = rowIdx+ncoarse-2;
+        colind[k+9]  = rowIdx+ncoarse-1;
+        colind[k+10] = rowIdx+ncoarse;
+      }
+      else if(rowIdx==ncoarse*ncoarse-ncoarse-2) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+15;
+        colind[k]    = rowIdx-2*ncoarse-1;
+        colind[k+1]  = rowIdx-2*ncoarse;
+        colind[k+2]  = rowIdx-2*ncoarse+1;
+        colind[k+3]  = rowIdx-ncoarse-2;
+        colind[k+4]  = rowIdx-ncoarse-1;
+        colind[k+5]  = rowIdx-ncoarse;
+        colind[k+6]  = rowIdx-ncoarse+1;
+        colind[k+7]  = rowIdx-2;
+        colind[k+8]  = rowIdx-1;
+        colind[k+9]  = rowIdx;
+        colind[k+10] = rowIdx+1;
+        colind[k+11] = rowIdx+ncoarse-2;
+        colind[k+12] = rowIdx+ncoarse-1;
+        colind[k+13] = rowIdx+ncoarse;
+        colind[k+14] = rowIdx+ncoarse+1;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+        colind[k]    = rowIdx-2*ncoarse-1;
+        colind[k+1]  = rowIdx-2*ncoarse;
+        colind[k+2]  = rowIdx-2*ncoarse+1;
+        colind[k+3]  = rowIdx-ncoarse-2;
+        colind[k+4]  = rowIdx-ncoarse-1;
+        colind[k+5]  = rowIdx-ncoarse;
+        colind[k+6]  = rowIdx-ncoarse+1;
+        colind[k+7]  = rowIdx-ncoarse+2;
+        colind[k+8]  = rowIdx-2;
+        colind[k+9]  = rowIdx-1;
+        colind[k+10] = rowIdx;
+        colind[k+11] = rowIdx+1;
+        colind[k+12] = rowIdx+2;
+        colind[k+13] = rowIdx+ncoarse-2;
+        colind[k+14] = rowIdx+ncoarse-1;
+        colind[k+15] = rowIdx+ncoarse;
+        colind[k+16] = rowIdx+ncoarse+1;
+        colind[k+17] = rowIdx+ncoarse+2;
+      }
     }     
     for(int rowIdx=ncoarse*ncoarse-ncoarse; rowIdx<ncoarse*ncoarse; rowIdx++) {
-      if(rowIdx==ncoarse*ncoarse-ncoarse)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2, rowIdx, rowIdx+1, rowIdx+2)) );
-      else if(rowIdx==ncoarse*ncoarse-ncoarse+1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1, rowIdx-ncoarse+2,
-                                                                          rowIdx-1, rowIdx, rowIdx+1, rowIdx+2)) );
-      else if(rowIdx==ncoarse*ncoarse-1)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-2, rowIdx-1, rowIdx)) );
-      else if(rowIdx==ncoarse*ncoarse-2)
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1,
-                                                                          rowIdx-2, rowIdx-1, rowIdx, rowIdx+1)) );
-      else
-        myGraph->insertGlobalIndices(rowIdx, Array<GO>(Teuchos::tuple<GO>(rowIdx-2*ncoarse-1, rowIdx-2*ncoarse, rowIdx-2*ncoarse+1, rowIdx-ncoarse-2, rowIdx-ncoarse-1, rowIdx-ncoarse, rowIdx-ncoarse+1,
-                                                                          rowIdx-ncoarse+2, rowIdx-2, rowIdx-1, rowIdx, rowIdx+1, rowIdx+2)) );
+      if(rowIdx==ncoarse*ncoarse-ncoarse) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+        colind[k]   = rowIdx-2*ncoarse;
+        colind[k+1] = rowIdx-2*ncoarse+1;
+        colind[k+2] = rowIdx-ncoarse;
+        colind[k+3] = rowIdx-ncoarse+1;
+        colind[k+4] = rowIdx-ncoarse+2;
+        colind[k+5] = rowIdx;
+        colind[k+6] = rowIdx+1;
+        colind[k+7] = rowIdx+2;
+      }
+      else if(rowIdx==ncoarse*ncoarse-ncoarse+1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-2*ncoarse-1;
+        colind[k+1]  = rowIdx-2*ncoarse;
+        colind[k+2]  = rowIdx-2*ncoarse+1;
+        colind[k+3]  = rowIdx-ncoarse-1;
+        colind[k+4]  = rowIdx-ncoarse;
+        colind[k+5]  = rowIdx-ncoarse+1;
+        colind[k+6]  = rowIdx-ncoarse+2;
+        colind[k+7]  = rowIdx-1;
+        colind[k+8]  = rowIdx;
+        colind[k+9]  = rowIdx+1;
+        colind[k+10] = rowIdx+2;
+      }
+      else if(rowIdx==ncoarse*ncoarse-1) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+        colind[k]   = rowIdx-2*ncoarse-1;
+        colind[k+1] = rowIdx-2*ncoarse;
+        colind[k+2] = rowIdx-ncoarse-2;
+        colind[k+3] = rowIdx-ncoarse-1;
+        colind[k+4] = rowIdx-ncoarse;
+        colind[k+5] = rowIdx-2;
+        colind[k+6] = rowIdx-1;
+        colind[k+7] = rowIdx;
+      }
+      else if(rowIdx==ncoarse*ncoarse-2) {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+11;
+        colind[k]    = rowIdx-2*ncoarse-1;
+        colind[k+1]  = rowIdx-2*ncoarse;
+        colind[k+2]  = rowIdx-2*ncoarse+1;
+        colind[k+3]  = rowIdx-ncoarse-2;
+        colind[k+4]  = rowIdx-ncoarse-1;
+        colind[k+5]  = rowIdx-ncoarse;
+        colind[k+6]  = rowIdx-ncoarse+1;
+        colind[k+7]  = rowIdx-2;
+        colind[k+8]  = rowIdx-1;
+        colind[k+9]  = rowIdx;
+        colind[k+10] = rowIdx+1;
+      }
+      else {
+        int k = rowptr[rowIdx];
+        rowptr[rowIdx+1] = rowptr[rowIdx]+13;
+        colind[k]    = rowIdx-2*ncoarse-1;
+        colind[k+1]  = rowIdx-2*ncoarse;
+        colind[k+2]  = rowIdx-2*ncoarse+1;
+        colind[k+3]  = rowIdx-ncoarse-2;
+        colind[k+4]  = rowIdx-ncoarse-1;
+        colind[k+5]  = rowIdx-ncoarse;
+        colind[k+6]  = rowIdx-ncoarse+1;
+        colind[k+7]  = rowIdx-ncoarse+2;
+        colind[k+8]  = rowIdx-2;
+        colind[k+9]  = rowIdx-1;
+        colind[k+10] = rowIdx;
+        colind[k+11] = rowIdx+1;
+        colind[k+12] = rowIdx+2;
+      }
     }
 
-    myGraph->fillComplete();
+    std::cout << "Graph indices created!" << std::endl;
+    myGraph->setAllIndices(rowptr, colind);
+
     std::cout << "Graph is created and filled!" << std::endl;
+    myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
     Ac = MatrixFactory::Build(myGraph, paramList); 
@@ -575,8 +1069,8 @@ namespace MueLu {
     std::cout << "Graph indices created!" << std::endl;
     myGraph->setAllIndices(rowptr, colind);
 
-    myGraph->fillComplete();
     std::cout << "Graph is created and filled!" << std::endl;
+    myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
     Ac = MatrixFactory::Build(myGraph, paramList);
