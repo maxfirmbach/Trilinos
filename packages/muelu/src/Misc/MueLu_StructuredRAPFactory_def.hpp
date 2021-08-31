@@ -71,32 +71,31 @@ namespace MueLu {
 
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
   StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::StructuredRAPFactory()
-    : hasDeclaredInput_(false) { }
+    : hasDeclaredInput_(false) 
+  {}
 
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
-  RCP<const ParameterList> StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetValidParameterList() const {
+  RCP<const ParameterList> StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetValidParameterList() const
+  {
     RCP<ParameterList> validParamList = rcp(new ParameterList());
 
 #define SET_VALID_ENTRY(name) validParamList->setEntry(name, MasterList::getEntry(name))
-    SET_VALID_ENTRY("transpose: use implicit");
-    SET_VALID_ENTRY("rap: triple product");
     SET_VALID_ENTRY("rap: fix zero diagonals");
     SET_VALID_ENTRY("rap: fix zero diagonals threshold");
     SET_VALID_ENTRY("rap: fix zero diagonals replacement");
-    SET_VALID_ENTRY("rap: relative diagonal floor");  
-    SET_VALID_ENTRY("rap: structure type"); // set by user to define matrix structure (e.g. Laplace2D)
+    SET_VALID_ENTRY("rap: relative diagonal floor"); 
+    SET_VALID_ENTRY("rap: triple product");         // in the long term this has to be the only option for multiplication
+    SET_VALID_ENTRY("rap: structure type");         // set by user to define matrix structure (e.g. Laplace2D)
+    SET_VALID_ENTRY("transpose: use implicit");     // should always be used right now, guarantees symmetry
 #undef  SET_VALID_ENTRY
-    validParamList->set< RCP<const FactoryBase> >("A", null, "Generating factory of the matrix A used during the prolongator smoothing process");
-    validParamList->set< RCP<const FactoryBase> >("P", null, "Prolongator factory");
-    validParamList->set< RCP<const FactoryBase> >("R", null, "Restrictor factory");
-    
-    validParamList->set<RCP<const FactoryBase> >("numDimensions",                Teuchos::null,
-                                                 "Number of spacial dimensions in the problem.");
-    validParamList->set<RCP<const FactoryBase> >("lCoarseNodesPerDim",           Teuchos::null,
-                                                 "Number of nodes per spatial dimension on the coarse grid.");     
+    validParamList->set< RCP<const FactoryBase> >("A",                  null, "Generating factory of the matrix A used during the prolongator smoothing process");
+    validParamList->set< RCP<const FactoryBase> >("P",                  null, "Prolongator factory");
+    validParamList->set< RCP<const FactoryBase> >("R",                  null, "Restrictor factory");
+    validParamList->set< RCP<const FactoryBase> >("numDimensions",      null, "Number of spacial dimensions in the problem.");
+    validParamList->set< RCP<const FactoryBase> >("lCoarseNodesPerDim", null, "Number of nodes per spatial dimension on the coarse grid.");     
 
-    validParamList->set< bool >                  ("CheckMainDiagonal",  false, "Check main diagonal for zeros");
-    validParamList->set< bool >                  ("RepairMainDiagonal", false, "Repair zeros on main diagonal");
+    validParamList->set< bool >("CheckMainDiagonal",  false, "Check main diagonal for zeros");
+    validParamList->set< bool >("RepairMainDiagonal", false, "Repair zeros on main diagonal");
 
     // Make sure we don't recursively validate options for the matrixmatrix kernels
     ParameterList norecurse;
@@ -107,15 +106,16 @@ namespace MueLu {
   }
 
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
-  void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::DeclareInput(Level &fineLevel, Level &coarseLevel) const {
+  void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::DeclareInput(Level &fineLevel, Level &coarseLevel) const
+  {
     const Teuchos::ParameterList& pL = GetParameterList();
-    if (pL.get<bool>("transpose: use implicit") == false)
+    if(pL.get<bool>("transpose: use implicit") == false)
       Input(coarseLevel, "R");
 
     Input(fineLevel,   "A");
     Input(coarseLevel, "P");
 
-    // get structured information
+    // get structure information
     Input(fineLevel, "numDimensions");
     Input(fineLevel, "lCoarseNodesPerDim");
     
@@ -126,7 +126,6 @@ namespace MueLu {
     hasDeclaredInput_ = true;
   }
    
-  // Here do the pattern determination ...
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
   void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetLaplace1D(RCP<Matrix>& Ac, RCP<Matrix> P,
                                                                               	     Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
@@ -161,10 +160,10 @@ namespace MueLu {
     colind[end-2] = ncoarse-2;
     colind[end-1] = ncoarse-1;
     
-    std::cout << "Graph indices created!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph indices created!\n";
     myGraph->setAllIndices(rowptr, colind);
 
-    std::cout << "Graph is created and filled!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph is created and filled!\n";
     myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
@@ -269,10 +268,10 @@ namespace MueLu {
       }
     }
 
-    std::cout << "Graph indices created!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph indices created!\n";
     myGraph->setAllIndices(rowptr, colind);
 
-    std::cout << "Graph is created and filled!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph is created and filled!\n";
     myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
@@ -394,10 +393,10 @@ namespace MueLu {
       }
     }
 
-    std::cout << "Graph indices created!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph indices created!\n";
     myGraph->setAllIndices(rowptr, colind);
 
-    std::cout << "Graph is created and filled!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph is created and filled!\n";
     myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
@@ -865,10 +864,10 @@ namespace MueLu {
       }
     }
 
-    std::cout << "Graph indices created!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph indices created!\n";
     myGraph->setAllIndices(rowptr, colind);
 
-    std::cout << "Graph is created and filled!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph is created and filled!\n";
     myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
@@ -1066,10 +1065,10 @@ namespace MueLu {
       }    
     }
 
-    std::cout << "Graph indices created!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph indices created!\n";
     myGraph->setAllIndices(rowptr, colind);
 
-    std::cout << "Graph is created and filled!" << std::endl;
+    GetOStream(Statistics2) << "StructuredRAP: Graph is created and filled!\n";
     myGraph->fillComplete();
  
     // build Ac with static graph pattern ...
@@ -1077,11 +1076,13 @@ namespace MueLu {
   }
   
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
-  void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(Level& fineLevel, Level& coarseLevel) const {
+  void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(Level& fineLevel, Level& coarseLevel) const
+  {
     const bool doTranspose       = true;
     const bool doFillComplete    = true;
     const bool doOptimizeStorage = true;
     RCP<Matrix> Ac;
+
     {
          
       Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim(3);
@@ -1097,7 +1098,8 @@ namespace MueLu {
 
       const Teuchos::ParameterList& pL = GetParameterList();
       RCP<Matrix> A = Get< RCP<Matrix> >(fineLevel,   "A");
-      RCP<Matrix> P = Get< RCP<Matrix> >(coarseLevel, "P"), AP;
+      RCP<Matrix> P = Get< RCP<Matrix> >(coarseLevel, "P");
+      RCP<Matrix> AP;
 
       bool isEpetra = A->getRowMap()->lib() == Xpetra::UseEpetra;
 #ifdef KOKKOS_ENABLE_CUDA
@@ -1108,116 +1110,18 @@ namespace MueLu {
 
       if (pL.get<bool>("rap: triple product") == false || isEpetra || isCuda) {
         if (pL.get<bool>("rap: triple product") && isEpetra)
-          GetOStream(Warnings1) << "Switching from triple product to R x (A x P) since triple product has not been implemented for Epetra.\n";
+          GetOStream(Warnings1) << "Triple product R x A x P has not been implemented for Epetra.\n";
 #ifdef KOKKOS_ENABLE_CUDA
         if (pL.get<bool>("rap: triple product") && isCuda)
-          GetOStream(Warnings1) << "Switching from triple product to R x (A x P) since triple product has not been implemented for Cuda.\n";
+          GetOStream(Warnings1) << "Triple product R x A x P has not been implemented for Cuda.\n";
 #endif
+        GetOStream(Warnings1) << "For the structured RAP Factory swith to triple product R x A x P.\n";
+        // For now, force hard exit
+        exit(1);
 
-        // Reuse pattern if available (multiple solve)
-        RCP<ParameterList> APparams = rcp(new ParameterList);
-        if(pL.isSublist("matrixmatrix: kernel params"))
-          APparams->sublist("matrixmatrix: kernel params") = pL.sublist("matrixmatrix: kernel params");
-
-        // By default, we don't need global constants for A*P
-        APparams->set("compute global constants: temporaries",APparams->get("compute global constants: temporaries",false));
-        APparams->set("compute global constants",APparams->get("compute global constants",false));
-
-        if (coarseLevel.IsAvailable("AP reuse data", this)) {
-          GetOStream(static_cast<MsgType>(Runtime0 | Test)) << "Reusing previous AP data" << std::endl;
-
-          APparams = coarseLevel.Get< RCP<ParameterList> >("AP reuse data", this);
-
-          if (APparams->isParameter("graph"))
-            AP = APparams->get< RCP<Matrix> >("graph");
-        }
-
-        {
-          SubFactoryMonitor subM(*this, "MxM: A x P", coarseLevel);
-
-          AP = MatrixMatrix::Multiply(*A, !doTranspose, *P, !doTranspose, AP, GetOStream(Statistics2),
-                                      doFillComplete, doOptimizeStorage, labelstr+std::string("MueLu::A*P-")+levelstr.str(), APparams);
-        }
-
-        // Reuse coarse matrix memory if available (multiple solve)
-        RCP<ParameterList> RAPparams = rcp(new ParameterList);
-        if(pL.isSublist("matrixmatrix: kernel params"))
-          RAPparams->sublist("matrixmatrix: kernel params") = pL.sublist("matrixmatrix: kernel params");
-
-        if (coarseLevel.IsAvailable("RAP reuse data", this)) {
-          GetOStream(static_cast<MsgType>(Runtime0 | Test)) << "Reusing previous RAP data" << std::endl;
-
-          RAPparams = coarseLevel.Get< RCP<ParameterList> >("RAP reuse data", this);
-
-          if (RAPparams->isParameter("graph"))
-            Ac = RAPparams->get< RCP<Matrix> >("graph");
-
-          // Some eigenvalue may have been cached with the matrix in the previous run.
-          // As the matrix values will be updated, we need to reset the eigenvalue.
-          Ac->SetMaxEigenvalueEstimate(-Teuchos::ScalarTraits<SC>::one());
-        }
-
-        // We *always* need global constants for the RAP, but not for the temps
-        RAPparams->set("compute global constants: temporaries",RAPparams->get("compute global constants: temporaries",false));
-        RAPparams->set("compute global constants",true);
-
-        // Allow optimization of storage.
-        // This is necessary for new faster Epetra MM kernels.
-        // Seems to work with matrix modifications to repair diagonal entries.
-
-        if (pL.get<bool>("transpose: use implicit") == true) {
-          SubFactoryMonitor m2(*this, "MxM: P' x (AP) (implicit)", coarseLevel);
-
-          Ac = MatrixMatrix::Multiply(*P,  doTranspose, *AP, !doTranspose, Ac, GetOStream(Statistics2),
-                                      doFillComplete, doOptimizeStorage, labelstr+std::string("MueLu::R*(AP)-implicit-")+levelstr.str(), RAPparams);
-
-        } else {
-          RCP<Matrix> R = Get< RCP<Matrix> >(coarseLevel, "R");
-
-          SubFactoryMonitor m2(*this, "MxM: R x (AP) (explicit)", coarseLevel);
-
-          Ac = MatrixMatrix::Multiply(*R, !doTranspose, *AP, !doTranspose, Ac, GetOStream(Statistics2),
-                                      doFillComplete, doOptimizeStorage, labelstr+std::string("MueLu::R*(AP)-explicit-")+levelstr.str(), RAPparams);
-                                            
-        }
-
-        Teuchos::ArrayView<const double> relativeFloor = pL.get<Teuchos::Array<double> >("rap: relative diagonal floor")();
-        if(relativeFloor.size() > 0) {
-          Xpetra::MatrixUtils<SC,LO,GO,NO>::RelativeDiagonalBoost(Ac, relativeFloor,GetOStream(Statistics2));
-        }
-
-        bool repairZeroDiagonals = pL.get<bool>("RepairMainDiagonal") || pL.get<bool>("rap: fix zero diagonals");
-        bool checkAc             = pL.get<bool>("CheckMainDiagonal")|| pL.get<bool>("rap: fix zero diagonals"); ;
-        if (checkAc || repairZeroDiagonals) {
-          using magnitudeType = typename Teuchos::ScalarTraits<Scalar>::magnitudeType;
-          magnitudeType threshold;
-          if (pL.isType<magnitudeType>("rap: fix zero diagonals threshold"))
-            threshold = pL.get<magnitudeType>("rap: fix zero diagonals threshold");
-          else
-            threshold = Teuchos::as<magnitudeType>(pL.get<double>("rap: fix zero diagonals threshold"));
-          Scalar replacement = Teuchos::as<Scalar>(pL.get<double>("rap: fix zero diagonals replacement"));
-          Xpetra::MatrixUtils<SC,LO,GO,NO>::CheckRepairMainDiagonal(Ac, repairZeroDiagonals, GetOStream(Warnings1), threshold, replacement);
-        }
-
-        if (IsPrint(Statistics2)) {
-          RCP<ParameterList> params = rcp(new ParameterList());;
-          params->set("printLoadBalancingInfo", true);
-          params->set("printCommInfo",          true);
-          GetOStream(Statistics2) << PerfUtils::PrintMatrixInfo(*Ac, "Ac", params);
-        }
-
-        if(!Ac.is_null()) {std::ostringstream oss; oss << "A_" << coarseLevel.GetLevelID(); Ac->setObjectLabel(oss.str());}
-        Set(coarseLevel, "A",         Ac);
-
-        APparams->set("graph", AP);
-        Set(coarseLevel, "AP reuse data",  APparams);
-        RAPparams->set("graph", Ac);
-        Set(coarseLevel, "RAP reuse data", RAPparams);
-      
-      } else {
-      
-      	// Here begins Ac = R x A x P as direct triple matrix product
-      
+      } 
+      else {
+            
         RCP<ParameterList> RAPparams = rcp(new ParameterList);
         if(pL.isSublist("matrixmatrix: kernel params"))
           RAPparams->sublist("matrixmatrix: kernel params") = pL.sublist("matrixmatrix: kernel params");
@@ -1236,30 +1140,31 @@ namespace MueLu {
         
         } else {
           // if reuse data not available, try to get sparse fill graph via the knowledge of the matrix structure
+          // Here we should technically also ask for the corsening rate / interpolation order
           std::string structureType = pL.get<std::string>("rap: structure type");
           if(structureType=="Laplace1D")
           {
-            //std::cout << "Hello from the Laplace1D pattern determination routine!" << std::endl;
+            GetOStream(Statistics2) << "StructuredRAP: Using Laplace1D pattern determination routine.\n";
             GetLaplace1D(Ac, P, lCoarseNodesPerDim);
           }
-          else if(structureType=="Laplace2D") // Here we should technically also ask for the corsening rate / interpolation order
+          else if(structureType=="Laplace2D")
           {
-            //std::cout << "Hello from the Laplace2D pattern determination routine!" << std::endl;
+            GetOStream(Statistics2) << "StructuredRAP: Using Laplace2D pattern determination routine.\n";
             GetLaplace2D(Ac, P, lCoarseNodesPerDim);
           }                   
           else if(structureType=="Star2D")
           {
-            //std::cout << "Hello from the Star2D pattern determination routine!" << std::endl;
+            GetOStream(Statistics2) << "StructuredRAP: Using Star2D pattern determination routine.\n";
             GetStar2D(Ac, P, lCoarseNodesPerDim);
           }
           else if(structureType=="BigStar2D")
           {
-            //std::cout << "Hello from the BigStar2D pattern determination routine!" << std::endl;
+            GetOStream(Statistics2) << "StructuredRAP: Using BigStar2D pattern determination routine.\n";
             GetBigStar2D(Ac, P, lCoarseNodesPerDim);
           }
           else if(structureType=="Elasticity2D")
           {
-            //std::cout << "Hello from the Elasticity2D pattern determination routine!" << std::endl;
+            GetOStream(Statistics2) << "StructuredRAP: Using Elasticity2D pattern determination routine.\n";
             GetElasticity2D(Ac, P, lCoarseNodesPerDim);      
           }
         }
@@ -1269,9 +1174,6 @@ namespace MueLu {
         RAPparams->set("compute global constants",true);
 
         if (pL.get<bool>("transpose: use implicit") == true) {
-
-          // why the hell is Ac build here again ?!
-          //Ac = MatrixFactory::Build(P->getDomainMap(), Teuchos::as<LO>(0));
 
           SubFactoryMonitor m2(*this, "MxMxM: R x A x P (implicit)", coarseLevel);
 
@@ -1283,9 +1185,6 @@ namespace MueLu {
         } else {
           
           RCP<Matrix> R = Get< RCP<Matrix> >(coarseLevel, "R");
-          
-          // same here ...
-          Ac = MatrixFactory::Build(R->getRowMap(), Teuchos::as<LO>(0));
 
           SubFactoryMonitor m2(*this, "MxMxM: R x A x P (explicit)", coarseLevel);
 
@@ -1327,7 +1226,6 @@ namespace MueLu {
         RAPparams->set("graph", Ac);
         Set(coarseLevel, "RAP reuse data", RAPparams);
       }
-
 
     }
 
