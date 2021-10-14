@@ -1074,6 +1074,874 @@ namespace MueLu {
     // build Ac with static graph pattern ...
     Ac = MatrixFactory::Build(myGraph, paramList);
   }
+
+  template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
+  void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetLaplace3D(RCP<Matrix>& Ac, RCP<Matrix> P,
+                                                                              	     Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
+  {
+    // Define some containers for the compressed row storage
+    int ncoarse = lCoarseNodesPerDim[0];
+    int maxNnzOnRow = 7; // nnzOnRow is here ~7 for Laplace3D
+    const RCP<ParameterList> paramList = Teuchos::null;
+  
+    // get graph container  
+    auto rowMap = P->getDomainMap();
+    auto colMap = P->getColMap();
+    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, colMap, maxNnzOnRow, paramList);
+
+    const ArrayRCP<LO> colind((ncoarse-2)*ncoarse*ncoarse*7+2*ncoarse*ncoarse*6); // TODO: is this correct?
+    const ArrayRCP<size_t> rowptr(ncoarse*ncoarse*ncoarse+1);
+    rowptr[0] = 0;
+    
+    // set the crs pattern into the graph
+    for(int i=0; i<ncoarse; i++) {
+      if(i==0) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx;
+            colind[k+1] = rowIdx+1;
+            colind[k+2] = rowIdx+ncoarse;
+            colind[k+3] = rowIdx+ncoarse*ncoarse;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx-1;
+            colind[k+1] = rowIdx;
+            colind[k+2] = rowIdx+ncoarse;
+            colind[k+3] = rowIdx+ncoarse*ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-1;
+            colind[k+1] = rowIdx;
+            colind[k+2] = rowIdx+1;
+            colind[k+3] = rowIdx+ncoarse;
+            colind[k+4] = rowIdx+ncoarse*ncoarse;
+          }
+        }
+      }
+      else if(i==ncoarse-1) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx-ncoarse;
+            colind[k+1] = rowIdx;
+            colind[k+2] = rowIdx+1;
+            colind[k+3] = rowIdx+ncoarse*ncoarse;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx-ncoarse;
+            colind[k+1] = rowIdx-1;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+ncoarse*ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-ncoarse;
+            colind[k+1] = rowIdx-1;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+1;
+            colind[k+4] = rowIdx+ncoarse*ncoarse;
+          }
+        }
+      }
+      else{
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-ncoarse;
+            colind[k+1] = rowIdx;
+            colind[k+2] = rowIdx+1;
+            colind[k+3] = rowIdx+ncoarse;
+            colind[k+4] = rowIdx+ncoarse*ncoarse;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-ncoarse;
+            colind[k+1] = rowIdx-1;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+ncoarse;
+            colind[k+4] = rowIdx+ncoarse*ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+            colind[k]   = rowIdx-ncoarse;
+            colind[k+1] = rowIdx-1;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+1;
+            colind[k+4] = rowIdx+ncoarse;
+            colind[k+5] = rowIdx+ncoarse*ncoarse;
+          }
+        }
+      }
+    }
+
+    for(int i=1; i<ncoarse-1; i++) {
+      for(int j=0; j<ncoarse; j++) {
+        if(j==0)  {
+          for(int l=0; l<ncoarse; l++) {
+            int rowIdx = i*ncoarse*ncoarse+j*ncoarse+l;
+            if(l==0) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx;
+              colind[k+2] = rowIdx+1;
+              colind[k+3] = rowIdx+ncoarse;
+              colind[k+4] = rowIdx+ncoarse*ncoarse;
+            }
+            else if(l==ncoarse-1) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-1;
+              colind[k+2] = rowIdx;
+              colind[k+3] = rowIdx+ncoarse;
+              colind[k+4] = rowIdx+ncoarse*ncoarse;
+            }
+            else {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-1;
+              colind[k+2] = rowIdx;
+              colind[k+3] = rowIdx+1;
+              colind[k+4] = rowIdx+ncoarse;
+              colind[k+5] = rowIdx+ncoarse*ncoarse;          
+            }
+          }
+        }
+        else if(j==ncoarse-1) {
+          for(int l=0; l<ncoarse; l++) {
+            int rowIdx = i*ncoarse*ncoarse+j*ncoarse+l;
+            if(l==0) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-ncoarse;
+              colind[k+2] = rowIdx;
+              colind[k+3] = rowIdx+1;
+              colind[k+4] = rowIdx+ncoarse*ncoarse;
+            }
+            else if(l==ncoarse-1) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-ncoarse;
+              colind[k+2] = rowIdx-1;
+              colind[k+3] = rowIdx;
+              colind[k+4] = rowIdx+ncoarse*ncoarse;
+            }
+            else {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-ncoarse;
+              colind[k+2] = rowIdx-1;
+              colind[k+3] = rowIdx;
+              colind[k+4] = rowIdx+1;
+              colind[k+5] = rowIdx+ncoarse*ncoarse;
+            }
+          }
+        }
+        else {
+          for(int l=0; l<ncoarse; l++) {
+            int rowIdx = i*ncoarse*ncoarse+j*ncoarse+l;
+            if(l==0) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-ncoarse;
+              colind[k+2] = rowIdx;
+              colind[k+3] = rowIdx+1;
+              colind[k+4] = rowIdx+ncoarse;
+              colind[k+5] = rowIdx+ncoarse*ncoarse;
+            }
+            else if(l==ncoarse-1) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-ncoarse;
+              colind[k+2] = rowIdx-1;
+              colind[k+3] = rowIdx;
+              colind[k+4] = rowIdx+ncoarse;
+              colind[k+5] = rowIdx+ncoarse*ncoarse;
+            }
+            else {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+7;
+              colind[k]   = rowIdx-ncoarse*ncoarse;
+              colind[k+1] = rowIdx-ncoarse;
+              colind[k+2] = rowIdx-1;
+              colind[k+3] = rowIdx;
+              colind[k+4] = rowIdx+1;
+              colind[k+5] = rowIdx+ncoarse;
+              colind[k+6] = rowIdx+ncoarse*ncoarse;
+            }
+          }
+        }
+      }
+    }    
+  
+    for(int i=ncoarse*ncoarse-ncoarse; i<ncoarse*ncoarse; i++) {
+      if(i==ncoarse*ncoarse) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx;
+            colind[k+2] = rowIdx+1;
+            colind[k+3] = rowIdx+ncoarse;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-1;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+ncoarse; 
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-1;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+1;
+            colind[k+4] = rowIdx+ncoarse;
+          }
+        }
+      }
+      else if(i==ncoarse*ncoarse-1) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-ncoarse;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+1;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+4;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-ncoarse;
+            colind[k+2] = rowIdx-1;
+            colind[k+3] = rowIdx;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-ncoarse;
+            colind[k+2] = rowIdx-1;
+            colind[k+3] = rowIdx;
+            colind[k+4] = rowIdx+1;
+          }
+        }
+      }
+      else {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-ncoarse;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+1;
+            colind[k+4] = rowIdx+ncoarse;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+5;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-ncoarse;
+            colind[k+2] = rowIdx-1;
+            colind[k+3] = rowIdx;
+            colind[k+4] = rowIdx+ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+6;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-ncoarse;
+            colind[k+2] = rowIdx-1;
+            colind[k+3] = rowIdx;
+            colind[k+4] = rowIdx+1;
+            colind[k+5] = rowIdx+ncoarse;
+          }
+        }
+      }
+    }
+
+    
+
+    GetOStream(Statistics2) << "StructuredRAP: Graph indices created!\n";
+    myGraph->setAllIndices(rowptr, colind);
+
+    GetOStream(Statistics2) << "StructuredRAP: Graph is created and filled!\n";
+    myGraph->fillComplete();
+ 
+    // build Ac with static graph pattern ...
+    Ac = MatrixFactory::Build(myGraph, paramList); 
+  }
+
+  template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
+  void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::GetBrick3D(RCP<Matrix>& Ac, RCP<Matrix> P,
+                                                                              	     Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const
+  {
+    // Define some containers for the compressed row storage
+    int ncoarse = lCoarseNodesPerDim[0];
+    int maxNnzOnRow = 27; // nnzOnRow is here ~27 for Brick3D
+    const RCP<ParameterList> paramList = Teuchos::null;
+  
+    // get graph container  
+    auto rowMap = P->getDomainMap();
+    auto colMap = P->getColMap();
+    RCP<CrsGraph> myGraph = CrsGraphFactory::Build(rowMap, colMap, maxNnzOnRow, paramList);
+
+    const ArrayRCP<LO> colind((ncoarse-2)*ncoarse*ncoarse*27+2*ncoarse*ncoarse*18); // TODO: is this correct?
+    const ArrayRCP<size_t> rowptr(ncoarse*ncoarse*ncoarse+1);
+    rowptr[0] = 0;
+    
+    // set the crs pattern into the graph
+    for(int i=0; i<ncoarse; i++) {
+      if(i==0) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx;
+            colind[k+1] = rowIdx+1;
+            colind[k+2] = rowIdx+ncoarse;
+            colind[k+3] = rowIdx+ncoarse+1;
+            colind[k+4] = rowIdx+ncoarse*ncoarse;
+            colind[k+5] = rowIdx+ncoarse*ncoarse+1;
+            colind[k+6] = rowIdx+ncoarse*ncoarse+ncoarse;
+            colind[k+7] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx-1;
+            colind[k+1] = rowIdx;
+            colind[k+2] = rowIdx+ncoarse-1;
+            colind[k+3] = rowIdx+ncoarse;
+            colind[k+4] = rowIdx+ncoarse*ncoarse-1;
+            colind[k+5] = rowIdx+ncoarse*ncoarse;
+            colind[k+6] = rowIdx+ncoarse*ncoarse+ncoarse-1;
+            colind[k+7] = rowIdx+ncoarse*ncoarse+ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-1;
+            colind[k+1]  = rowIdx;
+            colind[k+2]  = rowIdx+1;
+            colind[k+3]  = rowIdx+ncoarse-1;
+            colind[k+4]  = rowIdx+ncoarse;
+            colind[k+5]  = rowIdx+ncoarse+1;
+            colind[k+6]  = rowIdx+ncoarse*ncoarse-1;
+            colind[k+7]  = rowIdx+ncoarse*ncoarse;
+            colind[k+8]  = rowIdx+ncoarse*ncoarse+1;
+            colind[k+9]  = rowIdx+ncoarse*ncoarse+ncoarse-1;
+            colind[k+10] = rowIdx+ncoarse*ncoarse+ncoarse;
+            colind[k+11] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+          }
+        }
+      }
+      else if(i==ncoarse-1) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx-ncoarse;
+            colind[k+1] = rowIdx-ncoarse+1;
+            colind[k+2] = rowIdx;
+            colind[k+3] = rowIdx+1;
+            colind[k+4] = rowIdx+ncoarse*ncoarse-ncoarse;
+            colind[k+5] = rowIdx+ncoarse*ncoarse-ncoarse+1;
+            colind[k+6] = rowIdx+ncoarse*ncoarse;
+            colind[k+7] = rowIdx+ncoarse*ncoarse+1;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx-ncoarse-1;
+            colind[k+1] = rowIdx-ncoarse;
+            colind[k+2] = rowIdx-1;
+            colind[k+3] = rowIdx;
+            colind[k+4] = rowIdx+ncoarse*ncoarse-ncoarse-1;
+            colind[k+5] = rowIdx+ncoarse*ncoarse-ncoarse;
+            colind[k+6] = rowIdx+ncoarse*ncoarse-1;
+            colind[k+7] = rowIdx+ncoarse*ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-ncoarse-1;
+            colind[k+1]  = rowIdx-ncoarse;
+            colind[k+2]  = rowIdx-ncoarse+1;
+            colind[k+3]  = rowIdx-1;
+            colind[k+4]  = rowIdx;
+            colind[k+5]  = rowIdx+1;
+            colind[k+6]  = rowIdx+ncoarse*ncoarse-ncoarse-1;
+            colind[k+7]  = rowIdx+ncoarse*ncoarse-ncoarse;
+            colind[k+8]  = rowIdx+ncoarse*ncoarse-ncoarse+1;
+            colind[k+9]  = rowIdx+ncoarse*ncoarse-1;
+            colind[k+10] = rowIdx+ncoarse*ncoarse;
+            colind[k+11] = rowIdx+ncoarse*ncoarse+1;
+          }
+        }
+      }
+      else{
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-ncoarse;
+            colind[k+1]  = rowIdx-ncoarse+1;
+            colind[k+2]  = rowIdx;
+            colind[k+3]  = rowIdx+1;
+            colind[k+4]  = rowIdx+ncoarse;
+            colind[k+5]  = rowIdx+ncoarse+1;
+            colind[k+6]  = rowIdx+ncoarse*ncoarse-ncoarse;
+            colind[k+7]  = rowIdx+ncoarse*ncoarse-ncoarse+1;
+            colind[k+8]  = rowIdx+ncoarse*ncoarse;
+            colind[k+9]  = rowIdx+ncoarse*ncoarse+1;
+            colind[k+10] = rowIdx+ncoarse*ncoarse+ncoarse;
+            colind[k+11] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-ncoarse-1;
+            colind[k+1]  = rowIdx-ncoarse;
+            colind[k+2]  = rowIdx-1;
+            colind[k+3]  = rowIdx;
+            colind[k+4]  = rowIdx+ncoarse-1;
+            colind[k+5]  = rowIdx+ncoarse;
+            colind[k+6]  = rowIdx+ncoarse*ncoarse-ncoarse-1;
+            colind[k+7]  = rowIdx+ncoarse*ncoarse-ncoarse;
+            colind[k+8]  = rowIdx+ncoarse*ncoarse-1;
+            colind[k+9]  = rowIdx+ncoarse*ncoarse;
+            colind[k+10] = rowIdx+ncoarse*ncoarse+ncoarse-1;
+            colind[k+11] = rowIdx+ncoarse*ncoarse+ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+            colind[k]    = rowIdx-ncoarse-1;
+            colind[k+1]  = rowIdx-ncoarse;
+            colind[k+2]  = rowIdx-ncoarse+1;
+            colind[k+3]  = rowIdx-1;
+            colind[k+4]  = rowIdx;
+            colind[k+5]  = rowIdx+1;
+            colind[k+6]  = rowIdx+ncoarse-1;
+            colind[k+7]  = rowIdx+ncoarse;
+            colind[k+8]  = rowIdx+ncoarse+1;
+            colind[k+9]  = rowIdx+ncoarse*ncoarse-ncoarse-1;
+            colind[k+10] = rowIdx+ncoarse*ncoarse-ncoarse;
+            colind[k+11] = rowIdx+ncoarse*ncoarse-ncoarse+1;
+            colind[k+12] = rowIdx+ncoarse*ncoarse-1;
+            colind[k+13] = rowIdx+ncoarse*ncoarse;
+            colind[k+14] = rowIdx+ncoarse*ncoarse+1;
+            colind[k+15] = rowIdx+ncoarse*ncoarse+ncoarse-1;
+            colind[k+16] = rowIdx+ncoarse*ncoarse+ncoarse;
+            colind[k+17] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+          }
+        }
+      }
+    }
+
+    for(int i=1; i<ncoarse-1; i++) {
+      for(int j=0; j<ncoarse; j++) {
+        if(j==0)  {
+          for(int l=0; l<ncoarse; l++) {
+            int rowIdx = i*ncoarse*ncoarse+j*ncoarse+l;
+            if(l==0) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+              colind[k]    = rowIdx-ncoarse*ncoarse;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse+1;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse+ncoarse;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse+ncoarse+1;
+              colind[k+4]  = rowIdx;
+              colind[k+5]  = rowIdx+1;
+              colind[k+6]  = rowIdx+ncoarse;
+              colind[k+7]  = rowIdx+ncoarse+1;
+              colind[k+8]  = rowIdx+ncoarse*ncoarse;
+              colind[k+9]  = rowIdx+ncoarse*ncoarse+1;
+              colind[k+10] = rowIdx+ncoarse*ncoarse+ncoarse;
+              colind[k+11] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+            }
+            else if(l==ncoarse-1) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+              colind[k]    = rowIdx-ncoarse*ncoarse-1;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse+ncoarse-1;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse+ncoarse;
+              colind[k+4]  = rowIdx-1;
+              colind[k+5]  = rowIdx;
+              colind[k+6]  = rowIdx+ncoarse-1;
+              colind[k+7]  = rowIdx+ncoarse;
+              colind[k+8]  = rowIdx+ncoarse*ncoarse-1;
+              colind[k+9]  = rowIdx+ncoarse*ncoarse;
+              colind[k+10] = rowIdx+ncoarse*ncoarse+ncoarse-1;
+              colind[k+11] = rowIdx+ncoarse*ncoarse+ncoarse;
+            }
+            else {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+              colind[k]    = rowIdx-ncoarse*ncoarse-1;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse+1;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse+ncoarse-1;
+              colind[k+4]  = rowIdx-ncoarse*ncoarse+ncoarse;
+              colind[k+5]  = rowIdx-ncoarse*ncoarse+ncoarse+1;
+              colind[k+6]  = rowIdx-1;
+              colind[k+7]  = rowIdx;
+              colind[k+8]  = rowIdx+1;
+              colind[k+9]  = rowIdx+ncoarse-1;
+              colind[k+10] = rowIdx+ncoarse;
+              colind[k+11] = rowIdx+ncoarse+1;
+              colind[k+12] = rowIdx+ncoarse*ncoarse-1;
+              colind[k+13] = rowIdx+ncoarse*ncoarse;
+              colind[k+14] = rowIdx+ncoarse*ncoarse+1;
+              colind[k+15] = rowIdx+ncoarse*ncoarse+ncoarse-1;
+              colind[k+16] = rowIdx+ncoarse*ncoarse+ncoarse;
+              colind[k+17] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+            }
+          }
+        }
+        else if(j==ncoarse-1) {
+          for(int l=0; l<ncoarse; l++) {
+            int rowIdx = i*ncoarse*ncoarse+j*ncoarse+l;
+            if(l==0) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+              colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse+1;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse+1;
+              colind[k+4]  = rowIdx-ncoarse;
+              colind[k+5]  = rowIdx-ncoarse+1;
+              colind[k+6]  = rowIdx;
+              colind[k+7]  = rowIdx+1;
+              colind[k+8]  = rowIdx+ncoarse*ncoarse-ncoarse;
+              colind[k+9]  = rowIdx+ncoarse*ncoarse-ncoarse+1;
+              colind[k+10] = rowIdx+ncoarse*ncoarse;
+              colind[k+11] = rowIdx+ncoarse*ncoarse+1;
+            }
+            else if(l==ncoarse-1) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+              colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse-1;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse-1;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse;
+              colind[k+4]  = rowIdx-ncoarse-1;
+              colind[k+5]  = rowIdx-ncoarse;
+              colind[k+6]  = rowIdx-1;
+              colind[k+7]  = rowIdx;
+              colind[k+8]  = rowIdx+ncoarse*ncoarse-ncoarse-1;
+              colind[k+9]  = rowIdx+ncoarse*ncoarse-ncoarse;
+              colind[k+10] = rowIdx+ncoarse*ncoarse-1;
+              colind[k+11] = rowIdx+ncoarse*ncoarse;
+            }
+            else {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+              colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse-1;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse-ncoarse+1;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse-1;
+              colind[k+4]  = rowIdx-ncoarse*ncoarse;
+              colind[k+5]  = rowIdx-ncoarse*ncoarse+1;
+              colind[k+6]  = rowIdx-ncoarse-1;
+              colind[k+7]  = rowIdx-ncoarse;
+              colind[k+8]  = rowIdx-ncoarse+1;
+              colind[k+9]  = rowIdx-1;
+              colind[k+10] = rowIdx;
+              colind[k+11] = rowIdx+1;
+              colind[k+12] = rowIdx+ncoarse*ncoarse-ncoarse-1;
+              colind[k+13] = rowIdx+ncoarse*ncoarse-ncoarse;
+              colind[k+14] = rowIdx+ncoarse*ncoarse-ncoarse+1;
+              colind[k+15] = rowIdx+ncoarse*ncoarse-1;
+              colind[k+16] = rowIdx+ncoarse*ncoarse;
+              colind[k+17] = rowIdx+ncoarse*ncoarse+1;
+            }
+          }
+        }
+        else {
+          for(int l=0; l<ncoarse; l++) {
+            int rowIdx = i*ncoarse*ncoarse+j*ncoarse+l;
+            if(l==0) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+              colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse+1;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse+1;
+              colind[k+4]  = rowIdx-ncoarse*ncoarse+ncoarse;
+              colind[k+5]  = rowIdx-ncoarse*ncoarse+ncoarse+1;
+              colind[k+6]  = rowIdx-ncoarse;
+              colind[k+7]  = rowIdx-ncoarse+1;
+              colind[k+8]  = rowIdx;
+              colind[k+9]  = rowIdx+1;
+              colind[k+10] = rowIdx+ncoarse;
+              colind[k+11] = rowIdx+ncoarse+1;
+              colind[k+12] = rowIdx+ncoarse*ncoarse-ncoarse;
+              colind[k+13] = rowIdx+ncoarse*ncoarse-ncoarse+1;
+              colind[k+14] = rowIdx+ncoarse*ncoarse;
+              colind[k+15] = rowIdx+ncoarse*ncoarse+1;
+              colind[k+16] = rowIdx+ncoarse*ncoarse+ncoarse;
+              colind[k+17] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+            }
+            else if(l==ncoarse-1) {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+              colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse-1;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse-1;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse;
+              colind[k+4]  = rowIdx-ncoarse*ncoarse+ncoarse-1;
+              colind[k+5]  = rowIdx-ncoarse*ncoarse+ncoarse;
+              colind[k+6]  = rowIdx-ncoarse-1;
+              colind[k+7]  = rowIdx-ncoarse;
+              colind[k+8]  = rowIdx-1;
+              colind[k+9]  = rowIdx;
+              colind[k+10] = rowIdx+ncoarse-1;
+              colind[k+11] = rowIdx+ncoarse;
+              colind[k+12] = rowIdx+ncoarse*ncoarse-ncoarse-1;
+              colind[k+13] = rowIdx+ncoarse*ncoarse-ncoarse;
+              colind[k+14] = rowIdx+ncoarse*ncoarse-1;
+              colind[k+15] = rowIdx+ncoarse*ncoarse;
+              colind[k+16] = rowIdx+ncoarse*ncoarse+ncoarse-1;
+              colind[k+17] = rowIdx+ncoarse*ncoarse+ncoarse;
+            }
+            else {
+              int k = rowptr[rowIdx];
+              rowptr[rowIdx+1] = rowptr[rowIdx]+27;
+              colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse-1;
+              colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse;
+              colind[k+2]  = rowIdx-ncoarse*ncoarse-ncoarse+1;
+              colind[k+3]  = rowIdx-ncoarse*ncoarse-1;
+              colind[k+4]  = rowIdx-ncoarse*ncoarse;
+              colind[k+5]  = rowIdx-ncoarse*ncoarse+1;
+              colind[k+6]  = rowIdx-ncoarse*ncoarse+ncoarse-1;
+              colind[k+7]  = rowIdx-ncoarse*ncoarse+ncoarse;
+              colind[k+8]  = rowIdx-ncoarse*ncoarse+ncoarse+1;
+              colind[k+9]  = rowIdx-ncoarse-1;
+              colind[k+10] = rowIdx-ncoarse;
+              colind[k+11] = rowIdx-ncoarse+1;
+              colind[k+12] = rowIdx-1;
+              colind[k+13] = rowIdx;
+              colind[k+14] = rowIdx+1;
+              colind[k+15] = rowIdx+ncoarse-1;
+              colind[k+16] = rowIdx+ncoarse;
+              colind[k+17] = rowIdx+ncoarse+1;
+              colind[k+18] = rowIdx+ncoarse*ncoarse-ncoarse-1;
+              colind[k+19] = rowIdx+ncoarse*ncoarse-ncoarse;
+              colind[k+20] = rowIdx+ncoarse*ncoarse-ncoarse+1;
+              colind[k+21] = rowIdx+ncoarse*ncoarse-1;
+              colind[k+22] = rowIdx+ncoarse*ncoarse;
+              colind[k+23] = rowIdx+ncoarse*ncoarse+1;
+              colind[k+24] = rowIdx+ncoarse*ncoarse+ncoarse-1;
+              colind[k+25] = rowIdx+ncoarse*ncoarse+ncoarse;
+              colind[k+26] = rowIdx+ncoarse*ncoarse+ncoarse+1;
+            }
+          }
+        }
+      }
+    }    
+  
+    for(int i=ncoarse*ncoarse-ncoarse; i<ncoarse*ncoarse; i++) {
+      if(i==ncoarse*ncoarse) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx-ncoarse*ncoarse;
+            colind[k+1] = rowIdx-ncoarse*ncoarse+1;
+            colind[k+2] = rowIdx-ncoarse*ncoarse+ncoarse;
+            colind[k+3] = rowIdx-ncoarse*ncoarse+ncoarse+1;
+            colind[k+4] = rowIdx;
+            colind[k+5] = rowIdx+1;
+            colind[k+6] = rowIdx+ncoarse;
+            colind[k+7] = rowIdx+ncoarse+1;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx-ncoarse*ncoarse-1;
+            colind[k+1] = rowIdx-ncoarse*ncoarse;
+            colind[k+2] = rowIdx-ncoarse*ncoarse+ncoarse-1;
+            colind[k+3] = rowIdx-ncoarse*ncoarse+ncoarse;
+            colind[k+4] = rowIdx-1;
+            colind[k+5] = rowIdx;
+            colind[k+6] = rowIdx+ncoarse-1;
+            colind[k+7] = rowIdx+ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-ncoarse*ncoarse-1;
+            colind[k+1]  = rowIdx-ncoarse*ncoarse;
+            colind[k+2]  = rowIdx-ncoarse*ncoarse+1;
+            colind[k+3]  = rowIdx-ncoarse*ncoarse+ncoarse-1;
+            colind[k+4]  = rowIdx-ncoarse*ncoarse+ncoarse;
+            colind[k+5]  = rowIdx-ncoarse*ncoarse+ncoarse+1;
+            colind[k+6]  = rowIdx-1;
+            colind[k+7]  = rowIdx;
+            colind[k+8]  = rowIdx+1;
+            colind[k+9]  = rowIdx+ncoarse-1;
+            colind[k+10] = rowIdx+ncoarse;
+            colind[k+11] = rowIdx+ncoarse+1;
+          }
+        }
+      }
+      else if(i==ncoarse*ncoarse-1) {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx-ncoarse*ncoarse-ncoarse;
+            colind[k+1] = rowIdx-ncoarse*ncoarse-ncoarse+1;
+            colind[k+2] = rowIdx-ncoarse*ncoarse;
+            colind[k+3] = rowIdx-ncoarse*ncoarse+1;
+            colind[k+4] = rowIdx-ncoarse;
+            colind[k+5] = rowIdx-ncoarse+1;
+            colind[k+6] = rowIdx;
+            colind[k+7] = rowIdx+1;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+8;
+            colind[k]   = rowIdx-ncoarse*ncoarse-ncoarse-1;
+            colind[k+1] = rowIdx-ncoarse*ncoarse-ncoarse;
+            colind[k+2] = rowIdx-ncoarse*ncoarse-1;
+            colind[k+3] = rowIdx-ncoarse*ncoarse;
+            colind[k+4] = rowIdx-ncoarse-1;
+            colind[k+5] = rowIdx-ncoarse;
+            colind[k+6] = rowIdx-1;
+            colind[k+7] = rowIdx;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse-1;
+            colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse;
+            colind[k+2]  = rowIdx-ncoarse*ncoarse-ncoarse+1;
+            colind[k+3]  = rowIdx-ncoarse*ncoarse-1;
+            colind[k+4]  = rowIdx-ncoarse*ncoarse;
+            colind[k+5]  = rowIdx-ncoarse*ncoarse+1;
+            colind[k+6]  = rowIdx-ncoarse-1;
+            colind[k+7]  = rowIdx-ncoarse;
+            colind[k+8]  = rowIdx-ncoarse+1;
+            colind[k+9]  = rowIdx-1;
+            colind[k+10] = rowIdx;
+            colind[k+11] = rowIdx+1;
+          }
+        }
+      }
+      else {
+        for(int j=0; j<ncoarse; j++) {
+          int rowIdx = i*ncoarse+j;
+          if(j==0) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse;
+            colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse+1;
+            colind[k+2]  = rowIdx-ncoarse*ncoarse;
+            colind[k+3]  = rowIdx-ncoarse*ncoarse+1;
+            colind[k+4]  = rowIdx-ncoarse*ncoarse+ncoarse;
+            colind[k+5]  = rowIdx-ncoarse*ncoarse+ncoarse+1;
+            colind[k+6]  = rowIdx-ncoarse;
+            colind[k+7]  = rowIdx-ncoarse+1;
+            colind[k+8]  = rowIdx;
+            colind[k+9]  = rowIdx+1;
+            colind[k+10] = rowIdx+ncoarse;
+            colind[k+11] = rowIdx+ncoarse+1;
+          }
+          else if(j==ncoarse-1) {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+12;
+            colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse-1;
+            colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse;
+            colind[k+2]  = rowIdx-ncoarse*ncoarse-1;
+            colind[k+3]  = rowIdx-ncoarse*ncoarse;
+            colind[k+4]  = rowIdx-ncoarse*ncoarse+ncoarse-1;
+            colind[k+5]  = rowIdx-ncoarse*ncoarse+ncoarse;
+            colind[k+6]  = rowIdx-ncoarse-1;
+            colind[k+7]  = rowIdx-ncoarse;
+            colind[k+8]  = rowIdx-1;
+            colind[k+9]  = rowIdx;
+            colind[k+10] = rowIdx+ncoarse-1;
+            colind[k+11] = rowIdx+ncoarse;
+          }
+          else {
+            int k = rowptr[rowIdx];
+            rowptr[rowIdx+1] = rowptr[rowIdx]+18;
+            colind[k]    = rowIdx-ncoarse*ncoarse-ncoarse-1;
+            colind[k+1]  = rowIdx-ncoarse*ncoarse-ncoarse;
+            colind[k+2]  = rowIdx-ncoarse*ncoarse-ncoarse+1;
+            colind[k+3]  = rowIdx-ncoarse*ncoarse-1;
+            colind[k+4]  = rowIdx-ncoarse*ncoarse;
+            colind[k+5]  = rowIdx-ncoarse*ncoarse+1;
+            colind[k+6]  = rowIdx-ncoarse*ncoarse+ncoarse-1;
+            colind[k+7]  = rowIdx-ncoarse*ncoarse+ncoarse;
+            colind[k+8]  = rowIdx-ncoarse*ncoarse+ncoarse+1;
+            colind[k+9]  = rowIdx-ncoarse-1;
+            colind[k+10] = rowIdx-ncoarse;
+            colind[k+11] = rowIdx-ncoarse+1;
+            colind[k+12] = rowIdx-1;
+            colind[k+13] = rowIdx;
+            colind[k+14] = rowIdx+1;
+            colind[k+15] = rowIdx+ncoarse-1;
+            colind[k+16] = rowIdx+ncoarse;
+            colind[k+17] = rowIdx+ncoarse+1;
+          }
+        }
+      }
+    }
+
+    
+
+    GetOStream(Statistics2) << "StructuredRAP: Graph indices created!\n";
+    myGraph->setAllIndices(rowptr, colind);
+
+    GetOStream(Statistics2) << "StructuredRAP: Graph is created and filled!\n";
+    myGraph->fillComplete();
+ 
+    // build Ac with static graph pattern ...
+    Ac = MatrixFactory::Build(myGraph, paramList); 
+  }
   
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
   void StructuredRAPFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(Level& fineLevel, Level& coarseLevel) const
@@ -1165,7 +2033,17 @@ namespace MueLu {
           else if(structureType=="Elasticity2D")
           {
             GetOStream(Statistics2) << "StructuredRAP: Using Elasticity2D pattern determination routine.\n";
-            GetElasticity2D(Ac, P, lCoarseNodesPerDim);      
+            GetElasticity2D(Ac, P, lCoarseNodesPerDim);
+          }
+          else if(structureType=="Laplace3D")
+          {
+            GetOStream(Statistics2) << "StructuredRAP: Using Laplace3D pattern determination routine.\n";
+            GetLaplace3D(Ac, P, lCoarseNodesPerDim);
+          }
+          else if(structureType=="Brick3D")
+          {
+            GetOStream(Statistics2) << "StructuredRAP: Using Brick3D pattern determination routine.\n";
+            GetBrick3D(Ac, P, lCoarseNodesPerDim);
           }
         }
         

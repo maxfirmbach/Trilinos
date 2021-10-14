@@ -135,11 +135,13 @@ namespace MueLu {
     
     //@{
     
-    void GetLaplace1D(RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
-    void GetLaplace2D(RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
-    void GetStar2D(RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
-    void GetBigStar2D(RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
-    void GetElasticity2D(RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
+    void GetLaplace1D    (RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
+    void GetLaplace2D    (RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
+    void GetStar2D       (RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
+    void GetBigStar2D    (RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
+    void GetElasticity2D (RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
+    void GetLaplace3D    (RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
+    void GetBrick3D      (RCP<Matrix>& Ac, RCP<Matrix> P, Teuchos::Array<LocalOrdinal> lCoarseNodesPerDim) const;
     
     //}
     

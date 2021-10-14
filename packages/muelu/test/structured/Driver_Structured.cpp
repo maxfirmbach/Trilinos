@@ -141,9 +141,9 @@ int main_(Teuchos::CommandLineProcessor &clp, Xpetra::UnderlyingLib& lib, int ar
   // =========================================================================
   // Parameters initialization
   // =========================================================================
-  GO nx = 100, ny = 100, nz = 100;
-  Galeri::Xpetra::Parameters<GO> galeriParameters(clp, nx, ny, nz, "Laplace2D"); // manage parameters of the test case
-  Xpetra::Parameters             xpetraParameters(clp);                          // manage parameters of Xpetra
+  GO nx = 200, ny = 200, nz = 200;
+  Galeri::Xpetra::Parameters<GO> galeriParameters(clp, nx, ny, nz, "Brick3D"); // manage parameters of the test case
+  Xpetra::Parameters             xpetraParameters(clp);                        // manage parameters of Xpetra
 
   std::string xmlFileName       = "";                clp.setOption("xml",                   &xmlFileName,       "read parameters from an xml file");
   std::string yamlFileName      = "";                clp.setOption("yaml",                  &yamlFileName,      "read parameters from a yaml file");

@@ -280,6 +280,7 @@ namespace MueLu {
                         RAPparams);
 
         } else {
+
           RCP<Matrix> R = Get< RCP<Matrix> >(coarseLevel, "R");
           Ac = MatrixFactory::Build(R->getRowMap(), Teuchos::as<LO>(0));
 
