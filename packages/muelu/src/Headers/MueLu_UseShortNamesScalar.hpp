@@ -167,6 +167,9 @@ typedef MueLu::InitialBlockNumberFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>
 #ifdef MUELU_INTREPIDPCOARSENFACTORY_SHORT
 typedef MueLu::IntrepidPCoarsenFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> IntrepidPCoarsenFactory;
 #endif
+#ifdef MUELU_INVERSEAPPROXIMATIONFACTORY_SHORT
+typedef MueLu::InverseApproximationFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> InverseApproximationFactory;
+#endif
 #ifdef MUELU_LINEDETECTIONFACTORY_SHORT
 typedef MueLu::LineDetectionFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> LineDetectionFactory;
 #endif
@@ -187,6 +190,9 @@ typedef MueLu::MergedBlockedMatrixFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node
 #endif
 #ifdef MUELU_MERGEDSMOOTHER_SHORT
 typedef MueLu::MergedSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> MergedSmoother;
+#endif
+#ifdef MUELU_MUELUSMOOTHER_SHORT
+typedef MueLu::MueLuSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> MueLuSmoother;
 #endif
 #ifdef MUELU_MULTIVECTORTRANSFERFACTORY_SHORT
 typedef MueLu::MultiVectorTransferFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> MultiVectorTransferFactory;
@@ -311,6 +317,9 @@ typedef MueLu::SmooVecCoalesceDropFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node
 #ifdef MUELU_SOLVERBASE_SHORT
 typedef MueLu::SolverBase<Scalar,LocalOrdinal,GlobalOrdinal,Node> SolverBase;
 #endif
+#ifdef MUELU_SPAI_SHORT
+typedef MueLu::SPAI<Scalar,LocalOrdinal,GlobalOrdinal,Node> SPAI;
+#endif
 #ifdef MUELU_STEEPESTDESCENTSOLVER_SHORT
 typedef MueLu::SteepestDescentSolver<Scalar,LocalOrdinal,GlobalOrdinal,Node> SteepestDescentSolver;
 #endif
@@ -355,9 +364,6 @@ typedef MueLu::TpetraOperator<Scalar,LocalOrdinal,GlobalOrdinal,Node> TpetraOper
 #endif
 #ifdef MUELU_TRANSPFACTORY_SHORT
 typedef MueLu::TransPFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> TransPFactory;
-#endif
-#ifdef MUELU_RFROMP_OR_TRANSP_SHORT
-typedef MueLu::RfromP_Or_TransP<Scalar,LocalOrdinal,GlobalOrdinal,Node> RfromP_Or_TransP;
 #endif
 #ifdef MUELU_TRILINOSSMOOTHER_SHORT
 typedef MueLu::TrilinosSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> TrilinosSmoother;

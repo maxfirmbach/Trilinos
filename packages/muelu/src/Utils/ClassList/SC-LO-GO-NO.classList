@@ -53,6 +53,7 @@ Ifpack2Smoother - #if defined(HAVE_MUELU_TPETRA) && defined(HAVE_MUELU_IFPACK2)
 IndefBlockedDiagonalSmoother
 InitialBlockNumberFactory
 IntrepidPCoarsenFactory - #ifdef HAVE_MUELU_INTREPID2
+InverseApproximationFactory
 LineDetectionFactory
 LocalPermutationStrategy
 LowPrecisionFactory
@@ -60,6 +61,7 @@ MapTransferFactory
 MatrixAnalysisFactory
 MergedBlockedMatrixFactory
 MergedSmoother
+MueLuSmoother
 MultiVectorTransferFactory
 NotayAggregationFactory - #if defined(HAVE_MUELU_KOKKOS_REFACTOR)
 NullspaceFactory
@@ -101,6 +103,7 @@ SmootherFactory
 SmootherPrototype
 SmooVecCoalesceDropFactory
 SolverBase
+SPAI
 SteepestDescentSolver
 StratimikosSmoother - #if defined(HAVE_MUELU_STRATIMIKOS) && defined(HAVE_MUELU_TPETRA) && defined(HAVE_MUELU_THYRA)
 StructuredAggregationFactory
@@ -116,7 +119,6 @@ TopRAPFactory
 TopSmootherFactory
 TpetraOperator
 TransPFactory
-RfromP_Or_TransP
 TrilinosSmoother
 UnsmooshFactory
 UserPFactory

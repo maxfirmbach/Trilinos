@@ -52,15 +52,17 @@
 #include <Xpetra_MatrixFactory.hpp>
 #include <Xpetra_Matrix.hpp>
 #include <Xpetra_MatrixMatrix.hpp>
+#include <Xpetra_TripleMatrixMultiply.hpp>
 #include <Xpetra_CrsMatrixWrap.hpp>
 #include <Xpetra_BlockedCrsMatrix.hpp>
 #include <Xpetra_CrsMatrix.hpp>
+#include <Xpetra_IO.hpp>
 #include "MueLu_Level.hpp"
 #include "MueLu_Monitor.hpp"
 #include "MueLu_Utilities.hpp"
-//#include "MueLu_HierarchyHelpers.hpp"
-
+#include "MueLu_SPAI.hpp"
 #include "MueLu_SchurComplementFactory.hpp"
+//#include "MueLu_HierarchyHelpers.hpp"
 
 namespace MueLu {
 
@@ -70,12 +72,14 @@ namespace MueLu {
 
     SC one = Teuchos::ScalarTraits<SC>::one();
 
-    validParamList->set<RCP<const FactoryBase> >("A", NoFactory::getRCP()/*null*/, "Generating factory of the matrix A used for building Schur complement\n"
-                                                                                   "(must be a 2x2 blocked operator)");
-    validParamList->set<SC>                     ("omega",                     one, "Scaling parameter in S = A(1,1) - 1/omega A(1,0) diag{A(0,0)}^{-1} A(0,1)");
-    validParamList->set<bool>                   ("lumping",                 false, "Use lumping to construct diag(A(0,0)), i.e. use row sum of the abs values on the diagonal "
-                                                                                   "as approximation of A00 (and A00^{-1})");
-    validParamList->set<bool>                   ("fixing",                  false, "Fix diagonal by replacing small entries with 1.0");
+    validParamList->set<RCP<const FactoryBase> >("A", NoFactory::getRCP(), "Generating factory of the matrix A used for building Schur complement\n"
+                                                                                           "(must be a 2x2 blocked operator)");
+    validParamList->set<RCP<const FactoryBase> >("M", NoFactory::getRCP(), "Generating factory of the inverse matrix used in the Schur complement");
+
+    validParamList->set<int>                    ("block row",                           1, "Block row of subblock matrix A");
+    validParamList->set<int>                    ("block col",                           1, "Block column of subblock matrix A");
+
+    validParamList->set<SC>                     ("schur: damping factor",             one, "Scaling parameter in S = A(1,1) - 1/omega A(1,0) M^{-1} A(0,1)");
 
     return validParamList;
   }
@@ -83,6 +87,7 @@ namespace MueLu {
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
   void SchurComplementFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::DeclareInput(Level& currentLevel) const {
     Input(currentLevel, "A");
+    Input(currentLevel, "M");
   }
 
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
@@ -93,6 +98,7 @@ namespace MueLu {
     SC zero = STS::zero(), one = STS::one();
 
     RCP<Matrix>            A = Get<RCP<Matrix> >(currentLevel, "A");
+    RCP<Matrix>            M = Get<RCP<Matrix> >(currentLevel, "M");
     RCP<BlockedCrsMatrix> bA = rcp_dynamic_cast<BlockedCrsMatrix>(A);
     TEUCHOS_TEST_FOR_EXCEPTION(bA.is_null(), Exceptions::BadCast,
                                "MueLu::SchurComplementFactory::Build: input matrix A is not of type BlockedCrsMatrix!");
@@ -100,78 +106,58 @@ namespace MueLu {
     TEUCHOS_TEST_FOR_EXCEPTION(bA->Rows() != 2 || bA->Cols() != 2, Exceptions::RuntimeError,
                                "MueLu::SchurComplementFactory::Build: input matrix A is a " << bA->Rows() << "x" << bA->Cols() << " block matrix. We expect a 2x2 blocked operator.");
 
-    RCP<Matrix> A00 = bA->getMatrix(0,0);
-    RCP<Matrix> A01 = bA->getMatrix(0,1);
-    RCP<Matrix> A10 = bA->getMatrix(1,0);
-    RCP<Matrix> A11 = bA->getMatrix(1,1);
-
-    RCP<BlockedCrsMatrix> bA01 = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(A01);
-    bool bIsBlocked = (bA01 == Teuchos::null ? false : true);
-
     const ParameterList& pL = GetParameterList();
-    SC omega = pL.get<Scalar>("omega");
+
+    // Check on which block the Schur complement should be calculated  default is S(1,1)
+    auto row = Teuchos::as<size_t>(pL.get<int>("block row"));
+    auto col = Teuchos::as<size_t>(pL.get<int>("block col"));
+
+    RCP<Matrix> A01, A10, A11;
+    if(row == 0 && col == 0)
+    {
+      A01 = bA->getMatrix(1,0);
+      A10 = bA->getMatrix(0,1);
+      A11 = bA->getMatrix(0,0); 
+    }
+    else
+    {
+      A01 = bA->getMatrix(0,1);
+      A10 = bA->getMatrix(1,0);
+      A11 = bA->getMatrix(1,1);
+    }
+
+    SC omega = pL.get<Scalar>("schur: damping factor");
 
     TEUCHOS_TEST_FOR_EXCEPTION(omega == zero, Exceptions::RuntimeError,
                                "MueLu::SchurComplementFactory::Build: Scaling parameter omega must not be zero to avoid division by zero.");
 
+    RCP<Matrix> A10MA01 = Teuchos::null;
     RCP<Matrix> S = Teuchos::null;
     // only if the off-diagonal blocks A10 and A01 are non-zero we have to do the MM multiplication
     if(A01.is_null() == false && A10.is_null() == false) {
-      bool lumping = pL.get<bool>("lumping");
-      bool fixing  = pL.get<bool>("fixing");
-      RCP<Vector> diag = Teuchos::null;
-      if (!lumping) {
-        diag = VectorFactory::Build(A00->getRangeMap(), true);
-        A00->getLocalDiagCopy(*diag);
-      } else {
-        RCP<BlockedCrsMatrix> bA00 = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(A00);
-        TEUCHOS_TEST_FOR_EXCEPTION(bA00.is_null()==false, MueLu::Exceptions::RuntimeError,"MueLu::SchurComplementFactory::Build: Mass lumping not implemented. Implement a mass lumping kernel!");
-        diag = Utilities::GetLumpedMatrixDiagonal(*A00);
-      }
-      // invert diagonal vector. Replace all entries smaller than 1e-4 by one!
-      RCP<Vector> D = (!fixing ? Utilities::GetInverse(diag) : Utilities::GetInverse(diag, 1e-4, one));
+
       // scale with -1/omega
-      D->scale(Teuchos::as<Scalar>(-one/omega));
-      // left scale matrix T with (scaled) diagonal D
-      // Copy the value of A01 so we can do the left scale.
-      RCP<Matrix> T = MatrixFactory::BuildCopy(A01, false);
-      T->leftScale(*D);
+      M->scale(Teuchos::as<Scalar>(-one/omega));
 
-      // build Schur complement operator
-      if (!bIsBlocked) {
-        TEUCHOS_TEST_FOR_EXCEPTION(T->getRangeMap()->isSameAs(*(A10->getDomainMap())) == false, Exceptions::RuntimeError,
-                                   "MueLu::SchurComplementFactory::Build: RangeMap of A01 and domain map of A10 are not the same.");
-        RCP<ParameterList> myparams = rcp(new ParameterList);
-        myparams->set("compute global constants", true);
-        S = Xpetra::MatrixMatrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Multiply(*A10, false, *T, false, GetOStream(Statistics2),true,true,std::string("SchurComplementFactory"),myparams);
-      } else {
-        // nested blocking
-        RCP<BlockedCrsMatrix> bA10 = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(A10);
-        RCP<BlockedCrsMatrix> bT   = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(T);
+      // -1/omega*M*A_01
+      RCP<Matrix> MA01 = Xpetra::MatrixMatrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Multiply(*M, false, *A01, false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"));
 
-        TEUCHOS_TEST_FOR_EXCEPTION(bA01->Rows() != bA10->Cols(), Exceptions::RuntimeError,
-                                   "MueLu::SchurComplementFactory::Build: Block rows and cols of A01 and A10 are not compatible.");
-        TEUCHOS_TEST_FOR_EXCEPTION(bA01->Rows() != bT->Rows() || bA01->Cols() != bT->Cols(), Exceptions::RuntimeError,
-                                   "MueLu::SchurComplementFactory::Build: The scaled A01 operator has " << bT->Rows() << "x" << bT->Cols() << " blocks, "
-                                   "but should have " << bA01->Rows() << "x" << bA01->Cols() << " blocks.");
-        TEUCHOS_TEST_FOR_EXCEPTION(bA01->Cols() != bA10->Rows(), Exceptions::RuntimeError,
-                                   "MueLu::SchurComplementFactory::Build: Block rows and cols of A01 and A10 are not compatible.");
-
-        S = Xpetra::MatrixMatrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>::TwoMatrixMultiplyBlock(*bA10, false, *bT, false, GetOStream(Statistics2));
-      }
+      // -1/omega*A_10*M*A_01;
+      RCP<Matrix> A10MA01 = Xpetra::MatrixMatrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Multiply(*A10, false, *MA01, false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"));
 
       if (!A11.is_null()) {
-        T = Teuchos::null;
-        Xpetra::MatrixMatrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>::TwoMatrixAdd(*A11, false, one, *S, false, one, T, GetOStream(Statistics2));
-        T->fillComplete();
-        S.swap(T);
+        Xpetra::MatrixMatrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>::TwoMatrixAdd(*A11, false, one, *A10MA01, false, one, S, GetOStream(Statistics2));
+        S->fillComplete();
 
         TEUCHOS_TEST_FOR_EXCEPTION(A11->getRangeMap()->isSameAs(*(S->getRangeMap())) == false, Exceptions::RuntimeError,
                                    "MueLu::SchurComplementFactory::Build: RangeMap of A11 and S are not the same.");
         TEUCHOS_TEST_FOR_EXCEPTION(A11->getDomainMap()->isSameAs(*(S->getDomainMap())) == false, Exceptions::RuntimeError,
                                    "MueLu::SchurComplementFactory::Build: DomainMap of A11 and S are not the same.");
       }
-
+      else {
+        S = A10MA01;
+        S->fillComplete();
+      }
     }
     else {
       if (!A11.is_null()) {
@@ -182,25 +168,14 @@ namespace MueLu {
       }
     }
 
-    // Check whether Schur complement operator is a 1x1 block matrix.
-    // If so, unwrap it and return the CrsMatrix based Matrix object
-    // We need this, as single-block smoothers expect it this way.
-    // In case of Thyra GIDs we obtain a Schur complement operator in Thyra GIDs
-    // This may make some special handling in feeding the SchurComplement solver Apply routine
-    // necessary!
-    if (bIsBlocked) {
-      RCP<BlockedCrsMatrix> bS = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(S);
+    GetOStream(Statistics1) << "S(" << row << "," << col << ") has " << S->getGlobalNumRows() << "x" 
+                            << S->getGlobalNumCols() << " rows and columns." << std::endl;
 
-      if (bS != Teuchos::null && bS->Rows() == 1 && bS->Cols() == 1) {
-        RCP<Matrix> temp = bS->getCrsMatrix();
-        S.swap(temp);
-      }
-    }
     // NOTE: "A" generated by this factory is actually the Schur complement
     // matrix, but it is required as all smoothers expect "A"
     Set(currentLevel, "A", S);
-  }
 
+  }
 } // namespace MueLu
 
 #endif /* MUELU_SCHURCOMPLEMENTFACTORY_DEF_HPP_ */
