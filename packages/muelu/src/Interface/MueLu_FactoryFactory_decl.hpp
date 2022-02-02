@@ -265,7 +265,7 @@ namespace MueLu {
       if (factoryName == "InterfaceAggregationFactory")           return Build2<InterfaceAggregationFactory>           (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "InterfaceMappingTransferFactory")       return Build2<InterfaceMappingTransferFactory>       (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "InverseApproximationFactory")           return Build2<InverseApproximationFactory>           (paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "InitialBlockNumberFactory")             return Build2<InitialBlockNumberFactory>              (paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "InitialBlockNumberFactory")             return Build2<InitialBlockNumberFactory>             (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "LineDetectionFactory")                  return Build2<LineDetectionFactory>                  (paramList, factoryMapIn, factoryManagersIn);
       // LocalOrdinalTransferFactory is a utility factory that can be used for multiple things, so there is no default
       //      if (factoryName == "LocalOrdinalTransferFactory")           return Build2<LocalOrdinalTransferFactory>           (paramList, factoryMapIn, factoryManagersIn);
