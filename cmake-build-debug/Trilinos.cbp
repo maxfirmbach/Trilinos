@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Trilinos"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake\;CMake Files\cmake\tribits\;CMake Files\cmake\tribits\core\;CMake Files\cmake\tribits\core\package_arch\;CMake Files\cmake\tribits\core\utils\;CMake Files\cmake\tribits\core\installation\;CMake Files\cmake\tribits\core\installation\add_project_install_commands\;CMake Files\cmake\tribits\core\installation\add_install_group_and_perms_fixups\;CMake Files\cmake\tribits\core\config_tests\;CMake Files\cmake\tribits\ci_support\;CMake Files\cmake\tribits\xsdk\;CMake Files\cmake\tribits\ctest_driver\;CMake Files\cmake\std\;CMake Files\cmake\std\atdm\;CMake Files\cmake\std\atdm\cmake\;CMake Files\cmake\TPLs\;CMake Files\cmake\ctest\;CMake Files\commonTools\;CMake Files\commonTools\build_stats\;CMake Files\commonTools\build_stats\cmake\;CMake Files\commonTools\framework\;CMake Files\commonTools\framework\cmake\;CMake Files\commonTools\gtest\;CMake Files\commonTools\gtest\cmake\;CMake Files\packages\;CMake Files\packages\seacas\;CMake Files\packages\seacas\cmake\;CMake Files\packages\seacas\libraries\;CMake Files\packages\seacas\libraries\exodus\;CMake Files\packages\seacas\libraries\exodus\cmake\;CMake Files\packages\seacas\libraries\exodus_for\;CMake Files\packages\seacas\libraries\exodus_for\cmake\;CMake Files\packages\seacas\libraries\exoIIv2for32\;CMake Files\packages\seacas\libraries\exoIIv2for32\cmake\;CMake Files\packages\seacas\libraries\nemesis\;CMake Files\packages\seacas\libraries\nemesis\cmake\;CMake Files\packages\seacas\libraries\ioss\;CMake Files\packages\seacas\libraries\ioss\cmake\;CMake Files\packages\seacas\libraries\chaco\;CMake Files\packages\seacas\libraries\chaco\cmake\;CMake Files\packages\seacas\libraries\aprepro_lib\;CMake Files\packages\seacas\libraries\aprepro_lib\cmake\;CMake Files\packages\seacas\libraries\supes\;CMake Files\packages\seacas\libraries\supes\cmake\;CMake Files\packages\seacas\libraries\suplib\;CMake Files\packages\seacas\libraries\suplib\cmake\;CMake Files\packages\seacas\libraries\suplib_c\;CMake Files\packages\seacas\libraries\suplib_c\cmake\;CMake Files\packages\seacas\libraries\suplib_cpp\;CMake Files\packages\seacas\libraries\suplib_cpp\cmake\;CMake Files\packages\seacas\libraries\svdi\;CMake Files\packages\seacas\libraries\svdi\cmake\;CMake Files\packages\seacas\libraries\plt\;CMake Files\packages\seacas\libraries\plt\cmake\;CMake Files\packages\seacas\libraries\mapvarlib\;CMake Files\packages\seacas\libraries\mapvarlib\cmake\;CMake Files\packages\seacas\applications\;CMake Files\packages\seacas\applications\algebra\;CMake Files\packages\seacas\applications\algebra\cmake\;CMake Files\packages\seacas\applications\aprepro\;CMake Files\packages\seacas\applications\aprepro\cmake\;CMake Files\packages\seacas\applications\blot\;CMake Files\packages\seacas\applications\blot\cmake\;CMake Files\packages\seacas\applications\conjoin\;CMake Files\packages\seacas\applications\conjoin\cmake\;CMake Files\packages\seacas\applications\ejoin\;CMake Files\packages\seacas\applications\ejoin\cmake\;CMake Files\packages\seacas\applications\epu\;CMake Files\packages\seacas\applications\epu\cmake\;CMake Files\packages\seacas\applications\cpup\;CMake Files\packages\seacas\applications\cpup\cmake\;CMake Files\packages\seacas\applications\exo2mat\;CMake Files\packages\seacas\applications\exo2mat\cmake\;CMake Files\packages\seacas\applications\exodiff\;CMake Files\packages\seacas\applications\exodiff\cmake\;CMake Files\packages\seacas\applications\exomatlab\;CMake Files\packages\seacas\applications\exomatlab\cmake\;CMake Files\packages\seacas\applications\exotxt\;CMake Files\packages\seacas\applications\exotxt\cmake\;CMake Files\packages\seacas\applications\exo_format\;CMake Files\packages\seacas\applications\exo_format\cmake\;CMake Files\packages\seacas\applications\ex1ex2v2\;CMake Files\packages\seacas\applications\ex1ex2v2\cmake\;CMake Files\packages\seacas\applications\exotec2\;CMake Files\packages\seacas\applications\exotec2\cmake\;CMake Files\packages\seacas\applications\fastq\;CMake Files\packages\seacas\applications\fastq\cmake\;CMake Files\packages\seacas\applications\gjoin\;CMake Files\packages\seacas\applications\gjoin\cmake\;CMake Files\packages\seacas\applications\gen3d\;CMake Files\packages\seacas\applications\gen3d\cmake\;CMake Files\packages\seacas\applications\genshell\;CMake Files\packages\seacas\applications\genshell\cmake\;CMake Files\packages\seacas\applications\grepos\;CMake Files\packages\seacas\applications\grepos\cmake\;CMake Files\packages\seacas\applications\explore\;CMake Files\packages\seacas\applications\explore\cmake\;CMake Files\packages\seacas\applications\mapvar\;CMake Files\packages\seacas\applications\mapvar\cmake\;CMake Files\packages\seacas\applications\mapvar-kd\;CMake Files\packages\seacas\applications\mapvar-kd\cmake\;CMake Files\packages\seacas\applications\mat2exo\;CMake Files\packages\seacas\applications\mat2exo\cmake\;CMake Files\packages\seacas\applications\nas2exo\;CMake Files\packages\seacas\applications\nas2exo\cmake\;CMake Files\packages\seacas\applications\zellij\;CMake Files\packages\seacas\applications\zellij\cmake\;CMake Files\packages\seacas\applications\nem_slice\;CMake Files\packages\seacas\applications\nem_slice\cmake\;CMake Files\packages\seacas\applications\nem_spread\;CMake Files\packages\seacas\applications\nem_spread\cmake\;CMake Files\packages\seacas\applications\numbers\;CMake Files\packages\seacas\applications\numbers\cmake\;CMake Files\packages\seacas\applications\slice\;CMake Files\packages\seacas\applications\slice\cmake\;CMake Files\packages\seacas\applications\txtexo\;CMake Files\packages\seacas\applications\txtexo\cmake\;CMake Files\packages\seacas\applications\ex2ex1v2\;CMake Files\packages\seacas\applications\ex2ex1v2\cmake\;CMake Files\packages\kokkos\;CMake Files\packages\kokkos\cmake\;CMake Files\packages\kokkos\core\;CMake Files\packages\kokkos\core\cmake\;CMake Files\packages\kokkos\containers\;CMake Files\packages\kokkos\containers\cmake\;CMake Files\packages\kokkos\algorithms\;CMake Files\packages\kokkos\algorithms\cmake\;CMake Files\packages\teuchos\;CMake Files\packages\teuchos\cmake\;CMake Files\packages\teuchos\core\;CMake Files\packages\teuchos\core\cmake\;CMake Files\packages\teuchos\parser\;CMake Files\packages\teuchos\parser\cmake\;CMake Files\packages\teuchos\parameterlist\;CMake Files\packages\teuchos\parameterlist\cmake\;CMake Files\packages\teuchos\comm\;CMake Files\packages\teuchos\comm\cmake\;CMake Files\packages\teuchos\numerics\;CMake Files\packages\teuchos\numerics\cmake\;CMake Files\packages\teuchos\remainder\;CMake Files\packages\teuchos\remainder\cmake\;CMake Files\packages\teuchos\kokkoscompat\;CMake Files\packages\teuchos\kokkoscompat\cmake\;CMake Files\packages\teuchos\kokkoscomm\;CMake Files\packages\teuchos\kokkoscomm\cmake\;CMake Files\packages\kokkos-kernels\;CMake Files\packages\kokkos-kernels\cmake\;CMake Files\packages\rtop\;CMake Files\packages\rtop\cmake\;CMake Files\packages\sacado\;CMake Files\packages\sacado\cmake\;CMake Files\packages\minitensor\;CMake Files\packages\minitensor\cmake\;CMake Files\packages\epetra\;CMake Files\packages\epetra\cmake\;CMake Files\packages\zoltan\;CMake Files\packages\zoltan\cmake\;CMake Files\packages\shards\;CMake Files\packages\shards\cmake\;CMake Files\packages\triutils\;CMake Files\packages\triutils\cmake\;CMake Files\packages\epetraext\;CMake Files\packages\epetraext\cmake\;CMake Files\packages\tpetra\;CMake Files\packages\tpetra\cmake\;CMake Files\packages\tpetra\classic\;CMake Files\packages\tpetra\classic\cmake\;CMake Files\packages\tpetra\tsqr\;CMake Files\packages\tpetra\tsqr\cmake\;CMake Files\packages\tpetra\core\;CMake Files\packages\tpetra\core\cmake\;CMake Files\packages\common\;CMake Files\packages\common\auxiliarySoftware\;CMake Files\packages\common\auxiliarySoftware\SuiteSparse\;CMake Files\packages\common\auxiliarySoftware\SuiteSparse\cmake\;CMake Files\packages\domi\;CMake Files\packages\domi\cmake\;CMake Files\packages\thyra\;CMake Files\packages\thyra\cmake\;CMake Files\packages\thyra\core\;CMake Files\packages\thyra\core\cmake\;CMake Files\packages\thyra\adapters\;CMake Files\packages\thyra\adapters\epetra\;CMake Files\packages\thyra\adapters\epetra\cmake\;CMake Files\packages\thyra\adapters\epetraext\;CMake Files\packages\thyra\adapters\epetraext\cmake\;CMake Files\packages\thyra\adapters\tpetra\;CMake Files\packages\thyra\adapters\tpetra\cmake\;CMake Files\packages\xpetra\;CMake Files\packages\xpetra\cmake\;CMake Files\packages\isorropia\;CMake Files\packages\isorropia\cmake\;CMake Files\packages\pliris\;CMake Files\packages\pliris\cmake\;CMake Files\packages\aztecoo\;CMake Files\packages\aztecoo\cmake\;CMake Files\packages\galeri\;CMake Files\packages\galeri\cmake\;CMake Files\packages\amesos\;CMake Files\packages\amesos\cmake\;CMake Files\packages\pamgen\;CMake Files\packages\pamgen\cmake\;CMake Files\packages\zoltan2\;CMake Files\packages\zoltan2\core\;CMake Files\packages\zoltan2\core\cmake\;CMake Files\packages\zoltan2\sphynx\;CMake Files\packages\zoltan2\sphynx\cmake\;CMake Files\packages\zoltan2\cmake\;CMake Files\packages\ifpack\;CMake Files\packages\ifpack\cmake\;CMake Files\packages\ml\;CMake Files\packages\ml\cmake\;CMake Files\packages\belos\;CMake Files\packages\belos\cmake\;CMake Files\packages\shylu\;CMake Files\packages\shylu\shylu_node\;CMake Files\packages\shylu\shylu_node\cmake\;CMake Files\packages\shylu\shylu_node\hts\;CMake Files\packages\shylu\shylu_node\hts\cmake\;CMake Files\packages\shylu\shylu_node\tacho\;CMake Files\packages\shylu\shylu_node\tacho\cmake\;CMake Files\packages\shylu\shylu_node\basker\;CMake Files\packages\shylu\shylu_node\basker\cmake\;CMake Files\packages\shylu\shylu_node\fastilu\;CMake Files\packages\shylu\shylu_node\fastilu\cmake\;CMake Files\packages\shylu\shylu_dd\;CMake Files\packages\shylu\shylu_dd\cmake\;CMake Files\packages\shylu\shylu_dd\bddc\;CMake Files\packages\shylu\shylu_dd\bddc\cmake\;CMake Files\packages\shylu\shylu_dd\frosch\;CMake Files\packages\shylu\shylu_dd\frosch\cmake\;CMake Files\packages\shylu\shylu_dd\core\;CMake Files\packages\shylu\shylu_dd\core\cmake\;CMake Files\packages\shylu\shylu_dd\common\;CMake Files\packages\shylu\shylu_dd\common\cmake\;CMake Files\packages\shylu\cmake\;CMake Files\packages\amesos2\;CMake Files\packages\amesos2\cmake\;CMake Files\packages\komplex\;CMake Files\packages\komplex\cmake\;CMake Files\packages\anasazi\;CMake Files\packages\anasazi\cmake\;CMake Files\packages\ifpack2\;CMake Files\packages\ifpack2\cmake\;CMake Files\packages\stratimikos\;CMake Files\packages\stratimikos\cmake\;CMake Files\packages\fei\;CMake Files\packages\fei\cmake\;CMake Files\packages\teko\;CMake Files\packages\teko\cmake\;CMake Files\packages\TriKota\;CMake Files\packages\TriKota\cmake\;CMake Files\packages\intrepid\;CMake Files\packages\intrepid\cmake\;CMake Files\packages\intrepid2\;CMake Files\packages\intrepid2\cmake\;CMake Files\packages\compadre\;CMake Files\packages\compadre\cmake\;CMake Files\packages\stk\;CMake Files\packages\stk\cmake\;CMake Files\packages\stk\stk_util\;CMake Files\packages\stk\stk_util\cmake\;CMake Files\packages\stk\stk_emend\;CMake Files\packages\stk\stk_emend\cmake\;CMake Files\packages\stk\stk_coupling\;CMake Files\packages\stk\stk_coupling\cmake\;CMake Files\packages\stk\stk_math\;CMake Files\packages\stk\stk_math\cmake\;CMake Files\packages\stk\stk_simd\;CMake Files\packages\stk\stk_simd\cmake\;CMake Files\packages\stk\stk_ngp_test\;CMake Files\packages\stk\stk_ngp_test\cmake\;CMake Files\packages\stk\stk_topology\;CMake Files\packages\stk\stk_topology\cmake\;CMake Files\packages\stk\stk_mesh\;CMake Files\packages\stk\stk_mesh\cmake\;CMake Files\packages\stk\stk_io\;CMake Files\packages\stk\stk_io\cmake\;CMake Files\packages\stk\stk_search\;CMake Files\packages\stk\stk_search\cmake\;CMake Files\packages\stk\stk_transfer\;CMake Files\packages\stk\stk_transfer\cmake\;CMake Files\packages\stk\stk_tools\;CMake Files\packages\stk\stk_tools\cmake\;CMake Files\packages\stk\stk_balance\;CMake Files\packages\stk\stk_balance\cmake\;CMake Files\packages\stk\stk_unit_test_utils\;CMake Files\packages\stk\stk_unit_test_utils\cmake\;CMake Files\packages\stk\stk_search_util\;CMake Files\packages\stk\stk_search_util\cmake\;CMake Files\packages\stk\stk_unit_tests\;CMake Files\packages\stk\stk_unit_tests\cmake\;CMake Files\packages\stk\stk_doc_tests\;CMake Files\packages\stk\stk_doc_tests\cmake\;CMake Files\packages\stk\stk_expreval\;CMake Files\packages\stk\stk_expreval\cmake\;CMake Files\packages\percept\;CMake Files\packages\percept\cmake\;CMake Files\packages\krino\;CMake Files\packages\krino\cmake\;CMake Files\packages\phalanx\;CMake Files\packages\phalanx\cmake\;CMake Files\packages\nox\;CMake Files\packages\nox\cmake\;CMake Files\packages\moertel\;CMake Files\packages\moertel\cmake\;CMake Files\packages\muelu\;CMake Files\packages\muelu\cmake\;CMake Files\packages\rythmos\;CMake Files\packages\rythmos\cmake\;CMake Files\packages\tempus\;CMake Files\packages\tempus\cmake\;CMake Files\packages\stokhos\;CMake Files\packages\stokhos\cmake\;CMake Files\packages\rol\;CMake Files\packages\rol\cmake\;CMake Files\packages\piro\;CMake Files\packages\piro\cmake\;CMake Files\packages\panzer\;CMake Files\packages\panzer\cmake\;CMake Files\packages\panzer\core\;CMake Files\packages\panzer\core\cmake\;CMake Files\packages\panzer\dof-mgr\;CMake Files\packages\panzer\dof-mgr\cmake\;CMake Files\packages\panzer\disc-fe\;CMake Files\packages\panzer\disc-fe\cmake\;CMake Files\packages\panzer\adapters-stk\;CMake Files\packages\panzer\adapters-stk\cmake\;CMake Files\packages\panzer\mini-em\;CMake Files\packages\panzer\mini-em\cmake\;CMake Files\packages\panzer\expr-eval\;CMake Files\packages\panzer\expr-eval\cmake\;CMake Files\packages\PyTrilinos\;CMake Files\packages\PyTrilinos\cmake\;CMake Files\packages\new_package\;CMake Files\packages\new_package\cmake\;CMake Files\packages\adelus\;CMake Files\packages\adelus\cmake\;CMake Files\packages\trilinoscouplings\;CMake Files\packages\trilinoscouplings\cmake\;CMake Files\packages\pike\;CMake Files\packages\pike\cmake\;CMake Files\packages\pike\blackbox\;CMake Files\packages\pike\blackbox\cmake\;CMake Files\packages\pike\implicit\;CMake Files\packages\pike\implicit\cmake\;CMake Files\cmake-build-debug\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install_package_by_package">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 install_package_by_package"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="dashboard">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 dashboard"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Nightly">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 Nightly"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="package">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 package"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Continuous">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 Continuous"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="package_source">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 package_source"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 test"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Experimental">
+				<Option working_dir="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 Experimental"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/CTestConfig.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/LICENSE">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/PackagesList.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/ProjectName.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/README">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/TPLsList.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/Version.cmake">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/CallbackDefineProjectPackaging.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/CallbackDefineRepositoryPackaging.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/CallbackSetupExtraOptions.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/ProjectCompilerPostConfig.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/ProjectDependenciesSetup.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/RepositoryDependenciesSetup.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/TriBITS.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/Version.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddAdvancedTest.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddAdvancedTestHelpers.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddExecutable.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddExecutableAndTest.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddExecutableTestHelpers.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddInstallGroupAndPermsFixups.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddOptionAndDefine.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddTest.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAddTestHelpers.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsAdjustPackageEnables.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsBLASMangling.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsCMakePolicies.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsCommonArgsHelpers.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsConfigureCTestCustom.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsConstants.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsCopyFilesToBinaryDir.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsCreateClientTemplateHeaders.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsDefineStandardCompileVars.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsFindPythonInterp.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsFortranMangling.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsGeneralMacros.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsGenerateResourceSpecFile.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsGetVersionDate.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsGlobalMacros.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsHostType.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsIncludeDirectories.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsInstallHeaders.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsLibraryMacros.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsListHelpers.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsPackageDefineDependencies.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsPackageMacros.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsPackageSetupCompilerFlags.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsPrintDependencyInfo.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsProcessEnabledTpl.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsProcessExtraRepositoriesList.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsProcessPackagesAndDirsLists.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsProcessTplsLists.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsProject.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsProjectImpl.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsReportInvalidTribitsUsage.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsSetupBasicCompileLinkFlags.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsSetupMPI.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsSetupStrongCompileWarnings.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsSortListAccordingToMasterList.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsSubPackageMacros.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsTestCategories.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsTplDeclareLibraries.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsVerbosePrintVar.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/TribitsWriteClientExportFiles.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/Tribits_version.h.in">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/Tribits_version_date.h.in">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/package_arch/VersionDate.cmake.in">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\package_arch\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AddSubdirectories.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AdvancedOption.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AdvancedSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AppendCmndlineArgs.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AppendGlob.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AppendGlobalSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AppendSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AppendStringVar.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AppendStringVarWithSep.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AssertAndTouchDefined.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/AssertDefined.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/CMakeBuildTypesList.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/ConcatStrings.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/DualScopeAppendCmndlineArgs.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/DualScopePrependCmndlineArgs.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/DualScopeSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/FindListElement.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/FindProgramPlus.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/GlobalNullSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/GlobalSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/Join.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/MessageWrapper.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/MultilineSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/PrependCmndlineArgs.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/PrependGlobalSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/PrependSet.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/PrintNonemptyVar.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/PrintNonemptyVarWithSpaces.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/PrintVar.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/RemoveGlobalDuplicates.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/SetAndIncDirs.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/SetCacheOnOffEmpty.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/SetDefault.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/SetDefaultAndFromEnv.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/SetNotFound.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/Split.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/TimingUtils.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/TribitsFilepathHelpers.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/TribitsGetCategoriesString.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/TribitsStandardizePaths.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/utils/TribitsStripQuotesFromStr.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\utils\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/installation/TribitsConfigInclude.cmake.in">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\installation\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/installation/TribitsInstallationTestingMacros.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\installation\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/installation/TribitsProjectConfigTemplate.cmake.in">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\installation\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/installation/cmake_pbp_install.cmake.in">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\installation\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/installation/add_project_install_commands/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\installation\add_project_install_commands\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/installation/add_install_group_and_perms_fixups/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\installation\add_install_group_and_perms_fixups\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/config_tests/FiniteValue.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\config_tests\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/config_tests/FortranMangling.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\config_tests\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/core/config_tests/MathLibraryNeeded.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\core\config_tests\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/ci_support/TribitsWriteXmlDependenciesFiles.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\ci_support\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/xsdk/XSDKDefaults.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\xsdk\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits/ctest_driver/TribitsAddDashboardTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\tribits\ctest_driver\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/std/atdm/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\cmake\std\atdm\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/TPLs/FindTPLDLlib.cmake">
+			<Option virtualFolder="CMake Files\cmake\TPLs\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake/ctest/CTestCustom.cmake.in">
+			<Option virtualFolder="CMake Files\cmake\ctest\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/commonTools/build_stats/BuildStatsSharedVars.cmake">
+			<Option virtualFolder="CMake Files\commonTools\build_stats\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/commonTools/build_stats/BuildStatsWrappers.cmake">
+			<Option virtualFolder="CMake Files\commonTools\build_stats\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/commonTools/build_stats/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\commonTools\build_stats\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/commonTools/framework/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\commonTools\framework\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/commonTools/gtest/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\commonTools\gtest\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/cmake/SeacasDisableSubpackagesDependingOnFortran.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/exodus/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\exodus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/exodus_for/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\exodus_for\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/exoIIv2for32/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\exoIIv2for32\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/nemesis/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\nemesis\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/ioss/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\ioss\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/chaco/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\chaco\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/aprepro_lib/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\aprepro_lib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/supes/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\supes\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/suplib/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\suplib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/suplib_c/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\suplib_c\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/suplib_cpp/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\suplib_cpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/svdi/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\svdi\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/plt/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\plt\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/libraries/mapvarlib/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\libraries\mapvarlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/algebra/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\algebra\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/aprepro/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\aprepro\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/blot/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\blot\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/conjoin/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\conjoin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/ejoin/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\ejoin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/epu/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\epu\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/cpup/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\cpup\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/exo2mat/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\exo2mat\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/exodiff/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\exodiff\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/exomatlab/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\exomatlab\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/exotxt/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\exotxt\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/exo_format/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\exo_format\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/ex1ex2v2/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\ex1ex2v2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/exotec2/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\exotec2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/fastq/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\fastq\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/gjoin/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\gjoin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/gen3d/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\gen3d\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/genshell/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\genshell\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/grepos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\grepos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/explore/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\explore\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/mapvar/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\mapvar\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/mapvar-kd/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\mapvar-kd\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/mat2exo/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\mat2exo\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/nas2exo/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\nas2exo\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/zellij/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\zellij\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/nem_slice/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\nem_slice\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/nem_spread/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\nem_spread\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/numbers/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\numbers\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/slice/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\slice\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/txtexo/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\txtexo\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/seacas/applications/ex2ex1v2/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\seacas\applications\ex2ex1v2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/kokkos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\kokkos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/kokkos/core/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\kokkos\core\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/kokkos/containers/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\kokkos\containers\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/kokkos/algorithms/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\kokkos\algorithms\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/core/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\core\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/parser/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\parser\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/parameterlist/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\parameterlist\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/comm/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\comm\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/numerics/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\numerics\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/remainder/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\remainder\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/kokkoscompat/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\kokkoscompat\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teuchos/kokkoscomm/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teuchos\kokkoscomm\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/kokkos-kernels/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\kokkos-kernels\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/rtop/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\rtop\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/sacado/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\sacado\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/minitensor/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\minitensor\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/epetra/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\epetra\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/zoltan/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\zoltan\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shards/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shards\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/triutils/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\triutils\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/epetraext/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\epetraext\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/tpetra/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\tpetra\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/tpetra/classic/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\tpetra\classic\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/tpetra/tsqr/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\tpetra\tsqr\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/tpetra/core/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\tpetra\core\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/common/auxiliarySoftware/SuiteSparse/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\common\auxiliarySoftware\SuiteSparse\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/domi/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\domi\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/thyra/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\thyra\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/thyra/core/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\thyra\core\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/thyra/adapters/epetra/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\thyra\adapters\epetra\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/thyra/adapters/epetraext/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\thyra\adapters\epetraext\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/thyra/adapters/tpetra/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\thyra\adapters\tpetra\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/xpetra/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\xpetra\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/isorropia/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\isorropia\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/pliris/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\pliris\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/aztecoo/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\aztecoo\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/galeri/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\galeri\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/amesos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\amesos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/pamgen/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\pamgen\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/zoltan2/core/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\zoltan2\core\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/zoltan2/sphynx/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\zoltan2\sphynx\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/zoltan2/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\zoltan2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/ifpack/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\ifpack\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/ml/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\ml\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/belos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\belos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_node/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_node\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_node/hts/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_node\hts\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_node/tacho/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_node\tacho\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_node/basker/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_node\basker\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_node/fastilu/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_node\fastilu\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_dd/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_dd\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_dd/bddc/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_dd\bddc\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_dd/frosch/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_dd\frosch\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_dd/core/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_dd\core\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/shylu_dd/common/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\shylu_dd\common\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/shylu/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\shylu\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/amesos2/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\amesos2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/komplex/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\komplex\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/anasazi/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\anasazi\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/ifpack2/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\ifpack2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stratimikos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stratimikos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/fei/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\fei\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/teko/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\teko\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/TriKota/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\TriKota\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/intrepid/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\intrepid\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/intrepid2/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\intrepid2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/compadre/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\compadre\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_util/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_util\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_emend/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_emend\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_coupling/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_coupling\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_math/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_math\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_simd/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_simd\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_ngp_test/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_ngp_test\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_topology/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_topology\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_mesh/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_mesh\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_io/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_io\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_search/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_search\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_transfer/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_transfer\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_tools/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_tools\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_balance/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_balance\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_unit_test_utils/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_unit_test_utils\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_search_util/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_search_util\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_unit_tests/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_unit_tests\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_doc_tests/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_doc_tests\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stk/stk_expreval/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stk\stk_expreval\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/percept/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\percept\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/krino/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\krino\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/phalanx/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\phalanx\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/nox/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\nox\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/moertel/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\moertel\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/muelu/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\muelu\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/rythmos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\rythmos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/tempus/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\tempus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/stokhos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\stokhos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/rol/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\rol\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/piro/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\piro\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/panzer/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\panzer\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/panzer/core/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\panzer\core\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/panzer/dof-mgr/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\panzer\dof-mgr\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/panzer/disc-fe/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\panzer\disc-fe\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/panzer/adapters-stk/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\panzer\adapters-stk\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/panzer/mini-em/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\panzer\mini-em\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/panzer/expr-eval/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\panzer\expr-eval\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/PyTrilinos/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\PyTrilinos\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/new_package/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\new_package\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/adelus/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\adelus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/trilinoscouplings/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\trilinoscouplings\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/pike/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\pike\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/pike/blackbox/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\pike\blackbox\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/packages/pike/implicit/cmake/Dependencies.cmake">
+			<Option virtualFolder="CMake Files\packages\pike\implicit\cmake\"/>
+		</Unit>
+		<Unit filename="/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/VersionDate.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

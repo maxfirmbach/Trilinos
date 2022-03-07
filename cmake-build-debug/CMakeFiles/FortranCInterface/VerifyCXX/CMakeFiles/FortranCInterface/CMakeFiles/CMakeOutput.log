@@ -1,0 +1,18 @@
+Performing C SOURCE FILE Test C_SUPPORTS_DOLLAR succeeded with the following output:
+Change Dir: /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_33cf5/fast && /usr/bin/make  -f CMakeFiles/cmTC_33cf5.dir/build.make CMakeFiles/cmTC_33cf5.dir/build
+make[1]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_33cf5.dir/src.c.o
+/usr/bin/cc -DC_SUPPORTS_DOLLAR   -o CMakeFiles/cmTC_33cf5.dir/src.c.o -c /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_33cf5
+/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_33cf5.dir/link.txt --verbose=1
+/usr/bin/cc CMakeFiles/cmTC_33cf5.dir/src.c.o -o cmTC_33cf5 
+make[1]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+extern int dollar$(void);
+int main() { return 0; }
+

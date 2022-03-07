@@ -111,6 +111,7 @@
 #include "MueLu_MapTransferFactory.hpp"
 #include "MueLu_MatrixAnalysisFactory.hpp"
 #include "MueLu_MultiVectorTransferFactory.hpp"
+#include "MueLu_MueluSmoother.hpp"
 #include "MueLu_NotayAggregationFactory.hpp"
 #include "MueLu_NullspaceFactory.hpp"
 #include "MueLu_NullspacePresmoothFactory.hpp"
@@ -134,6 +135,7 @@
 #include "MueLu_SchurComplementFactory.hpp"
 #include "MueLu_SimpleSmoother.hpp"
 #include "MueLu_SmootherFactory.hpp"
+#include "MueLu_SpaiBlockSmoother.hpp"
 #include "MueLu_StructuredAggregationFactory.hpp"
 #include "MueLu_StructuredLineDetectionFactory.hpp"
 #include "MueLu_SubBlockAFactory.hpp"
@@ -296,6 +298,7 @@ namespace MueLu {
       if (factoryName == "SemiCoarsenPFactory")                   return Build2<SemiCoarsenPFactory>                   (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "StructuredAggregationFactory")          return Build2<StructuredAggregationFactory>          (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "StructuredLineDetectionFactory")        return Build2<StructuredLineDetectionFactory>        (paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "MueluSmoother")                         return BuildMueluSmoother                            (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "SubBlockAFactory")                      return Build2<SubBlockAFactory>                      (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "TentativePFactory")                     return Build2<TentativePFactory>                     (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "ToggleCoordinatesTransferFactory")      return BuildToggleCoordinatesTransferFactory         (paramList, factoryMapIn, factoryManagersIn);
@@ -368,18 +371,19 @@ namespace MueLu {
 #endif // HAVE_MPI
       }
       // Blocked factories
-      if (factoryName == "BlockedCoordinatesTransferFactory")     return BuildBlockedCoordFactory<BlockedCoordinatesTransferFactory>     (paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "BlockedDirectSolver")             return BuildBlockedDirectSolver(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "BlockedGaussSeidelSmoother")      return BuildBlockedSmoother<BlockedGaussSeidelSmoother>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "BlockedJacobiSmoother")           return BuildBlockedSmoother<BlockedJacobiSmoother>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "BlockedPFactory")                 return BuildBlockedFactory<BlockedPFactory>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "BraessSarazinSmoother")           return BuildBlockedSmoother<BraessSarazinSmoother>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "IndefiniteBlockDiagonalSmoother") return BuildBlockedSmoother<IndefBlockedDiagonalSmoother>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "SimpleSmoother")                  return BuildBlockedSmoother<SimpleSmoother>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "SchurComplementFactory")          return Build2<SchurComplementFactory> (paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "RebalanceBlockRestrictionFactory")return BuildBlockedFactory<RebalanceBlockRestrictionFactory>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "RebalanceBlockAcFactory")         return BuildBlockedFactory<RebalanceBlockAcFactory>(paramList, factoryMapIn, factoryManagersIn);
-      if (factoryName == "RebalanceBlockInterpolationFactory") return BuildBlockedFactory<RebalanceBlockInterpolationFactory>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BlockedCoordinatesTransferFactory")     return BuildBlockedCoordFactory<BlockedCoordinatesTransferFactory>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BlockedDirectSolver")                   return BuildBlockedDirectSolver(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BlockedGaussSeidelSmoother")            return BuildBlockedSmoother<BlockedGaussSeidelSmoother>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BlockedJacobiSmoother")                 return BuildBlockedSmoother<BlockedJacobiSmoother>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BlockedPFactory")                       return BuildBlockedFactory<BlockedPFactory>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BraessSarazinSmoother")                 return BuildBlockedSmoother<BraessSarazinSmoother>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "IndefiniteBlockDiagonalSmoother")       return BuildBlockedSmoother<IndefBlockedDiagonalSmoother>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "SimpleSmoother")                        return BuildBlockedSmoother<SimpleSmoother>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "SchurComplementFactory")                return Build2<SchurComplementFactory>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "SpaiBlockSmoother")                     return BuildBlockedSmoother<SpaiBlockSmoother>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "RebalanceBlockRestrictionFactory")      return BuildBlockedFactory<RebalanceBlockRestrictionFactory>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "RebalanceBlockAcFactory")               return BuildBlockedFactory<RebalanceBlockAcFactory>(paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "RebalanceBlockInterpolationFactory")    return BuildBlockedFactory<RebalanceBlockInterpolationFactory>(paramList, factoryMapIn, factoryManagersIn);
 #ifdef HAVE_MPI
       if (factoryName == "RepartitionBlockDiagonalFactory")    return Build2<RepartitionBlockDiagonalFactory>    (paramList, factoryMapIn, factoryManagersIn);
 #endif
@@ -663,6 +667,35 @@ namespace MueLu {
 
       return factory;
     }
+
+    //! MueluSmoother
+    // Parameter List Parsing:
+    //     <ParameterList name="smootherFact1">
+    //       <Parameter name="factory" type="string" value="MueluSmoother"/>
+    //       <Parameter name="type" type="string" value="SPAI"/>
+    //       <ParameterList name="ParameterList">
+    //       ...
+    //       </ParameterList>
+    //     </ParameterList>
+    RCP<FactoryBase> BuildMueluSmoother(const Teuchos::ParameterList & paramList, const FactoryMap & factoryMapIn, const FactoryManagerMap& factoryManagersIn) const {
+      if (paramList.begin() == paramList.end())
+        return rcp(new SmootherFactory(rcp(new MueluSmoother())));
+
+      TEUCHOS_TEST_FOR_EXCEPTION(paramList.get<std::string>("factory") != "MueluSmoother", Exceptions::RuntimeError, "");
+
+      std::string type="";            if(paramList.isParameter("type"))          type    = paramList.get<std::string>("type");
+      Teuchos::ParameterList params;  if(paramList.isParameter("ParameterList")) params  = paramList.get<Teuchos::ParameterList>("ParameterList");
+
+      Teuchos::RCP<MueluSmoother> mueluSmoo = Teuchos::rcp(new MueluSmoother(type, params));
+
+      RCP<SmootherFactory> smooFact = rcp(new SmootherFactory(Teuchos::null));
+      Teuchos::ParameterList smooFactParams;
+
+      smooFact->SetParameterList(smooFactParams);
+      smooFact->SetSmootherPrototypes(mueluSmoo);
+      return smooFact;
+    }
+
 
     //! TrilinosSmoother
     // Parameter List Parsing:

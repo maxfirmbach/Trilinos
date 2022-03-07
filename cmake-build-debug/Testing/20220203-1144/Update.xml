@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Update mode="Client" Generator="ctest-3.20.2">
+	<Site>alaz</Site>
+	<BuildName>Linux-c++</BuildName>
+	<BuildStamp>20220203-1144-Continuous</BuildStamp>
+	<StartDateTime>Feb 03 12:44 CET</StartDateTime>
+	<StartTime>1643888687</StartTime>
+	<UpdateCommand>"/usr/bin/git" "fetch"</UpdateCommand>
+	<UpdateType>GIT</UpdateType>
+	<Revision>82fe4c66880eebff04c735e508421c5440d3cb7a</Revision>
+	<EndDateTime>Feb 03 12:44 CET</EndDateTime>
+	<EndTime>1643888688</EndTime>
+	<ElapsedMinutes>0</ElapsedMinutes>
+	<UpdateReturnStatus>Update command failed:
+"/usr/bin/git" "fetch"</UpdateReturnStatus>
+</Update>

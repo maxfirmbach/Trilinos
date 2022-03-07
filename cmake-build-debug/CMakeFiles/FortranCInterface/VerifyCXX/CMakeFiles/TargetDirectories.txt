@@ -1,0 +1,4 @@
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/rebuild_cache.dir
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/edit_cache.dir
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortranC.dir
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortran.dir

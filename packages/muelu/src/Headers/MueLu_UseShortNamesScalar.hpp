@@ -194,6 +194,12 @@ typedef MueLu::MergedSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> MergedSmoo
 #ifdef MUELU_MULTIVECTORTRANSFERFACTORY_SHORT
 typedef MueLu::MultiVectorTransferFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> MultiVectorTransferFactory;
 #endif
+#ifdef MUELU_MULTIGRIDSMOOTHER_SHORT
+typedef MueLu::MultigridSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> MultigridSmoother;
+#endif
+#ifdef MUELU_MUELUSMOOTHER_SHORT
+typedef MueLu::MueluSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> MueluSmoother;
+#endif
 #ifdef MUELU_NOTAYAGGREGATIONFACTORY_SHORT
 typedef MueLu::NotayAggregationFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> NotayAggregationFactory;
 #endif
@@ -315,7 +321,13 @@ typedef MueLu::SmooVecCoalesceDropFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node
 typedef MueLu::SolverBase<Scalar,LocalOrdinal,GlobalOrdinal,Node> SolverBase;
 #endif
 #ifdef MUELU_SPAI_SHORT
-typedef MueLu::SPAI<Scalar,LocalOrdinal,GlobalOrdinal,Node> SPAI;
+typedef MueLu::Spai<Scalar,LocalOrdinal,GlobalOrdinal,Node> Spai;
+#endif
+#ifdef MUELU_SPAISMOOTHER_SHORT
+typedef MueLu::SpaiSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> SpaiSmoother;
+#endif
+#ifdef MUELU_SPAIBLOCKSMOOTHER_SHORT
+typedef MueLu::SpaiBlockSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> SpaiBlockSmoother;
 #endif
 #ifdef MUELU_STEEPESTDESCENTSOLVER_SHORT
 typedef MueLu::SteepestDescentSolver<Scalar,LocalOrdinal,GlobalOrdinal,Node> SteepestDescentSolver;

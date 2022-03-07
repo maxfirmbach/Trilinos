@@ -1,0 +1,47 @@
+Change Dir: /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX
+
+Run Build Command(s):/usr/bin/make -f Makefile VerifyFortranC && /home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -S/home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify -B/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/bin/make  -f CMakeFiles/Makefile2 VerifyFortranC
+make[1]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -S/home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify -B/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX --check-build-system CMakeFiles/Makefile.cmake 0
+/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -E cmake_progress_start /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 6
+/usr/bin/make  -f CMakeFiles/Makefile2 CMakeFiles/VerifyFortranC.dir/all
+make[2]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/bin/make  -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/depend
+make[3]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+cd /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX && /home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -E cmake_depends "Unix Makefiles" /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortran.dir/DependInfo.cmake
+Scanning dependencies of target VerifyFortran
+make[3]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/bin/make  -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/build
+make[3]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+[ 16%] Building Fortran object CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
+/usr/bin/gfortran -DVERIFY_CXX -I/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX -O3 -c /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify/VerifyFortran.f -o CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
+[ 33%] Linking Fortran static library libVerifyFortran.a
+/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -P CMakeFiles/VerifyFortran.dir/cmake_clean_target.cmake
+/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/VerifyFortran.dir/link.txt --verbose=1
+/usr/bin/ar qc libVerifyFortran.a CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
+/usr/bin/ranlib libVerifyFortran.a
+make[3]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+[ 33%] Built target VerifyFortran
+/usr/bin/make  -f CMakeFiles/VerifyFortranC.dir/build.make CMakeFiles/VerifyFortranC.dir/depend
+make[3]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+cd /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX && /home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -E cmake_depends "Unix Makefiles" /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortranC.dir/DependInfo.cmake
+Scanning dependencies of target VerifyFortranC
+make[3]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/bin/make  -f CMakeFiles/VerifyFortranC.dir/build.make CMakeFiles/VerifyFortranC.dir/build
+make[3]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+[ 50%] Building C object CMakeFiles/VerifyFortranC.dir/main.c.o
+/usr/bin/cc -DVERIFY_CXX -I/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX -O3 -DNDEBUG -o CMakeFiles/VerifyFortranC.dir/main.c.o -c /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify/main.c
+[ 66%] Building C object CMakeFiles/VerifyFortranC.dir/VerifyC.c.o
+/usr/bin/cc -DVERIFY_CXX -I/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX -O3 -DNDEBUG -o CMakeFiles/VerifyFortranC.dir/VerifyC.c.o -c /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify/VerifyC.c
+[ 83%] Building CXX object CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o
+/usr/bin/c++ -DVERIFY_CXX -I/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX -O3 -DNDEBUG -o CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o -c /home/a11bmafi/Apps/clion/bin/cmake/linux/share/cmake-3.20/Modules/FortranCInterface/Verify/VerifyCXX.cxx
+[100%] Linking CXX executable VerifyFortranC
+/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/VerifyFortranC.dir/link.txt --verbose=1
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/VerifyFortranC.dir/main.c.o CMakeFiles/VerifyFortranC.dir/VerifyC.c.o CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o -o VerifyFortranC  libVerifyFortran.a -lgfortran -lquadmath 
+make[3]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+[100%] Built target VerifyFortranC
+make[2]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake -E cmake_progress_start /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 0
+make[1]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/VerifyCXX'
+

@@ -1,0 +1,62 @@
+Performing C++ SOURCE FILE Test FINITE_VALUE_HAVE_GLOBAL_ISNAN failed with the following output:
+Change Dir: /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_5b5e7/fast && /usr/bin/make  -f CMakeFiles/cmTC_5b5e7.dir/build.make CMakeFiles/cmTC_5b5e7.dir/build
+make[1]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5b5e7.dir/src.cxx.o
+/usr/bin/c++ -DFINITE_VALUE_HAVE_GLOBAL_ISNAN  -O3 -DNDEBUG -std=c++14 -o CMakeFiles/cmTC_5b5e7.dir/src.cxx.o -c /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx: In function ‘int main()’:
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx:6:3: error: ‘isnan’ was not declared in this scope; did you mean ‘std::isnan’?
+    6 |   isnan(x);
+      |   ^~~~~
+      |   std::isnan
+In file included from /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx:2:
+/usr/include/c++/9/cmath:632:5: note: ‘std::isnan’ declared here
+  632 |     isnan(_Tp __x)
+      |     ^~~~~
+make[1]: *** [CMakeFiles/cmTC_5b5e7.dir/build.make:78: CMakeFiles/cmTC_5b5e7.dir/src.cxx.o] Error 1
+make[1]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp'
+make: *** [Makefile:127: cmTC_5b5e7/fast] Error 2
+
+
+Source file was:
+
+#include <cmath>
+int main()
+{
+  double x = 1.0;
+  isnan(x);
+  return 0;
+}
+  
+Performing C++ SOURCE FILE Test FINITE_VALUE_HAVE_GLOBAL_ISINF failed with the following output:
+Change Dir: /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_be641/fast && /usr/bin/make  -f CMakeFiles/cmTC_be641.dir/build.make CMakeFiles/cmTC_be641.dir/build
+make[1]: Entering directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_be641.dir/src.cxx.o
+/usr/bin/c++ -DFINITE_VALUE_HAVE_GLOBAL_ISINF  -O3 -DNDEBUG -std=c++14 -o CMakeFiles/cmTC_be641.dir/src.cxx.o -c /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx: In function ‘int main()’:
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx:6:3: error: ‘isinf’ was not declared in this scope; did you mean ‘std::isinf’?
+    6 |   isinf(x);
+      |   ^~~~~
+      |   std::isinf
+In file included from /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx:2:
+/usr/include/c++/9/cmath:605:5: note: ‘std::isinf’ declared here
+  605 |     isinf(_Tp __x)
+      |     ^~~~~
+make[1]: *** [CMakeFiles/cmTC_be641.dir/build.make:78: CMakeFiles/cmTC_be641.dir/src.cxx.o] Error 1
+make[1]: Leaving directory '/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/CMakeTmp'
+make: *** [Makefile:127: cmTC_be641/fast] Error 2
+
+
+Source file was:
+
+#include <cmath>
+int main()
+{
+  double x = 1.0;
+  isinf(x);
+  return 0;
+}
+  

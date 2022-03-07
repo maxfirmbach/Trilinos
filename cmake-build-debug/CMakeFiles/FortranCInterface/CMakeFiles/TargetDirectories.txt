@@ -1,0 +1,5 @@
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/CMakeFiles/rebuild_cache.dir
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/CMakeFiles/myfort.dir
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/CMakeFiles/symbols.dir
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/CMakeFiles/edit_cache.dir
+/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug/CMakeFiles/FortranCInterface/CMakeFiles/FortranCInterface.dir

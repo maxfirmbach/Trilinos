@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Linux-c++"
+	BuildStamp="20220203-1144-Continuous"
+	Name="alaz"
+	Generator="ctest-3.20.2"
+	CompilerName="/usr/bin/c++"
+	CompilerVersion="9.3.0"
+	OSName="Linux"
+	Hostname="alaz"
+	OSRelease="5.13.0-28-generic"
+	OSVersion="#31~20.04.1-Ubuntu SMP Wed Jan 19 14:08:10 UTC 2022"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="165"
+	ProcessorCacheSize="12288"
+	NumberOfLogicalCPU="12"
+	NumberOfPhysicalCPU="6"
+	TotalVirtualMemory="975"
+	TotalPhysicalMemory="64059"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="3194.22"
+	>
+	<Subproject name="Adelus">
+		<Label>Adelus</Label>
+	</Subproject>
+	<Subproject name="Amesos">
+		<Label>Amesos</Label>
+	</Subproject>
+	<Subproject name="Amesos2">
+		<Label>Amesos2</Label>
+	</Subproject>
+	<Subproject name="Anasazi">
+		<Label>Anasazi</Label>
+	</Subproject>
+	<Subproject name="AztecOO">
+		<Label>AztecOO</Label>
+	</Subproject>
+	<Subproject name="Belos">
+		<Label>Belos</Label>
+	</Subproject>
+	<Subproject name="Compadre">
+		<Label>Compadre</Label>
+	</Subproject>
+	<Subproject name="Domi">
+		<Label>Domi</Label>
+	</Subproject>
+	<Subproject name="Epetra">
+		<Label>Epetra</Label>
+	</Subproject>
+	<Subproject name="EpetraExt">
+		<Label>EpetraExt</Label>
+	</Subproject>
+	<Subproject name="FEI">
+		<Label>FEI</Label>
+	</Subproject>
+	<Subproject name="Galeri">
+		<Label>Galeri</Label>
+	</Subproject>
+	<Subproject name="Gtest">
+		<Label>Gtest</Label>
+	</Subproject>
+	<Subproject name="Ifpack">
+		<Label>Ifpack</Label>
+	</Subproject>
+	<Subproject name="Ifpack2">
+		<Label>Ifpack2</Label>
+	</Subproject>
+	<Subproject name="Intrepid">
+		<Label>Intrepid</Label>
+	</Subproject>
+	<Subproject name="Intrepid2">
+		<Label>Intrepid2</Label>
+	</Subproject>
+	<Subproject name="Isorropia">
+		<Label>Isorropia</Label>
+	</Subproject>
+	<Subproject name="Kokkos">
+		<Label>Kokkos</Label>
+	</Subproject>
+	<Subproject name="KokkosKernels">
+		<Label>KokkosKernels</Label>
+	</Subproject>
+	<Subproject name="Komplex">
+		<Label>Komplex</Label>
+	</Subproject>
+	<Subproject name="Krino">
+		<Label>Krino</Label>
+	</Subproject>
+	<Subproject name="ML">
+		<Label>ML</Label>
+	</Subproject>
+	<Subproject name="MiniTensor">
+		<Label>MiniTensor</Label>
+	</Subproject>
+	<Subproject name="Moertel">
+		<Label>Moertel</Label>
+	</Subproject>
+	<Subproject name="MueLu">
+		<Label>MueLu</Label>
+	</Subproject>
+	<Subproject name="NOX">
+		<Label>NOX</Label>
+	</Subproject>
+	<Subproject name="NewPackage">
+		<Label>NewPackage</Label>
+	</Subproject>
+	<Subproject name="Pamgen">
+		<Label>Pamgen</Label>
+	</Subproject>
+	<Subproject name="Panzer">
+		<Label>Panzer</Label>
+	</Subproject>
+	<Subproject name="Percept">
+		<Label>Percept</Label>
+	</Subproject>
+	<Subproject name="Phalanx">
+		<Label>Phalanx</Label>
+	</Subproject>
+	<Subproject name="Pike">
+		<Label>Pike</Label>
+	</Subproject>
+	<Subproject name="Piro">
+		<Label>Piro</Label>
+	</Subproject>
+	<Subproject name="Pliris">
+		<Label>Pliris</Label>
+	</Subproject>
+	<Subproject name="PyTrilinos">
+		<Label>PyTrilinos</Label>
+	</Subproject>
+	<Subproject name="ROL">
+		<Label>ROL</Label>
+	</Subproject>
+	<Subproject name="RTOp">
+		<Label>RTOp</Label>
+	</Subproject>
+	<Subproject name="Rythmos">
+		<Label>Rythmos</Label>
+	</Subproject>
+	<Subproject name="SEACAS">
+		<Label>SEACAS</Label>
+	</Subproject>
+	<Subproject name="STK">
+		<Label>STK</Label>
+	</Subproject>
+	<Subproject name="Sacado">
+		<Label>Sacado</Label>
+	</Subproject>
+	<Subproject name="Shards">
+		<Label>Shards</Label>
+	</Subproject>
+	<Subproject name="ShyLU">
+		<Label>ShyLU</Label>
+	</Subproject>
+	<Subproject name="ShyLU_DD">
+		<Label>ShyLU_DD</Label>
+	</Subproject>
+	<Subproject name="ShyLU_Node">
+		<Label>ShyLU_Node</Label>
+	</Subproject>
+	<Subproject name="Stokhos">
+		<Label>Stokhos</Label>
+	</Subproject>
+	<Subproject name="Stratimikos">
+		<Label>Stratimikos</Label>
+	</Subproject>
+	<Subproject name="Teko">
+		<Label>Teko</Label>
+	</Subproject>
+	<Subproject name="Tempus">
+		<Label>Tempus</Label>
+	</Subproject>
+	<Subproject name="Teuchos">
+		<Label>Teuchos</Label>
+	</Subproject>
+	<Subproject name="Thyra">
+		<Label>Thyra</Label>
+	</Subproject>
+	<Subproject name="Tpetra">
+		<Label>Tpetra</Label>
+	</Subproject>
+	<Subproject name="TriKota">
+		<Label>TriKota</Label>
+	</Subproject>
+	<Subproject name="TrilinosATDMConfigTests">
+		<Label>TrilinosATDMConfigTests</Label>
+	</Subproject>
+	<Subproject name="TrilinosBuildStats">
+		<Label>TrilinosBuildStats</Label>
+	</Subproject>
+	<Subproject name="TrilinosCouplings">
+		<Label>TrilinosCouplings</Label>
+	</Subproject>
+	<Subproject name="TrilinosFrameworkTests">
+		<Label>TrilinosFrameworkTests</Label>
+	</Subproject>
+	<Subproject name="TrilinosSS">
+		<Label>TrilinosSS</Label>
+	</Subproject>
+	<Subproject name="Triutils">
+		<Label>Triutils</Label>
+	</Subproject>
+	<Subproject name="Xpetra">
+		<Label>Xpetra</Label>
+	</Subproject>
+	<Subproject name="Zoltan">
+		<Label>Zoltan</Label>
+	</Subproject>
+	<Subproject name="Zoltan2">
+		<Label>Zoltan2</Label>
+	</Subproject>
+	<Subproject name="Zoltan2Core">
+		<Label>Zoltan2Core</Label>
+	</Subproject>
+	<Subproject name="Zoltan2Sphynx">
+		<Label>Zoltan2Sphynx</Label>
+	</Subproject>
+	<Build>
+		<StartDateTime>Feb 03 12:44 CET</StartDateTime>
+		<StartBuildTime>1643888689</StartBuildTime>
+		<BuildCommand>/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake --build . --config "Release"</BuildCommand>
+		<Warning>
+			<BuildLogLine>1</BuildLogLine>
+			<Text>make[4]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.</Text>
+			<PreContext></PreContext>
+			<PostContext></PostContext>
+			<RepeatCount>0</RepeatCount>
+		</Warning>
+		<Log Encoding="base64" Compression="bin/gzip"/>
+		<EndDateTime>Feb 03 12:44 CET</EndDateTime>
+		<EndBuildTime>1643888689</EndBuildTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Build>
+</Site>

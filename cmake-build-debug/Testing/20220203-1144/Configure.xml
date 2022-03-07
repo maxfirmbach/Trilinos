@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Linux-c++"
+	BuildStamp="20220203-1144-Continuous"
+	Name="alaz"
+	Generator="ctest-3.20.2"
+	CompilerName="/usr/bin/c++"
+	CompilerVersion="9.3.0"
+	OSName="Linux"
+	Hostname="alaz"
+	OSRelease="5.13.0-28-generic"
+	OSVersion="#31~20.04.1-Ubuntu SMP Wed Jan 19 14:08:10 UTC 2022"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="165"
+	ProcessorCacheSize="12288"
+	NumberOfLogicalCPU="12"
+	NumberOfPhysicalCPU="6"
+	TotalVirtualMemory="975"
+	TotalPhysicalMemory="64059"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="2800"
+	>
+	<Subproject name="Adelus">
+		<Label>Adelus</Label>
+	</Subproject>
+	<Subproject name="Amesos">
+		<Label>Amesos</Label>
+	</Subproject>
+	<Subproject name="Amesos2">
+		<Label>Amesos2</Label>
+	</Subproject>
+	<Subproject name="Anasazi">
+		<Label>Anasazi</Label>
+	</Subproject>
+	<Subproject name="AztecOO">
+		<Label>AztecOO</Label>
+	</Subproject>
+	<Subproject name="Belos">
+		<Label>Belos</Label>
+	</Subproject>
+	<Subproject name="Compadre">
+		<Label>Compadre</Label>
+	</Subproject>
+	<Subproject name="Domi">
+		<Label>Domi</Label>
+	</Subproject>
+	<Subproject name="Epetra">
+		<Label>Epetra</Label>
+	</Subproject>
+	<Subproject name="EpetraExt">
+		<Label>EpetraExt</Label>
+	</Subproject>
+	<Subproject name="FEI">
+		<Label>FEI</Label>
+	</Subproject>
+	<Subproject name="Galeri">
+		<Label>Galeri</Label>
+	</Subproject>
+	<Subproject name="Gtest">
+		<Label>Gtest</Label>
+	</Subproject>
+	<Subproject name="Ifpack">
+		<Label>Ifpack</Label>
+	</Subproject>
+	<Subproject name="Ifpack2">
+		<Label>Ifpack2</Label>
+	</Subproject>
+	<Subproject name="Intrepid">
+		<Label>Intrepid</Label>
+	</Subproject>
+	<Subproject name="Intrepid2">
+		<Label>Intrepid2</Label>
+	</Subproject>
+	<Subproject name="Isorropia">
+		<Label>Isorropia</Label>
+	</Subproject>
+	<Subproject name="Kokkos">
+		<Label>Kokkos</Label>
+	</Subproject>
+	<Subproject name="KokkosKernels">
+		<Label>KokkosKernels</Label>
+	</Subproject>
+	<Subproject name="Komplex">
+		<Label>Komplex</Label>
+	</Subproject>
+	<Subproject name="Krino">
+		<Label>Krino</Label>
+	</Subproject>
+	<Subproject name="ML">
+		<Label>ML</Label>
+	</Subproject>
+	<Subproject name="MiniTensor">
+		<Label>MiniTensor</Label>
+	</Subproject>
+	<Subproject name="Moertel">
+		<Label>Moertel</Label>
+	</Subproject>
+	<Subproject name="MueLu">
+		<Label>MueLu</Label>
+	</Subproject>
+	<Subproject name="NOX">
+		<Label>NOX</Label>
+	</Subproject>
+	<Subproject name="NewPackage">
+		<Label>NewPackage</Label>
+	</Subproject>
+	<Subproject name="Pamgen">
+		<Label>Pamgen</Label>
+	</Subproject>
+	<Subproject name="Panzer">
+		<Label>Panzer</Label>
+	</Subproject>
+	<Subproject name="Percept">
+		<Label>Percept</Label>
+	</Subproject>
+	<Subproject name="Phalanx">
+		<Label>Phalanx</Label>
+	</Subproject>
+	<Subproject name="Pike">
+		<Label>Pike</Label>
+	</Subproject>
+	<Subproject name="Piro">
+		<Label>Piro</Label>
+	</Subproject>
+	<Subproject name="Pliris">
+		<Label>Pliris</Label>
+	</Subproject>
+	<Subproject name="PyTrilinos">
+		<Label>PyTrilinos</Label>
+	</Subproject>
+	<Subproject name="ROL">
+		<Label>ROL</Label>
+	</Subproject>
+	<Subproject name="RTOp">
+		<Label>RTOp</Label>
+	</Subproject>
+	<Subproject name="Rythmos">
+		<Label>Rythmos</Label>
+	</Subproject>
+	<Subproject name="SEACAS">
+		<Label>SEACAS</Label>
+	</Subproject>
+	<Subproject name="STK">
+		<Label>STK</Label>
+	</Subproject>
+	<Subproject name="Sacado">
+		<Label>Sacado</Label>
+	</Subproject>
+	<Subproject name="Shards">
+		<Label>Shards</Label>
+	</Subproject>
+	<Subproject name="ShyLU">
+		<Label>ShyLU</Label>
+	</Subproject>
+	<Subproject name="ShyLU_DD">
+		<Label>ShyLU_DD</Label>
+	</Subproject>
+	<Subproject name="ShyLU_Node">
+		<Label>ShyLU_Node</Label>
+	</Subproject>
+	<Subproject name="Stokhos">
+		<Label>Stokhos</Label>
+	</Subproject>
+	<Subproject name="Stratimikos">
+		<Label>Stratimikos</Label>
+	</Subproject>
+	<Subproject name="Teko">
+		<Label>Teko</Label>
+	</Subproject>
+	<Subproject name="Tempus">
+		<Label>Tempus</Label>
+	</Subproject>
+	<Subproject name="Teuchos">
+		<Label>Teuchos</Label>
+	</Subproject>
+	<Subproject name="Thyra">
+		<Label>Thyra</Label>
+	</Subproject>
+	<Subproject name="Tpetra">
+		<Label>Tpetra</Label>
+	</Subproject>
+	<Subproject name="TriKota">
+		<Label>TriKota</Label>
+	</Subproject>
+	<Subproject name="TrilinosATDMConfigTests">
+		<Label>TrilinosATDMConfigTests</Label>
+	</Subproject>
+	<Subproject name="TrilinosBuildStats">
+		<Label>TrilinosBuildStats</Label>
+	</Subproject>
+	<Subproject name="TrilinosCouplings">
+		<Label>TrilinosCouplings</Label>
+	</Subproject>
+	<Subproject name="TrilinosFrameworkTests">
+		<Label>TrilinosFrameworkTests</Label>
+	</Subproject>
+	<Subproject name="TrilinosSS">
+		<Label>TrilinosSS</Label>
+	</Subproject>
+	<Subproject name="Triutils">
+		<Label>Triutils</Label>
+	</Subproject>
+	<Subproject name="Xpetra">
+		<Label>Xpetra</Label>
+	</Subproject>
+	<Subproject name="Zoltan">
+		<Label>Zoltan</Label>
+	</Subproject>
+	<Subproject name="Zoltan2">
+		<Label>Zoltan2</Label>
+	</Subproject>
+	<Subproject name="Zoltan2Core">
+		<Label>Zoltan2Core</Label>
+	</Subproject>
+	<Subproject name="Zoltan2Sphynx">
+		<Label>Zoltan2Sphynx</Label>
+	</Subproject>
+	<Configure>
+		<StartDateTime>Feb 03 12:44 CET</StartDateTime>
+		<StartConfigureTime>1643888688</StartConfigureTime>
+		<ConfigureCommand>"/home/a11bmafi/Apps/clion/bin/cmake/linux/bin/cmake" "/home/a11bmafi/Library/trilinos/src-trilinos"</ConfigureCommand>
+		<Log>
+Configuring Trilinos build directory
+
+-- PROJECT_SOURCE_DIR='/home/a11bmafi/Library/trilinos/src-trilinos'
+-- PROJECT_BINARY_DIR='/home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug'
+-- Trilinos_TRIBITS_DIR='/home/a11bmafi/Library/trilinos/src-trilinos/cmake/tribits'
+-- TriBITS_VERSION_STRING='0.9 (Dev)'
+-- CMAKE_VERSION='3.20.2'
+-- CMAKE_GENERATOR='Unix Makefiles'
+-- CMAKE_HOST_SYSTEM_NAME='Linux'
+-- Trilinos_HOSTNAME='alaz'
+-- PYTHON_EXECUTABLE='/usr/bin/python'
+
+Setting up major user options ...
+
+
+***
+*** NOTE: Setting Trilinos_ENABLE_PyTrilinos=OFF because BUILD_SHARED_LIBS=OFF!
+***
+
+-- Setting Trilinos_ENABLE_TriKota=OFF because '/home/a11bmafi/Library/trilinos/src-trilinos/packages/TriKota/Dakota' does not exist!
+
+Trilinos repos versions:
+--------------------------------------------------------------------------------
+*** Base Git Repo: Trilinos
+82fe4c66880 [Thu Feb 3 12:03:20 2022 +0100] &lt;max@firmbach.com&gt;
+Beep boop
+ --------------------------------------------------------------------------------
+
+
+Reading list of native TPLs from /home/a11bmafi/Library/trilinos/src-trilinos/TPLsList.cmake
+
+-- Trilinos_NUM_TPLS='116'
+
+Reading list of native packages from /home/a11bmafi/Library/trilinos/src-trilinos/PackagesList.cmake
+
+-- Trilinos_NUM_PACKAGES='65'
+
+Processing Project, Repository, and Package dependency files and building internal dependencies graph ...
+
+-- Trilinos_NUM_SE_PACKAGES='162'
+-- Tentatively enabling TPL 'DLlib'
+
+Explicitly enabled packages on input (by user):  0
+
+Explicitly enabled SE packages on input (by user):  0
+
+Explicitly disabled packages on input (by user or by default):  TriKota PyTrilinos NewPackage 3
+
+Explicitly disabled SE packages on input (by user or by default):  ShyLU_NodeBasker ShyLU_NodeFastILU SEACASExotec2 TriKota ShyLU_DDCore PanzerExprEval PyTrilinos NewPackage 8
+
+Explicitly enabled TPLs on input (by user):  DLlib 1
+
+Explicitly disabled TPLs on input (by user or by default):  MPI 1
+
+Disabling all packages that have a required dependency on disabled TPLs and optional package TPL support based on TPL_ENABLE_&lt;TPL&gt;=OFF ...
+
+-- Setting Trilinos_ENABLE_STKCoupling=OFF because STKCoupling has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_STKMesh=OFF because STKMesh has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_STKSearch=OFF because STKSearch has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_ShyLU_DDBDDC=OFF because ShyLU_DDBDDC has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_ShyLU_DDFROSch=OFF because ShyLU_DDFROSch has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_PanzerDofMgr=OFF because PanzerDofMgr has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_PanzerDiscFE=OFF because PanzerDiscFE has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_PanzerMiniEM=OFF because PanzerMiniEM has a required library dependence on disabled TPL MPI
+-- Setting Trilinos_ENABLE_PikeBlackBox=OFF because PikeBlackBox has a required library dependence on disabled TPL MPI
+
+Disabling subpackages for hard disables of parent packages due to Trilinos_ENABLE_&lt;PARENT_PACKAGE&gt;=OFF ...
+
+
+Disabling forward required SE packages and optional intra-package support that have a dependency on disabled SE packages Trilinos_ENABLE_&lt;TRIBITS_PACKAGE&gt;=OFF ...
+
+-- Setting Trilinos_ENABLE_STKIO=OFF because STKIO has a required library dependence on disabled package STKMesh
+-- Setting Trilinos_ENABLE_STKTools=OFF because STKTools has a required library dependence on disabled package STKMesh
+-- Setting Trilinos_ENABLE_STKBalance=OFF because STKBalance has a required library dependence on disabled package STKMesh
+-- Setting Trilinos_ENABLE_STKSearchUtil=OFF because STKSearchUtil has a required library dependence on disabled package STKMesh
+-- Setting Trilinos_ENABLE_Percept=OFF because Percept has a required library dependence on disabled package STKMesh
+-- Setting Trilinos_ENABLE_PanzerAdaptersSTK=OFF because PanzerAdaptersSTK has a required library dependence on disabled package STKMesh
+-- Setting Trilinos_ENABLE_Krino=OFF because Krino has a required library dependence on disabled package STKIO
+-- Setting Trilinos_ENABLE_STKTransfer=OFF because STKTransfer has a required library dependence on disabled package STKSearch
+-- Setting Trilinos_ENABLE_ShyLU_DD=OFF because ShyLU_DD has a required library dependence on disabled package ShyLU_DDBDDC
+-- Setting Trilinos_ENABLE_ShyLU=OFF because ShyLU has a required library dependence on disabled package ShyLU_DD
+-- Setting Trilinos_ENABLE_PikeImplicit=OFF because PikeImplicit has a required library dependence on disabled package PikeBlackBox
+
+Enabling subpackages for hard enables of parent packages due to Trilinos_ENABLE_&lt;PARENT_PACKAGE&gt;=ON ...
+
+
+Enabling all required (and optional since Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES=ON) upstream SE packages for current set of enabled packages (Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON) ...
+
+
+Enabling all optional intra-package enables &lt;TRIBITS_PACKAGE&gt;_ENABLE_&lt;DEPPACKAGE&gt; that are not currently disabled if both sets of packages are enabled ...
+
+
+Enabling all remaining required TPLs for current set of enabled packages ...
+
+
+Enabling all optional package TPL support &lt;TRIBITS_PACKAGE&gt;_ENABLE_&lt;DEPTPL&gt; not currently disabled for enabled TPLs ...
+
+
+Enabling TPLs based on &lt;TRIBITS_PACKAGE&gt;_ENABLE_&lt;TPL&gt;=ON if TPL is not explicitly disabled ...
+
+
+Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ...
+
+
+Enabling the shell of non-enabled parent packages (mostly for show) that have at least one subpackage enabled ...
+
+
+Final set of enabled packages:  0
+
+Final set of enabled SE packages:  0
+
+Final set of non-enabled packages:  TrilinosFrameworkTests TrilinosATDMConfigTests Gtest Kokkos Teuchos KokkosKernels RTOp Sacado MiniTensor Epetra Zoltan Shards Triutils EpetraExt Tpetra TrilinosSS Domi Thyra Xpetra Isorropia Pliris AztecOO Galeri Amesos Pamgen Zoltan2Core Ifpack ML Belos ShyLU_Node Amesos2 SEACAS Komplex Anasazi Ifpack2 Stratimikos FEI Teko TriKota Intrepid Intrepid2 Compadre STK Percept Krino Phalanx NOX Moertel MueLu Zoltan2Sphynx Zoltan2 ShyLU_DD ShyLU Rythmos Tempus Stokhos ROL Piro Panzer PyTrilinos NewPackage Adelus TrilinosCouplings Pike TrilinosBuildStats 65
+
+Final set of non-enabled SE packages:  TrilinosFrameworkTests TrilinosATDMConfigTests Gtest KokkosCore KokkosContainers KokkosAlgorithms Kokkos TeuchosCore TeuchosParser TeuchosParameterList TeuchosComm TeuchosNumerics TeuchosRemainder TeuchosKokkosCompat TeuchosKokkosComm Teuchos KokkosKernels RTOp Sacado MiniTensor Epetra Zoltan Shards Triutils EpetraExt TpetraClassic TpetraTSQR TpetraCore Tpetra TrilinosSS Domi ThyraCore ThyraEpetraAdapters ThyraEpetraExtAdapters ThyraTpetraAdapters Thyra Xpetra Isorropia Pliris AztecOO Galeri Amesos Pamgen Zoltan2Core Ifpack ML Belos ShyLU_NodeHTS ShyLU_NodeTacho ShyLU_NodeBasker ShyLU_NodeFastILU ShyLU_Node Amesos2 SEACASExodus SEACASExodus_for SEACASExoIIv2for32 SEACASNemesis SEACASIoss SEACASChaco SEACASAprepro_lib SEACASSupes SEACASSuplib SEACASSuplibC SEACASSuplibCpp SEACASSVDI SEACASPLT SEACASAlgebra SEACASAprepro SEACASBlot SEACASConjoin SEACASEjoin SEACASEpu SEACASCpup SEACASExo2mat SEACASExodiff SEACASExomatlab SEACASExotxt SEACASExo_format SEACASEx1ex2v2 SEACASExotec2 SEACASFastq SEACASGjoin SEACASGen3D SEACASGenshell SEACASGrepos SEACASExplore SEACASMapvarlib SEACASMapvar SEACASMapvar-kd SEACASMat2exo SEACASNas2exo SEACASZellij SEACASNemslice SEACASNemspread SEACASNumbers SEACASSlice SEACASTxtexo SEACASEx2ex1v2 SEACAS Komplex Anasazi Ifpack2 Stratimikos FEI Teko TriKota Intrepid Intrepid2 Compadre STKUtil STKEmend STKCoupling STKMath STKSimd STKNGP_TEST STKTopology STKMesh STKIO STKSearch STKTransfer STKTools STKBalance STKUnit_test_utils STKSearchUtil STKUnit_tests STKDoc_tests STKExprEval STK Percept Krino Phalanx NOX Moertel MueLu Zoltan2Sphynx Zoltan2 ShyLU_DDBDDC ShyLU_DDFROSch ShyLU_DDCore ShyLU_DDCommon ShyLU_DD ShyLU Rythmos Tempus Stokhos ROL Piro PanzerCore PanzerDofMgr PanzerDiscFE PanzerAdaptersSTK PanzerMiniEM PanzerExprEval Panzer PyTrilinos NewPackage Adelus TrilinosCouplings PikeBlackBox PikeImplicit Pike TrilinosBuildStats 162
+
+Final set of enabled TPLs:  DLlib 1
+
+Final set of non-enabled TPLs:  MKL yaml-cpp Peano CUDA CUBLAS CUSOLVER CUSPARSE Thrust Cusp TBB Pthread HWLOC QTHREAD BinUtils ARPREC QD MPI BLAS LAPACK Boost Scotch OVIS gpcd METIS MTMETIS ParMETIS PuLP TopoManager LibTopoMap PaToH CppUnit ADOLC ADIC TVMET MF ExodusII Nemesis XDMF Zlib HDF5 CGNS Pnetcdf Netcdf ADIOS2 y12m SuperLUDist SuperLUMT SuperLU Cholmod UMFPACK MA28 AMD CSparse HYPRE PETSC BLACS SCALAPACK MUMPS STRUMPACK PARDISO_MKL PARDISO Oski TAUCS ForUQTK Dakota HIPS MATLAB CASK SPARSKIT QT gtest BoostLib BoostAlbLib OpenNURBS Portals CrayPortals Gemini InfiniBand BGPDCMF BGQPAMI Pablo HPCToolkit Clp GLPK qpOASES Matio PAPI MATLABLib Eigen X11 Lemon GLM quadmath CAMAL RTlib AmgX CGAL CGALCore VTune TASMANIAN ArrayFireCPU SimMesh SimModel SimParasolid SimAcis SimField Valgrind QUO ViennaCL Avatar mlpack pebbl MAGMASparse Check SARMA 115
+
+Setting up export dependencies for all enabled SE packages ...
+
+
+Probing the environment ...
+
+-- USE_XSDK_DEFAULTS='FALSE'
+-- BUILD_SHARED_LIBS='FALSE'
+-- CMAKE_BUILD_TYPE='Debug'
+-- CMAKE_C_COMPILER_ID='GNU'
+-- CMAKE_C_COMPILER_VERSION='9.3.0'
+-- CMAKE_CXX_COMPILER_ID='GNU'
+-- CMAKE_CXX_COMPILER_VERSION='9.3.0'
+-- Trilinos_SET_INSTALL_RPATH='TRUE'
+-- CMAKE_INSTALL_RPATH_USE_LINK_PATH='TRUE'
+-- Setting default for CMAKE_INSTALL_RPATH pointing to Trilinos_INSTALL_LIB_DIR
+-- CMAKE_INSTALL_RPATH='/usr/local/lib'
+
+Getting information for all enabled TPLs ...
+
+Processing enabled TPL: DLlib (enabled explicitly, disable with -DTPL_ENABLE_DLlib=OFF)
+-- Attempting to tentatively enable TPL 'DLlib' ...
+-- DLlib_LIBRARY_NAMES='dl'
+-- TPL_DLlib_LIBRARIES='/usr/lib/x86_64-linux-gnu/libdl.so'
+-- Attempt to tentatively enable TPL 'DLlib' passed!
+
+Setting up testing support ...
+
+-- CTEST_DROP_METHOD='http'
+-- CTEST_DROP_SITE='testing.sandia.gov'
+-- CTEST_PROJECT_NAME='Trilinos'
+-- CTEST_DROP_LOCATION='/cdash/submit.php?project=Trilinos'
+-- CTEST_TRIGGER_SITE=''
+-- CTEST_DROP_SITE_CDASH='TRUE'
+-- TRIBITS_2ND_CTEST_DROP_SITE='testing-dev.sandia.gov'
+-- TRIBITS_2ND_CTEST_DROP_LOCATION='/cdash/submit.php?project=Trilinos'
+
+Configuring individual enabled Trilinos packages ...
+
+
+No ETI support requested by packages.
+
+
+***
+*** WARNING:  There were no packages configured so no libraries or tests/examples will be built!
+***
+
+
+Set up for creating a distribution ...
+
+
+Finished configuring Trilinos!
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/a11bmafi/Library/trilinos/src-trilinos/cmake-build-debug
+</Log>
+		<ConfigureStatus>0</ConfigureStatus>
+		<EndDateTime>Feb 03 12:44 CET</EndDateTime>
+		<EndConfigureTime>1643888689</EndConfigureTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Configure>
+</Site>

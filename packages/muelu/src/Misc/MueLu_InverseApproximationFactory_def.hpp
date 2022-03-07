@@ -60,7 +60,7 @@
 #include "MueLu_Level.hpp"
 #include "MueLu_Monitor.hpp"
 #include "MueLu_Utilities.hpp"
-#include "MueLu_SPAI.hpp"
+#include "MueLu_Spai.hpp"
 #include "MueLu_InverseApproximationFactory_decl.hpp"
 //#include "MueLu_HierarchyHelpers.hpp"
 
@@ -132,8 +132,11 @@ namespace MueLu {
     else if(method=="SPAI")
     {
       // Implementation ongoing!
-      RCP<SPAI> spai = Teuchos::rcp(new SPAI());
+      RCP<Spai> spai = Teuchos::rcp(new Spai());
 
+      /* think about this
+        How to choose an appropriate sparsity pattern
+      */
       RCP<Matrix> AA = MatrixFactory::Build(A->getRowMap(), Teuchos::as<LO>(0));
       MatrixMatrix::Multiply(*A, false, *A, false, *AA);
 
@@ -142,8 +145,6 @@ namespace MueLu {
 
       RCP<const CrsGraph> pattern = AAA->getCrsGraph();
 
-      // actually we want to return the inverse here ... otherwise we got everything we want argumentwise
-      // patternwise different things are possible, given above is just the same pattern as input matrix???
       M = spai->BuildInverse(A, pattern);
     }
 
