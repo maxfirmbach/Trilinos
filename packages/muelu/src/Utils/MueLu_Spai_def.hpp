@@ -50,7 +50,7 @@ namespace MueLu {
     Ainv->resumeFill();
 
     // loop over all rows of the inverse sparsity pattern (this can be done in parallel)
-    for(size_t k=0; k<Ainv->getNodeNumRows(); k++) {
+    for(size_t k=0; k<Ainv->getLocalNumRows(); k++) {
 
       // 1. get sparsity pattern Ik of local row k (done)
       ArrayView<const LO> Ik;
