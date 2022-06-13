@@ -47,15 +47,16 @@
 #define MUELU_INVERSEAPPROXIMATIONFACTORY_DEF_HPP_
 
 #include <Xpetra_BlockedCrsMatrix.hpp>
+#include <Xpetra_CrsGraph.hpp>
+#include <Xpetra_CrsGraphFactory.hpp>
+#include <Xpetra_CrsMatrixWrap.hpp>
+#include <Xpetra_CrsMatrix.hpp>
 #include <Xpetra_MultiVectorFactory.hpp>
 #include <Xpetra_VectorFactory.hpp>
 #include <Xpetra_MatrixFactory.hpp>
 #include <Xpetra_Matrix.hpp>
 #include <Xpetra_MatrixMatrix.hpp>
 #include <Xpetra_TripleMatrixMultiply.hpp>
-#include <Xpetra_CrsMatrixWrap.hpp>
-#include <Xpetra_BlockedCrsMatrix.hpp>
-#include <Xpetra_CrsMatrix.hpp>
 
 #include <Teuchos_SerialDenseVector.hpp>
 #include <Teuchos_SerialDenseMatrix.hpp>
@@ -75,7 +76,8 @@ namespace MueLu {
     validParamList->set<RCP<const FactoryBase> >("A", NoFactory::getRCP(), "Matrix to build the approximate inverse on.\n");
 
     validParamList->set<std::string>            ("inverse: approximation type",  "diagonal", "Method used to approximate the inverse.");
-    validParamList->set<bool>                   ("inverse: fixing",              false     , "Fix diagonal by replacing small entries with 1.0");
+    validParamList->set<Scalar>                 ("inverse: drop tolerance",      1e-8      , "Below threshold values are dropped from the matrix.");
+    validParamList->set<bool>                   ("inverse: fixing",              false     , "Keep diagonal and fix small entries with 1.0");
 
     return validParamList;
   }
@@ -107,20 +109,29 @@ namespace MueLu {
     // if blocked operator is used, defaults to A(0,0)
     if(isBlocked) A = bA->getMatrix(0,0);
 
+    const Scalar tol = pL.get<Scalar>("inverse: drop tolerance");
     RCP<Matrix> Ainv = Teuchos::null;
-    if(method=="diagonal") {
+
+    if(method=="diagonal")
+    {
       const auto diag = VectorFactory::Build(A->getRangeMap(), true);
       A->getLocalDiagCopy(*diag);
-      const RCP<const Vector> D = (!fixing ? Utilities::GetInverse(diag) : Utilities::GetInverse(diag, 1e-4, one));
+      const RCP<const Vector> D = (!fixing ? Utilities::GetInverse(diag) : Utilities::GetInverse(diag, tol, one));
       Ainv = MatrixFactory::Build(D);
     }
-    else if(method=="lumping") {
+    else if(method=="lumping")
+    {
       const auto diag = Utilities::GetLumpedMatrixDiagonal(*A);
-      const RCP<const Vector> D = (!fixing ? Utilities::GetInverse(diag) : Utilities::GetInverse(diag, 1e-4, one));
+      const RCP<const Vector> D = (!fixing ? Utilities::GetInverse(diag) : Utilities::GetInverse(diag, tol, one));
       Ainv = MatrixFactory::Build(D);
     }
-    else if(method=="spai") {
-      Ainv = GetSparseInverse(A, A->getCrsGraph());
+    else if(method=="spai")
+    {
+      RCP<CrsGraph> sparsityPattern = Utilities::GetThresholdedGraph(A, tol, A->getGlobalMaxNumRowEntries());
+      GetOStream(Statistics1) << "NNZ Graph(A): " << A->getCrsGraph()->getGlobalNumEntries() << " , NZZ Tresholded Graph(A): " << sparsityPattern->getGlobalNumEntries() << std::endl;
+      RCP<Matrix> pAinv = GetSparseInverse(A, sparsityPattern);
+      Ainv = Utilities::GetThresholdedMatrix(pAinv, tol, fixing, pAinv->getGlobalMaxNumRowEntries());
+      GetOStream(Statistics1) << "Nonzeros in Ainv (input): " << pAinv->getGlobalNumEntries() << ", Nonzeros after filtering Ainv (parameter: " << tol << "): " << Ainv->getGlobalNumEntries() << std::endl;
     }
 
     GetOStream(Statistics1) << "Approximate inverse calculated by: " << method << "." << std::endl;
