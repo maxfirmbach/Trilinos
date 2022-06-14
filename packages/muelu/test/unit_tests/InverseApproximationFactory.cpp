@@ -264,7 +264,7 @@ namespace MueLuTests {
       TEST_EQUALITY(Ainv->getRangeMap()->getMaxGlobalIndex(), comm->getRank() * int(n/comm->getSize()) + int(n/comm->getSize()-1));
       TEST_EQUALITY(Ainv->getDomainMap()->getMinGlobalIndex(), comm->getRank() * int(n/comm->getSize()));
       TEST_EQUALITY(Ainv->getDomainMap()->getMaxGlobalIndex(), comm->getRank() * int(n/comm->getSize()) + int(n/comm->getSize()-1));
-      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 3.037251711528645, 1e2*TMT::eps());
+      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 3.037251711528645, 1e1*TMT::eps());
     }
 
     {
@@ -291,7 +291,7 @@ namespace MueLuTests {
       TEST_EQUALITY(Ainv->getRangeMap()->getMaxGlobalIndex(), comm->getRank() * int(n*n/comm->getSize()) + int(n*n/comm->getSize()-1));
       TEST_EQUALITY(Ainv->getDomainMap()->getMinGlobalIndex(), comm->getRank() * int(n*n/comm->getSize()));
       TEST_EQUALITY(Ainv->getDomainMap()->getMaxGlobalIndex(), comm->getRank() * int(n*n/comm->getSize()) + int(n*n/comm->getSize()-1));
-      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 12.41994595675205, 1e3*TMT::eps());
+      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 12.41994595675205, 2e2*TMT::eps());
     }
 
     // test with a highly nonsymmetric matrix
@@ -300,7 +300,7 @@ namespace MueLuTests {
 
       // Don't test for complex - matrix reader won't work
       if (STS::isComplex) {success=true; return;}
-      RCP<Matrix> A = Xpetra::IO<Scalar,LocalOrdinal,GlobalOrdinal,Node>::Read("TestMatrices/nonsym.mm", lib, comm);
+      RCP<Matrix> A = Xpetra::IO<Scalar,LocalOrdinal,GlobalOrdinal,Node>::Read("TestMatrices/nonsym1.mm", lib, comm);
 
       Level level;
       TestHelpers::TestFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>::createSingleLevelHierarchy(level);
@@ -318,15 +318,53 @@ namespace MueLuTests {
 
       RCP<Matrix> Ainv = level.Get<RCP<Matrix> >("Ainv", invapproxFact.get());
       TEST_EQUALITY(Ainv.is_null(), false);
-      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 0.1235706050986417, 1e2*TMT::eps());
+      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 0.123570605098642, 2e1*TMT::eps());
       // check values of first row only on root
       if(comm->getRank() == 0) {
         ArrayView<const LocalOrdinal> indices;
         ArrayView<const Scalar> values;
         Ainv->getLocalRowView(0, indices, values);
-        TEST_FLOATING_EQUALITY(values[0], 1.0000000000000002e-01, 1e2*TMT::eps());
-        TEST_FLOATING_EQUALITY(values[1], -1.6666666666666673e-02, 1e2*TMT::eps());
-        TEST_FLOATING_EQUALITY(values[2], 4.6666666666666688e-03, 1e2*TMT::eps());
+        TEST_FLOATING_EQUALITY(values[0], 1.0000000000000002e-01, 1e1*TMT::eps());
+        TEST_FLOATING_EQUALITY(values[1], -1.6666666666666673e-02, 1e1*TMT::eps());
+        TEST_FLOATING_EQUALITY(values[2], 4.6666666666666688e-03, 1e1*TMT::eps());
+      }
+    }
+
+    // test with a highly nonsymmetric matrix using powers
+    {
+      using STS = Teuchos::ScalarTraits<SC>;
+
+      // Don't test for complex - matrix reader won't work
+      if (STS::isComplex) {success=true; return;}
+      RCP<Matrix> A = Xpetra::IO<Scalar,LocalOrdinal,GlobalOrdinal,Node>::Read("TestMatrices/nonsym2.mm", lib, comm);
+
+      Level level;
+      TestHelpers::TestFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>::createSingleLevelHierarchy(level);
+      level.Set("A", A);
+
+      RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
+      invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: drop tolerance", Teuchos::ParameterEntry(1e-8));
+      invapproxFact->SetParameter("inverse: power", Teuchos::ParameterEntry(2));
+
+      // request InverseApproximation operator
+      level.Request("Ainv", invapproxFact.get());
+
+      // generate Schur complement operator
+      invapproxFact->Build(level);
+
+      RCP<Matrix> Ainv = level.Get<RCP<Matrix> >("Ainv", invapproxFact.get());
+      TEST_EQUALITY(Ainv.is_null(), false);
+      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 0.122733119878321, 2e1*TMT::eps());
+      // check values of first row only on root
+      if(comm->getRank() == 0) {
+        ArrayView<const LocalOrdinal> indices;
+        ArrayView<const Scalar> values;
+        Ainv->getLocalRowView(0, indices, values);
+        TEST_FLOATING_EQUALITY(values[0], 0.099075297225892, 1e2*TMT::eps());
+        TEST_FLOATING_EQUALITY(values[1], -0.016512549537649, 1e3*TMT::eps());
+        TEST_FLOATING_EQUALITY(values[2], 0.004623513870542, 1e3*TMT::eps());
       }
     }
 
@@ -357,6 +395,35 @@ namespace MueLuTests {
       TEST_EQUALITY(Ainv.is_null(), false);
       TEST_EQUALITY(Ainv->getGlobalNumEntries(), 117519);
       TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 8.316898282733437e+06, 2e3*TMT::eps());
+    }
+
+    // Test pre and post filtering of approximate inverse with powers
+    {
+      using STS = Teuchos::ScalarTraits<SC>;
+
+      // Don't test for complex - matrix reader won't work
+      if (STS::isComplex) {success=true; return;}
+      RCP<Matrix> A = Xpetra::IO<Scalar,LocalOrdinal,GlobalOrdinal,Node>::Read("TestMatrices/beam.mm", lib, comm);
+
+      Level level;
+      TestHelpers::TestFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>::createSingleLevelHierarchy(level);
+      level.Set("A", A);
+
+      RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
+      invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
+      invapproxFact->SetParameter("inverse: drop tolerance", Teuchos::ParameterEntry(Scalar(1e-10)));
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: power", Teuchos::ParameterEntry(3 ));
+
+      // request InverseApproximation operator
+      level.Request("Ainv", invapproxFact.get());
+
+      // generate Schur complement operator
+      invapproxFact->Build(level);
+
+      RCP<Matrix> Ainv = level.Get<RCP<Matrix> >("Ainv", invapproxFact.get());
+      TEST_EQUALITY(Ainv.is_null(), false);
+      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 1.149564764393621e+07, 5e3*TMT::eps());
     }
 
   } //InverseSpaiConstructor
