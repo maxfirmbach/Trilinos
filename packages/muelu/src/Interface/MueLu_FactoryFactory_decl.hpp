@@ -134,6 +134,7 @@
 #include "MueLu_SchurComplementFactory.hpp"
 #include "MueLu_SimpleSmoother.hpp"
 #include "MueLu_SmootherFactory.hpp"
+#include "MueLu_SpaiBlockSmoother.hpp"
 #include "MueLu_StructuredAggregationFactory.hpp"
 #include "MueLu_StructuredLineDetectionFactory.hpp"
 #include "MueLu_SubBlockAFactory.hpp"
@@ -377,6 +378,7 @@ namespace MueLu {
       if (factoryName == "IndefiniteBlockDiagonalSmoother") return BuildBlockedSmoother<IndefBlockedDiagonalSmoother>(paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "SimpleSmoother")                  return BuildBlockedSmoother<SimpleSmoother>(paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "SchurComplementFactory")          return Build2<SchurComplementFactory> (paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BlockedSpaiSmoother")                return BuildBlockedSmoother<SpaiBlockSmoother>(paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "RebalanceBlockRestrictionFactory")return BuildBlockedFactory<RebalanceBlockRestrictionFactory>(paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "RebalanceBlockAcFactory")         return BuildBlockedFactory<RebalanceBlockAcFactory>(paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "RebalanceBlockInterpolationFactory") return BuildBlockedFactory<RebalanceBlockInterpolationFactory>(paramList, factoryMapIn, factoryManagersIn);
