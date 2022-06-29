@@ -57,6 +57,9 @@
 #include <Xpetra_BlockedCrsMatrix.hpp>
 #include <Xpetra_CrsMatrix.hpp>
 
+#include <Xpetra_IO.hpp>
+#include <Xpetra_ReorderedBlockedCrsMatrix.hpp>
+
 #include "MueLu_Level.hpp"
 #include "MueLu_Monitor.hpp"
 #include "MueLu_Utilities.hpp"
@@ -82,7 +85,7 @@ namespace MueLu {
   template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
   void SchurComplementFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::DeclareInput(Level& currentLevel) const {
     Input(currentLevel, "A");
-    
+
     // Get default or user-given inverse approximation factory
     RCP<const FactoryBase> AinvFact = GetFactory("Ainv");
     currentLevel.DeclareInput("Ainv", AinvFact.get(), this);
@@ -124,6 +127,11 @@ namespace MueLu {
 
     RCP<BlockedCrsMatrix> bA01 = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(A01);
     const bool isBlocked = (bA01 == Teuchos::null ? false : true);
+    // Check if offblock is unwrapable ... most likely due to reordering
+    bool isUnwrap = false;
+    if(bA01 != Teuchos::null)
+      if(bA01->Rows() == 1 && bA01->Cols() == 1)
+        isUnwrap = true;
 
     const ParameterList& pL = GetParameterList();
     const SC omega = pL.get<Scalar>("omega");
@@ -140,19 +148,27 @@ namespace MueLu {
       Ainv->scale(Teuchos::as<Scalar>(-one/omega));
 
       // build Schur complement operator
-      if (!isBlocked) {
+      if (!isBlocked || isUnwrap) {
         RCP<ParameterList> myparams = rcp(new ParameterList);
         myparams->set("compute global constants", true);
 
-        // -1/omega*Ainv*A01
-        TEUCHOS_TEST_FOR_EXCEPTION(A01->getRangeMap()->isSameAs(*(Ainv->getDomainMap())) == false, Exceptions::RuntimeError,
-                                   "MueLu::SchurComplementFactory::Build: RangeMap of A01 and domain map of Ainv are not the same.");
-        RCP<Matrix> C = MatrixMatrix::Multiply(*Ainv, false, *A01, false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"), myparams);
+        if(isUnwrap) {
+          auto bA10  = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(A10);
+          RCP<Matrix> C = MatrixMatrix::Multiply(*Ainv, false, *(bA01->getCrsMatrix()), false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"), myparams);
 
-        // -1/omega*A10*Ainv*A01
-        TEUCHOS_TEST_FOR_EXCEPTION(A01->getRangeMap()->isSameAs(*(A10->getDomainMap())) == false, Exceptions::RuntimeError,
-                                   "MueLu::SchurComplementFactory::Build: RangeMap of A10 and domain map A01 are not the same.");
-        D = MatrixMatrix::Multiply(*A10, false, *C, false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"), myparams);
+          D = MatrixMatrix::Multiply(*(bA10->getCrsMatrix()), false, *C, false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"), myparams);
+        }
+        else {
+          // -1/omega*Ainv*A01
+          TEUCHOS_TEST_FOR_EXCEPTION(A01->getRangeMap()->isSameAs(*(Ainv->getDomainMap())) == false, Exceptions::RuntimeError,
+                                     "MueLu::SchurComplementFactory::Build: RangeMap of A01 and domain map of Ainv are not the same.");
+          RCP<Matrix> C = MatrixMatrix::Multiply(*Ainv, false, *A01, false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"), myparams);
+
+          // -1/omega*A10*Ainv*A01
+          TEUCHOS_TEST_FOR_EXCEPTION(A01->getRangeMap()->isSameAs(*(A10->getDomainMap())) == false, Exceptions::RuntimeError,
+                                    "MueLu::SchurComplementFactory::Build: RangeMap of A10 and domain map A01 are not the same.");
+          D = MatrixMatrix::Multiply(*A10, false, *C, false, GetOStream(Statistics2), true, true, std::string("SchurComplementFactory"), myparams);
+        }
       }
       else {
         // nested blocking
