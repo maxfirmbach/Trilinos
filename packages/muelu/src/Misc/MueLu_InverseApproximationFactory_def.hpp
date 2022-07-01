@@ -81,7 +81,7 @@ namespace MueLu {
     validParamList->set<RCP<const FactoryBase> >("A", NoFactory::getRCP(), "Matrix to build the approximate inverse on.\n");
 
     validParamList->set<std::string>            ("inverse: approximation type",  "diagonal", "Method used to approximate the inverse.");
-    validParamList->set<Scalar>                 ("inverse: drop tolerance",      1e-8      , "Below threshold values are dropped from the matrix.");
+    validParamList->set<double>                 ("inverse: drop tolerance",      1e-8      , "Below threshold values are dropped from the matrix.");
     validParamList->set<bool>                   ("inverse: fixing",              false     , "Keep diagonal and fix small entries with 1.0");
     validParamList->set<int>                    ("inverse: power",               1         , "Factor used to calculate the power of the static inverse sparsity pattern");
 
@@ -98,6 +98,7 @@ namespace MueLu {
     FactoryMonitor m(*this, "Build", currentLevel);
 
     using STS = Teuchos::ScalarTraits<SC>;
+    using MT = typename STS::magnitudeType;
     const SC one = STS::one();
 
     const ParameterList& pL = GetParameterList();
@@ -115,7 +116,7 @@ namespace MueLu {
     // if blocked operator is used, defaults to A(0,0)
     if(isBlocked) A = bA->getMatrix(0,0);
 
-    const Scalar tol = pL.get<Scalar>("inverse: drop tolerance");
+    const MT tol = pL.get<MT>("inverse: drop tolerance");
 
     RCP<Matrix> Ainv = Teuchos::null;
     if(method=="diagonal")
