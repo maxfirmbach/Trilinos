@@ -135,6 +135,7 @@
 #include "MueLu_SimpleSmoother.hpp"
 #include "MueLu_SmootherFactory.hpp"
 #include "MueLu_SpaiBlockSmoother.hpp"
+#include "MueLu_SparseApproximateInverseSmoother.hpp"
 #include "MueLu_StructuredAggregationFactory.hpp"
 #include "MueLu_StructuredLineDetectionFactory.hpp"
 #include "MueLu_SubBlockAFactory.hpp"
@@ -297,6 +298,7 @@ namespace MueLu {
       if (factoryName == "SemiCoarsenPFactory")                   return Build2<SemiCoarsenPFactory>                   (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "StructuredAggregationFactory")          return Build2<StructuredAggregationFactory>          (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "StructuredLineDetectionFactory")        return Build2<StructuredLineDetectionFactory>        (paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "SparseApproximateInverseSmoother")      return BuildSmoother<SparseApproximateInverseSmoother>(paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "SubBlockAFactory")                      return Build2<SubBlockAFactory>                      (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "TentativePFactory")                     return Build2<TentativePFactory>                     (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "ToggleCoordinatesTransferFactory")      return BuildToggleCoordinatesTransferFactory         (paramList, factoryMapIn, factoryManagersIn);
@@ -747,6 +749,14 @@ namespace MueLu {
       return rcp(new SmootherFactory(matSmoo));
     }
 #endif
+
+    template <class T>
+    RCP<FactoryBase> BuildSmoother(const Teuchos::ParameterList & paramList, const FactoryMap & factoryMapIn, const FactoryManagerMap& factoryManagersIn) const {
+
+      Teuchos::ParameterList params; if(paramList.isParameter("ParameterList")) params  = paramList.get<Teuchos::ParameterList>("ParameterList");
+
+      return rcp(new SmootherFactory(rcp(new T(params)), Teuchos::null));
+    }
 
     RCP<FactoryBase> BuildDirectSolver(const Teuchos::ParameterList& paramList, const FactoryMap& /* factoryMapIn */, const FactoryManagerMap& /* factoryManagersIn */) const {
       if (paramList.begin() == paramList.end())

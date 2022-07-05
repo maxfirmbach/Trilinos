@@ -101,6 +101,7 @@ APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::StratimikosSmoother-.?if.defined
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::StructuredAggregationFactory )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::StructuredLineDetectionFactory )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::SpaiBlockSmoother )
+APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::SparseApproximateInverseSmoother )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::SubBlockAFactory )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::TekoSmoother-.?ifdef.HAVE_MUELU_TEKO )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::TentativePFactory )
