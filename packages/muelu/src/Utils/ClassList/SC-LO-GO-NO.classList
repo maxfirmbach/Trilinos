@@ -107,6 +107,7 @@ StratimikosSmoother - #if defined(HAVE_MUELU_STRATIMIKOS) && defined(HAVE_MUELU_
 StructuredAggregationFactory
 StructuredLineDetectionFactory
 SpaiBlockSmoother
+SparseApproximateInverseSmoother
 SubBlockAFactory
 TekoSmoother - #ifdef HAVE_MUELU_TEKO
 TentativePFactory

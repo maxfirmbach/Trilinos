@@ -329,6 +329,9 @@ typedef MueLu::StructuredLineDetectionFactory<Scalar,LocalOrdinal,GlobalOrdinal,
 #ifdef MUELU_SPAIBLOCKSMOOTHER_SHORT
 typedef MueLu::SpaiBlockSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> SpaiBlockSmoother;
 #endif
+#ifdef MUELU_SPARSEAPPROXIMATEINVERSESMOOTHER_SHORT
+typedef MueLu::SparseApproximateInverseSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> SparseApproximateInverseSmoother;
+#endif
 #ifdef MUELU_SUBBLOCKAFACTORY_SHORT
 typedef MueLu::SubBlockAFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node> SubBlockAFactory;
 #endif
