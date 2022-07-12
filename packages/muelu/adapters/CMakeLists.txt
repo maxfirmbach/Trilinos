@@ -96,6 +96,8 @@ APPEND_SET(HEADERS
   ${CMAKE_CURRENT_SOURCE_DIR}/xpetra/MueLu_Maxwell1_def.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/xpetra/MueLu_Maxwell_Utils_decl.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/xpetra/MueLu_Maxwell_Utils_def.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/xpetra/MueLu_MueLuSmoother_decl.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/xpetra/MueLu_MueLuSmoother_def.hpp
 
 )
 
@@ -188,6 +190,7 @@ IF(${PACKAGE_NAME}_ENABLE_EXPLICIT_INSTANTIATION)
       MueLu::Maxwell_Utils
       MueLu::RefMaxwell
       MueLu::Maxwell1
+      MueLu::MueLuSmoother
       )
     IF (${PACKAGE_NAME}_ENABLE_Stratimikos)
       APPEND_GLOBAL_SET(MUELUADAPTERS_ETI_CLASSES
