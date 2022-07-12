@@ -59,6 +59,7 @@ APPEND_SET(SOURCES
   SaPFactory.cpp
   ScaledNullspaceFactory.cpp
   SemiCoarsenPFactory.cpp
+  Smoothers/MueLuSmoother.cpp
   Smoothers/SmootherFactory.cpp
   StructuredAggregationFactory.cpp
   StructuredLineDetection.cpp

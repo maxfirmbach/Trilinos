@@ -112,6 +112,7 @@
 #include "MueLu_MapTransferFactory.hpp"
 #include "MueLu_MatrixAnalysisFactory.hpp"
 #include "MueLu_MultiVectorTransferFactory.hpp"
+#include "MueLu_MueLuSmoother.hpp"
 #include "MueLu_NotayAggregationFactory.hpp"
 #include "MueLu_NullspaceFactory.hpp"
 #include "MueLu_NullspacePresmoothFactory.hpp"
@@ -276,6 +277,7 @@ namespace MueLu {
       if (factoryName == "MapTransferFactory")                    return Build2<MapTransferFactory>                    (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "MatrixAnalysisFactory")                 return Build2<MatrixAnalysisFactory>                 (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "MultiVectorTransferFactory")            return Build2<MultiVectorTransferFactory>            (paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "MueLuSmoother")                         return BuildSmoother<MueLuSmoother>                  (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "NoFactory")                             return MueLu::NoFactory::getRCP();
       if (factoryName == "NoSmoother")                            return rcp(new SmootherFactory(Teuchos::null));
 #ifdef HAVE_MUELU_KOKKOS_REFACTOR
@@ -751,6 +753,14 @@ namespace MueLu {
       return rcp(new SmootherFactory(matSmoo));
     }
 #endif
+
+    template <class T>
+    RCP<FactoryBase> BuildSmoother(const Teuchos::ParameterList & paramList, const FactoryMap & factoryMapIn, const FactoryManagerMap& factoryManagersIn) const {
+
+      Teuchos::ParameterList params; if(paramList.isParameter("ParameterList")) params  = paramList.get<Teuchos::ParameterList>("ParameterList");
+
+      return rcp(new SmootherFactory(rcp(new T(params)), Teuchos::null));
+    }
 
     RCP<FactoryBase> BuildDirectSolver(const Teuchos::ParameterList& paramList, const FactoryMap& /* factoryMapIn */, const FactoryManagerMap& /* factoryManagersIn */) const {
       if (paramList.begin() == paramList.end())
