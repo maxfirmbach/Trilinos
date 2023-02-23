@@ -69,6 +69,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/ProjectName.cmake)
 # not in an include file :-(
 PROJECT(${PROJECT_NAME} NONE)
 
+# Set up to use ccache
 if($ENV{CCACHE_NODISABLE})
 # ccache must be requested explicitly by setting env-var CCACHE_NODISABLE
 find_program(CCACHE_PROGRAM ccache)
@@ -100,8 +101,11 @@ else()
 endif()
 endif()
 
-## set an env so we know we are in configure
+# Set an env so we know we are in configure
 set(ENV{CMAKE_IS_IN_CONFIGURE_MODE} 1)
+
+# Don't define TriBITS override of include_directories()
+set(TRIBITS_HIDE_DEPRECATED_INCLUDE_DIRECTORIES_OVERRIDE TRUE)
 
 #
 # B) Pull in the TriBITS system and execute
@@ -127,9 +131,8 @@ IF (NOT CMAKE_CXX_STANDARD MATCHES "^${${PROJECT_NAME}_CMAKE_CXX_STANDARDS_ALLOW
     "CMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD} is not in the allowed set "
     "${${PROJECT_NAME}_CMAKE_CXX_STANDARDS_ALLOWED}")
 ENDIF ()
-# ToDo: We may want to warn about using a non-default version of C++ but
-# really Trilinos should support bulding with every newer C++ standard so we
-# should just be doing that instead.
+
+message(STATUS "The Current CXX Standard is : " ${CMAKE_CXX_STANDARD})
 
 # Force off support for Makefile.export.* files while TriBITS is refactored to
 # remove this (#8498)
