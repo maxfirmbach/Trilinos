@@ -71,6 +71,7 @@
 #include "MueLu_AggregationExportFactory.hpp"
 #include "MueLu_AmalgamationFactory.hpp"
 #include "MueLu_BlackBoxPFactory.hpp"
+#include "MueLu_BlockedAmalgamationFactory.hpp"
 #include "MueLu_BlockedCoarseMapFactory.hpp"
 #include "MueLu_BlockedCoordinatesTransferFactory.hpp"
 #include "MueLu_BlockedDirectSolver.hpp"
@@ -243,6 +244,7 @@ namespace MueLu {
       if (factoryName == "AggregateQualityEstimateFactory")       return Build2<AggregateQualityEstimateFactory>       (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "AggregationExportFactory")              return Build2<AggregationExportFactory>              (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "AmalgamationFactory")                   return Build2<AmalgamationFactory>                   (paramList, factoryMapIn, factoryManagersIn);
+      if (factoryName == "BlockedAmalgamationFactory")            return Build2<BlockedAmalgamationFactory>            (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "BlockedCoarseMapFactory")               return Build2<BlockedCoarseMapFactory>               (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "BlockedRAPFactory")                     return BuildRAPFactory<BlockedRAPFactory>            (paramList, factoryMapIn, factoryManagersIn);
       if (factoryName == "BrickAggregationFactory")               return Build2<BrickAggregationFactory>               (paramList, factoryMapIn, factoryManagersIn);

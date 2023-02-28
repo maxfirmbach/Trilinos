@@ -198,16 +198,19 @@ namespace MueLu {
 
   } //UnamalgamateAggregatesLO
 
+  /////////////////////////////////////////////////////////////////////////////
+
   template <class LocalOrdinal, class GlobalOrdinal, class Node>
   void AmalgamationInfo<LocalOrdinal, GlobalOrdinal, Node>::print(Teuchos::FancyOStream &out,
       const VerbLevel verbLevel) const
   {
-    if (!(verbLevel & Debug))
-      return;
+    //if (!(verbLevel & true))
+    //  return;
 
     out << "AmalgamationInfo -- Striding information:"
         << "\n  fullBlockSize = " << fullblocksize_
         << "\n  blockID = " << blockid_
+        << "\n  offset = " << offset_
         << "\n  stridingOffset = " << nStridedOffset_
         << "\n  stridedBlockSize = " << stridedblocksize_
         << "\n  indexBase = " << indexBase_
@@ -250,6 +253,10 @@ namespace MueLu {
     }
 
     Teuchos::ArrayRCP<GO> arr_myDofGids = Teuchos::arcp( myDofGids );
+
+    // TODO: remove afterwards
+    std::cout << arr_myDofGids << std::endl;
+
     Teuchos::RCP<Map> importDofMap = MapFactory::Build(aggregates.GetMap()->lib(), Teuchos::OrdinalTraits<Xpetra::global_size_t>::invalid(), arr_myDofGids(), aggregates.GetMap()->getIndexBase(), aggregates.GetMap()->getComm());
     return importDofMap;
   }

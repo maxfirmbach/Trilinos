@@ -7,6 +7,7 @@ AMGXOperator - #if defined(HAVE_MUELU_AMGX)
 AlgebraicPermutationStrategy
 BelosSmoother - #if defined(HAVE_MUELU_BELOS)
 BlackBoxPFactory
+BlockedAmalgamationFactory
 BlockedCoarseMapFactory
 BlockedCoordinatesTransferFactory
 BlockedDirectSolver

@@ -8,6 +8,7 @@ APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::AMGXOperator-.?if.defined[HAVE_M
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::AlgebraicPermutationStrategy )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::BelosSmoother-.?if.defined[HAVE_MUELU_BELOS] )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::BlackBoxPFactory )
+APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::BlockedAmalgamationFactory )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::BlockedCoarseMapFactory )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::BlockedCoordinatesTransferFactory )
 APPEND_SET(MUELU_SC_LO_GO_NO_ETI_CLASSES MueLu::BlockedDirectSolver )
