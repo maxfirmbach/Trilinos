@@ -58,6 +58,7 @@ APPEND_SET(SOURCES
   ReitzingerPFactory.cpp
   SaPFactory.cpp
   ScaledNullspaceFactory.cpp
+  SegregatedAFactory.cpp
   SemiCoarsenPFactory.cpp
   Smoothers/SmootherFactory.cpp
   StructuredAggregationFactory.cpp
@@ -101,6 +102,7 @@ TRIBITS_COPY_FILES_TO_BINARY_DIR(UnitTestsUserData_cp
 
 TRIBITS_COPY_FILES_TO_BINARY_DIR(UnitTestsTestMatrices_cp
   SOURCE_DIR ${MueLu_SOURCE_DIR}/test/unit_tests/TestMatrices
+  SOURCE_FILES contact.mm
   SOURCE_FILES cd2dx.mat
   SOURCE_FILES cd2dy.mat
   SOURCE_FILES aniso2dx.mat
@@ -112,6 +114,7 @@ TRIBITS_COPY_FILES_TO_BINARY_DIR(UnitTestsTestMatrices_cp
   SOURCE_FILES nonsym1.mm
   SOURCE_FILES nonsym2.mm
   SOURCE_FILES SaP_constrainTest_P.mat
+  SOURCE_FILES segregate.mm
   SOURCE_FILES semiRblkTestver.mm
   DEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/TestMatrices
 )
