@@ -51,18 +51,12 @@
 
 #include "Xpetra_Map_fwd.hpp"
 #include "Xpetra_Matrix_fwd.hpp"
-#include "Xpetra_MatrixFactory_fwd.hpp"
-#include "Xpetra_MultiVectorFactory_fwd.hpp"
 #include "Xpetra_VectorFactory_fwd.hpp"
-#include "Xpetra_CrsMatrixWrap_fwd.hpp"
 
 #include "MueLu_Level_fwd.hpp"
 #include "MueLu_ThresholdAFilterFactory_fwd.hpp"
 #include "MueLu_RAPFactory_fwd.hpp"
 #include "MueLu_Utilities_fwd.hpp"
-#ifdef HAVE_MUELU_KOKKOS_REFACTOR
-#include "MueLu_Utilities_kokkos_fwd.hpp"
-#endif
 
 
 namespace MueLu {
@@ -90,17 +84,26 @@ namespace MueLu {
     static void detectBoundaryConditionsSM(RCP<Matrix> & SM_Matrix,
                                            RCP<Matrix> & D0_Matrix,
                                            magnitudeType rowSumTol,
-#ifdef HAVE_MUELU_KOKKOS_REFACTOR
                                            bool useKokkos_,
                                            Kokkos::View<bool*, typename Node::device_type> & BCrowsKokkos,
                                            Kokkos::View<bool*, typename Node::device_type> & BCcolsKokkos,
                                            Kokkos::View<bool*, typename Node::device_type> & BCdomainKokkos,
-#endif
                                            int & BCedges,
                                            int & BCnodes,
                                            Teuchos::ArrayRCP<bool> & BCrows,
                                            Teuchos::ArrayRCP<bool> & BCcols,
                                            Teuchos::ArrayRCP<bool> & BCdomain,
+                                           bool & allEdgesBoundary,
+                                           bool & allNodesBoundary);
+
+    static void detectBoundaryConditionsSM(RCP<Matrix> & SM_Matrix,
+                                           RCP<Matrix> & D0_Matrix,
+                                           magnitudeType rowSumTol,
+                                           Kokkos::View<bool*, typename Node::device_type> & BCrowsKokkos,
+                                           Kokkos::View<bool*, typename Node::device_type> & BCcolsKokkos,
+                                           Kokkos::View<bool*, typename Node::device_type> & BCdomainKokkos,
+                                           int & BCedges,
+                                           int & BCnodes,
                                            bool & allEdgesBoundary,
                                            bool & allNodesBoundary);
         
