@@ -49,8 +49,6 @@
 #include <Teuchos_ParameterList.hpp>
 #include <Teuchos_XMLParameterListHelpers.hpp>
 
-#include <Kokkos_DefaultNode.hpp>
-
 #include <Xpetra_ConfigDefs.hpp>
 #include <Xpetra_Matrix.hpp>
 #include <Xpetra_MultiVector.hpp>

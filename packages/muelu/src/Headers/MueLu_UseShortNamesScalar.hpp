@@ -183,7 +183,7 @@ using MergedBlockedMatrixFactory [[maybe_unused]] = MueLu::MergedBlockedMatrixFa
 using MergedSmoother [[maybe_unused]] = MueLu::MergedSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node>;
 #endif
 #ifdef MUELU_MUELUSMOOTHER_SHORT
-typedef MueLu::MueLuSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node> MueLuSmoother;
+using MueLuSmoother [[maybe_unused]] = MueLu::MueLuSmoother<Scalar,LocalOrdinal,GlobalOrdinal,Node>;
 #endif
 #ifdef MUELU_MULTIVECTORTRANSFERFACTORY_SHORT
 using MultiVectorTransferFactory [[maybe_unused]] = MueLu::MultiVectorTransferFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>;
