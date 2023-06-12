@@ -63,6 +63,7 @@
 #include "MueLu_FactoryManagerBase.hpp"
 #include "MueLu_ParameterListInterpreter.hpp"
 #include "MueLu_MueLuSmoother_decl.hpp"
+#include "MueLu_AmalgamationInfo.hpp"
 
 namespace MueLu {
 
@@ -82,6 +83,7 @@ namespace MueLu {
     {
       this->Input(currentLevel, "A");
       this->Input(currentLevel, "Nullspace");
+      this->Input(currentLevel, "UnAmalgamationInfo");
     }
 
     template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
@@ -91,6 +93,7 @@ namespace MueLu {
 
       A_         = Factory::Get<RCP<Matrix>>(currentLevel, "A");
       nullspace_ = Factory::Get<RCP<MultiVector>>(currentLevel, "Nullspace");
+      unamalgamationinfo_ = Factory::Get<RCP<AmalgamationInfo>>(currentLevel, "UnAmalgamationInfo");
 
       const ParameterList& pL = this->GetParameterList();
       const std::string xmlFileName = pL.get<std::string>("muelu: xml file");
@@ -112,6 +115,7 @@ namespace MueLu {
       H_->IsPreconditioner(true);
       H_->GetLevel(0)->Set("A", A_);
       H_->GetLevel(0)->Set("Nullspace", nullspace_);
+      H_->GetLevel(0)->Set("UnAmalgamationInfo", unamalgamationinfo_);
       H_->SetProcRankVerbose(A_->getDomainMap()->getComm()->getRank());
 
       mueLuFactory->SetupHierarchy(*H_);

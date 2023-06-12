@@ -62,6 +62,7 @@
 #include "MueLu_Level_fwd.hpp"
 #include "MueLu_SmootherPrototype.hpp"
 #include "MueLu_ParameterListInterpreter_fwd.hpp"
+#include "MueLu_AmalgamationInfo_fwd.hpp"
 
 namespace MueLu {
 
@@ -160,6 +161,7 @@ namespace MueLu {
     //! matrix, used in apply if solving residual equation
     RCP<Matrix> A_;
     RCP<MultiVector> nullspace_;
+    RCP<AmalgamationInfo> unamalgamationinfo_;
 
   }; // class MueLuSmoother
 
