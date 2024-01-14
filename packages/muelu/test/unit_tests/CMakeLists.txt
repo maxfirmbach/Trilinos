@@ -112,9 +112,11 @@ TRIBITS_COPY_FILES_TO_BINARY_DIR(UnitTestsTestMatrices_cp
   SOURCE_FILES fuego1.mm
   SOURCE_FILES nonsym1.mm
   SOURCE_FILES nonsym2.mm
+  SOURCE_FILES nonsym3.mm
   SOURCE_FILES SaP_constrainTest_P.mat
   SOURCE_FILES segregate.mm
   SOURCE_FILES semiRblkTestver.mm
+  SOURCE_FILES stent.mm
   DEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/TestMatrices
 )
 

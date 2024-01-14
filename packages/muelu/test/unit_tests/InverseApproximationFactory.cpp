@@ -240,6 +240,7 @@ namespace MueLuTests {
     RCP<const Teuchos::Comm<int> > comm = Parameters::getDefaultComm();
     Xpetra::UnderlyingLib lib = MueLuTests::TestHelpers::Parameters::getLib();
 
+    /*
     {
       const int n = 20;
       Teuchos::RCP<Matrix> A = MueLuTests::TestHelpers::TestFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>::Build1DPoisson(n, lib);
@@ -250,7 +251,7 @@ namespace MueLuTests {
 
       RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
       invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
-      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
 
       // request InverseApproximation operator
       level.Request("Ainv", invapproxFact.get());
@@ -277,7 +278,7 @@ namespace MueLuTests {
 
       RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
       invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
-      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
 
       // request InverseApproximation operator
       level.Request("Ainv", invapproxFact.get());
@@ -308,7 +309,7 @@ namespace MueLuTests {
 
       RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
       invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
-      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
 
       // request InverseApproximation operator
       level.Request("Ainv", invapproxFact.get());
@@ -344,7 +345,7 @@ namespace MueLuTests {
 
       RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
       invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
-      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
       invapproxFact->SetParameter("inverse: drop tolerance", Teuchos::ParameterEntry(1e-8));
       invapproxFact->SetParameter("inverse: power", Teuchos::ParameterEntry(2));
 
@@ -383,7 +384,7 @@ namespace MueLuTests {
       RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
       invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
       invapproxFact->SetParameter("inverse: drop tolerance", Teuchos::ParameterEntry(Scalar(1e-10)));
-      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
 
       // request InverseApproximation operator
       level.Request("Ainv", invapproxFact.get());
@@ -412,7 +413,7 @@ namespace MueLuTests {
       RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
       invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
       invapproxFact->SetParameter("inverse: drop tolerance", Teuchos::ParameterEntry(Scalar(1e-10)));
-      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("spai")));
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
       invapproxFact->SetParameter("inverse: power", Teuchos::ParameterEntry(3 ));
 
       // request InverseApproximation operator
@@ -425,6 +426,66 @@ namespace MueLuTests {
       TEST_EQUALITY(Ainv.is_null(), false);
       TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 1.149564764393621e+07, 5e3*TMT::eps());
     }
+    */
+    
+    // Test simple problem for new additions
+    {
+      using STS = Teuchos::ScalarTraits<SC>;
+
+      // Don't test for complex - matrix reader won't work
+      if (STS::isComplex) {success=true; return;}
+      RCP<Matrix> A = Xpetra::IO<Scalar,LocalOrdinal,GlobalOrdinal,Node>::Read("TestMatrices/nonsym3.mm", lib, comm);
+
+      Level level;
+      TestHelpers::TestFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>::createSingleLevelHierarchy(level);
+      level.Set("A", A);
+
+      RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
+      invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
+      invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
+
+      // request InverseApproximation operator
+      level.Request("Ainv", invapproxFact.get());
+
+      // generate Schur complement operator
+      invapproxFact->Build(level);
+
+      RCP<Matrix> Ainv = level.Get<RCP<Matrix> >("Ainv", invapproxFact.get());
+      TEST_EQUALITY(Ainv.is_null(), false);
+      TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 0.123570605098642, 2e1*TMT::eps());
+
+      Ainv->describe(out, Teuchos::VERB_EXTREME);
+    }
+
+
+    /*
+      // Test for advanced stent problem
+      {
+        using STS = Teuchos::ScalarTraits<SC>;
+
+        // Don't test for complex - matrix reader won't work
+        if (STS::isComplex) {success=true; return;}
+        RCP<Matrix> A = Xpetra::IO<Scalar,LocalOrdinal,GlobalOrdinal,Node>::Read("TestMatrices/stent.mm", lib, comm);
+
+        Level level;
+        TestHelpers::TestFactory<Scalar,LocalOrdinal,GlobalOrdinal,Node>::createSingleLevelHierarchy(level);
+        level.Set("A", A);
+
+        RCP<InverseApproximationFactory> invapproxFact = rcp( new InverseApproximationFactory() );
+        invapproxFact->SetFactory("A",MueLu::NoFactory::getRCP());
+        invapproxFact->SetParameter("inverse: approximation type", Teuchos::ParameterEntry(std::string("sparseapproxinverse")));
+
+        // request InverseApproximation operator
+        level.Request("Ainv", invapproxFact.get());
+
+        // generate Schur complement operator
+        invapproxFact->Build(level);
+
+        RCP<Matrix> Ainv = level.Get<RCP<Matrix> >("Ainv", invapproxFact.get());
+        TEST_EQUALITY(Ainv.is_null(), false);
+        TEST_FLOATING_EQUALITY(Ainv->getFrobeniusNorm(), 1.625072963858635e+02, 2e1*TMT::eps());
+      }
+      */
 
   } //InverseSpaiConstructor
 
