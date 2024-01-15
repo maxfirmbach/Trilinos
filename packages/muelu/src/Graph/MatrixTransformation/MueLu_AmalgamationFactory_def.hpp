@@ -105,12 +105,22 @@ void AmalgamationFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(Level
     Xpetra::viewLabel_t oldView         = A->SwitchToView("stridedMaps");  // NOTE: "stridedMaps are always non-overlapping (correspond to range and domain maps!)
     RCP<const StridedMap> stridedRowMap = Teuchos::rcp_dynamic_cast<const StridedMap>(A->getRowMap());
     TEUCHOS_TEST_FOR_EXCEPTION(stridedRowMap == Teuchos::null, Exceptions::BadCast, "MueLu::CoalesceFactory::Build: cast to strided row map failed.");
-    fullblocksize = stridedRowMap->getFixedBlockSize();
-    offset        = stridedRowMap->getOffset();
-    blockid       = stridedRowMap->getStridedBlockId();
+
+    std::vector<size_t> stridingData = stridedRowMap->getStridingData();
+    RCP<const StridedMap> stridedMap = Teuchos::rcp(new StridedMap(stridedRowMap->lib(),
+                                                                   Teuchos::OrdinalTraits<GO>::invalid(),
+                                                                   stridedRowMap->getLocalElementList(),
+                                                                   stridedRowMap->getIndexBase(),
+                                                                   stridingData,
+                                                                   stridedRowMap->getComm(),
+                                                                   stridedRowMap->getStridedBlockId()));
+
+    fullblocksize = stridedMap->getFixedBlockSize();
+    offset        = stridedMap->getOffset();
+    blockid       = stridedMap->getStridedBlockId();
 
     if (blockid > -1) {
-      std::vector<size_t> stridingInfo = stridedRowMap->getStridingData();
+      std::vector<size_t> stridingInfo = stridedMap->getStridingData();
       for (size_t j = 0; j < Teuchos::as<size_t>(blockid); j++)
         nStridedOffset += stridingInfo[j];
       stridedblocksize = Teuchos::as<LocalOrdinal>(stridingInfo[blockid]);
@@ -193,10 +203,20 @@ void AmalgamationFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::AmalgamateM
   LO blkSize = A.GetFixedBlockSize() / A.GetStorageBlockSize();
   if (A.IsView("stridedMaps") == true) {
     Teuchos::RCP<const Map> myMap         = A.getRowMap("stridedMaps");
-    Teuchos::RCP<const StridedMap> strMap = Teuchos::rcp_dynamic_cast<const StridedMap>(myMap);
-    TEUCHOS_TEST_FOR_EXCEPTION(strMap == null, Exceptions::RuntimeError, "Map is not of type StridedMap");
-    offset  = strMap->getOffset();
-    blkSize = Teuchos::as<const LO>(strMap->getFixedBlockSize());
+    Teuchos::RCP<const StridedMap> stridedRowMap = Teuchos::rcp_dynamic_cast<const StridedMap>(myMap);
+    TEUCHOS_TEST_FOR_EXCEPTION(stridedRowMap == null, Exceptions::RuntimeError, "Map is not of type StridedMap");
+
+    std::vector<size_t> stridingData = stridedRowMap->getStridingData();
+    RCP<const StridedMap> stridedMap = Teuchos::rcp(new StridedMap(stridedRowMap->lib(),
+                                                                   Teuchos::OrdinalTraits<GO>::invalid(),
+                                                                   stridedRowMap->getLocalElementList(),
+                                                                   stridedRowMap->getIndexBase(),
+                                                                   stridingData,
+                                                                   stridedRowMap->getComm(),
+                                                                   stridedRowMap->getStridedBlockId()));
+
+    offset  = stridedMap->getOffset();
+    blkSize = Teuchos::as<const LO>(stridedMap->getFixedBlockSize());
   }
 
   Array<GO> elementList(numElements);
