@@ -109,8 +109,9 @@ void InverseApproximationFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Bui
   RCP<BlockedCrsMatrix> bA = Teuchos::rcp_dynamic_cast<BlockedCrsMatrix>(A);
   const bool isBlocked     = (bA == Teuchos::null ? false : true);
 
+  // TODO: this is a pretty bad idea!
   // if blocked operator is used, defaults to A(0,0)
-  if (isBlocked) A = bA->getMatrix(0, 0);
+  //if (isBlocked) A = bA->getMatrix(0, 0);
 
   const Magnitude tol = pL.get<Magnitude>("inverse: drop tolerance");
   RCP<Matrix> Ainv    = Teuchos::null;
