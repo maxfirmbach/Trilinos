@@ -153,20 +153,27 @@ void InterfaceAggregationFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Bui
 
   LocalOrdinal globalNumDualNodes = operatorRangeMap->getGlobalNumElements() / numDofsPerDualNode;
   LocalOrdinal localNumDualNodes  = operatorRangeMap->getLocalNumElements() / numDofsPerDualNode;
+  auto comm                       = operatorRangeMap->getComm();
 
   TEUCHOS_TEST_FOR_EXCEPTION(localNumDualNodes != Teuchos::as<LocalOrdinal>(mapNodesDualToPrimal->size()),
                              std::runtime_error, prefix << " MueLu requires the range map and the DualNodeID2PrimalNodeID map to be compatible.");
+
+  Teuchos::RCP<Teuchos::FancyOStream> fos = Teuchos::getFancyOStream(Teuchos::rcpFromRef(std::cout));
 
   RCP<const Map> dualNodeMap = Teuchos::null;
   if (numDofsPerDualNode == 1)
     dualNodeMap = operatorRangeMap;
   else {
+    Teuchos::RCP<const Map> myMap         = A->getRowMap("stridedMaps");
+    Teuchos::RCP<const StridedMap> strMap = Teuchos::rcp_dynamic_cast<const StridedMap>(myMap);
+    TEUCHOS_TEST_FOR_EXCEPTION(strMap == null, Exceptions::RuntimeError, "Map is not of type StridedMap");
+
+    GlobalOrdinal offset = strMap->getOffset();
     GlobalOrdinal indexBase                = operatorRangeMap->getIndexBase();
-    auto comm                              = operatorRangeMap->getComm();
     std::vector<GlobalOrdinal> myDualNodes = {};
 
     for (size_t i = 0; i < operatorRangeMap->getLocalNumElements(); i += numDofsPerDualNode)
-      myDualNodes.push_back((operatorRangeMap->getGlobalElement(i) - indexBase) / numDofsPerDualNode + indexBase);
+      myDualNodes.push_back((operatorRangeMap->getGlobalElement(i) - offset - indexBase) / numDofsPerDualNode + indexBase);
 
     dualNodeMap = MapFactory::Build(operatorRangeMap->lib(), globalNumDualNodes, myDualNodes, indexBase, comm);
   }
@@ -217,9 +224,12 @@ void InterfaceAggregationFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Bui
 
   // Store dual aggregeate data as well as coarsening information
   dualAggregates->SetNumAggregates(numLocalDualAggregates);
+  dualAggregates->GetNumGlobalAggregatesComputeIfNeeded();
+
+  GetOStream(Statistics1) << dualAggregates->description() << std::endl;
+
   Set(currentLevel, "Aggregates", dualAggregates);
   Set(currentLevel, "CoarseDualNodeID2PrimalNodeID", coarseMapNodesDualToPrimal);
-  GetOStream(Statistics1) << dualAggregates->description() << std::endl;
 }  // BuildBasedOnNodeMapping
 
 template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
