@@ -737,37 +737,99 @@ ModifiableLinearOp getAbsRowSumMatrix(const LinearOp &op) {
 }
 
 /** \brief Compute inverse of the absolute row sum matrix.
- *
- * Compute the inverse of the absolute row sum matrix. That is
- * a diagonal operator composed of the inverse of the absolute value
- * of the row sum.
- *
- * \returns A diagonal operator.
- */
-ModifiableLinearOp getAbsRowSumInvMatrix(const LinearOp &op) {
-  // if this is a blocked operator, extract diagonals block by block
-  // FIXME: this does not add in values from off-diagonal blocks
-  RCP<const Thyra::PhysicallyBlockedLinearOpBase<double>> blocked_op =
-      rcp_dynamic_cast<const Thyra::PhysicallyBlockedLinearOpBase<double>>(op);
-  if (blocked_op != Teuchos::null) {
-    int numRows = blocked_op->productRange()->numBlocks();
-    TEUCHOS_ASSERT(blocked_op->productDomain()->numBlocks() == numRows);
-    RCP<Thyra::PhysicallyBlockedLinearOpBase<double>> blocked_diag =
-        Thyra::defaultBlockedLinearOp<double>();
-    blocked_diag->beginBlockFill(numRows, numRows);
-    for (int r = 0; r < numRows; ++r) {
-      for (int c = 0; c < numRows; ++c) {
-        if (r == c)
-          blocked_diag->setNonconstBlock(r, c, getAbsRowSumInvMatrix(blocked_op->getBlock(r, c)));
-        else
-          blocked_diag->setBlock(r, c,
-                                 Thyra::zero<double>(blocked_op->getBlock(r, c)->range(),
-                                                     blocked_op->getBlock(r, c)->domain()));
-      }
-    }
-    blocked_diag->endBlockFill();
-    return blocked_diag;
-  }
+  *
+  * Compute the inverse of the absolute row sum matrix. That is
+  * a diagonal operator composed of the inverse of the absolute value
+  * of the row sum.
+  *
+  * \returns A diagonal operator.
+  */
+ModifiableLinearOp getAbsRowSumInvMatrix(const LinearOp & op)
+{
+   // if this is a blocked operator, extract diagonals block by block
+   // FIXME: this does not add in values from off-diagonal blocks
+   RCP<const Thyra::PhysicallyBlockedLinearOpBase<double> > blocked_op = rcp_dynamic_cast<const Thyra::PhysicallyBlockedLinearOpBase<double> >(op);
+   if(blocked_op != Teuchos::null){
+     int numRows = blocked_op->productRange()->numBlocks();
+     TEUCHOS_ASSERT(blocked_op->productDomain()->numBlocks() == numRows);
+     RCP<Thyra::PhysicallyBlockedLinearOpBase<double> > blocked_diag = Thyra::defaultBlockedLinearOp<double>();
+     blocked_diag->beginBlockFill(numRows,numRows);
+     for(int r = 0; r < numRows; ++r){
+       for(int c = 0; c < numRows; ++c){
+         if(r==c)
+           blocked_diag->setNonconstBlock(r,c,getAbsRowSumInvMatrix(blocked_op->getBlock(r,c)));
+         else {
+#ifdef TEKO_HAVE_EPETRA
+           ModifiableLinearOp zero = Teuchos::rcp_const_cast<Thyra::LinearOpBase<double> >(blocked_op->getBlock(r,c));
+           putScalar(zero, 0.0);
+           blocked_diag->setBlock(r, c, zero);
+#else
+           blocked_diag->setBlock(r,c,Thyra::zero<double>(blocked_op->getBlock(r,c)->range(),blocked_op->getBlock(r,c)->domain()));
+#endif
+         }
+       }
+     }
+     blocked_diag->endBlockFill();
+     return blocked_diag;
+   }
+
+   if(Teko::TpetraHelpers::isTpetraLinearOp(op)) {
+     ST scalar = 0.0;
+     bool transp = false;
+     RCP<const Tpetra::CrsMatrix<ST,LO,GO,NT> > tCrsOp = Teko::TpetraHelpers::getTpetraCrsMatrix(op, &scalar, &transp);
+
+     // extract diagonal
+     const RCP<Tpetra::Vector<ST,LO,GO,NT> > ptrDiag = Tpetra::createVector<ST,LO,GO,NT>(tCrsOp->getRowMap());
+     Tpetra::Vector<ST,LO,GO,NT> & diag = *ptrDiag;
+
+     // compute absolute value row sum
+     diag.putScalar(0.0);
+     for(LO i=0;i<(LO) tCrsOp->getLocalNumRows();i++) {
+        LO numEntries = tCrsOp->getNumEntriesInLocalRow (i);
+        typename Tpetra::CrsMatrix<ST,LO,GO,NT>::local_inds_host_view_type indices;
+        typename Tpetra::CrsMatrix<ST,LO,GO,NT>::values_host_view_type values;
+        tCrsOp->getLocalRowView(i,indices,values);
+
+        // build abs value row sum
+        for(LO j=0;j<numEntries;j++)
+           diag.sumIntoLocalValue(i,std::abs(values(j)));
+     }
+     diag.scale(scalar);
+     diag.reciprocal(diag); // invert entries
+
+     // build Thyra diagonal operator
+     return Teko::TpetraHelpers::thyraDiagOp(ptrDiag,*tCrsOp->getRowMap(),"absRowSum( " + op->getObjectLabel() + " ))");
+
+   }
+   else{
+#ifdef TEKO_HAVE_EPETRA
+     RCP<const Thyra::EpetraLinearOp > eOp = rcp_dynamic_cast<const Thyra::EpetraLinearOp >(op,true);
+     RCP<const Epetra_CrsMatrix> eCrsOp = rcp_dynamic_cast<const Epetra_CrsMatrix>(eOp->epetra_op(),true);
+
+     // extract diagonal
+     const RCP<Epetra_Vector> ptrDiag = rcp(new Epetra_Vector(eCrsOp->RowMap()));
+     Epetra_Vector & diag = *ptrDiag;
+
+     // compute absolute value row sum
+     diag.PutScalar(0.0);
+     for(int i=0;i<eCrsOp->NumMyRows();i++) {
+        double * values = 0;
+        int numEntries;
+        eCrsOp->ExtractMyRowView(i,numEntries,values);
+
+        // build abs value row sum
+        for(int j=0;j<numEntries;j++)
+           diag[i] += std::abs(values[j]);
+     }
+     diag.Reciprocal(diag); // invert entries
+
+     // build Thyra diagonal operator
+     return Teko::Epetra::thyraDiagOp(ptrDiag,eCrsOp->RowMap(),"absRowSum( " + op->getObjectLabel() + " )");
+#else
+     throw std::logic_error("getAbsRowSumInvMatrix is trying to use Epetra "
+                            "code, but TEKO_HAVE_EPETRA is disabled!");
+#endif
+   }
 
   if (Teko::TpetraHelpers::isTpetraLinearOp(op)) {
     ST scalar   = 0.0;
@@ -1007,67 +1069,69 @@ const MultiVector getDiagonal(const Teko::LinearOp &A, const DiagonalType &dt) {
 }
 
 /** \brief Get the diaonal of a linear operator
- *
- * Get the inverse of the diagonal of a linear operator.
- * Currently it is assumed that the underlying operator is
- * an Epetra_RowMatrix.
- *
- * \param[in] op The operator whose diagonal is to be
- *               extracted and inverted
- *
- * \returns An diagonal operator.
- */
-const ModifiableLinearOp getInvDiagonalOp(const LinearOp &op) {
-  // if this is a diagonal linear op already, just take the reciprocal
-  auto diagonal_op = rcp_dynamic_cast<const Thyra::DiagonalLinearOpBase<double>>(op);
-  if (diagonal_op != Teuchos::null) {
-    auto diag     = diagonal_op->getDiag();
-    auto inv_diag = diag->clone_v();
-    Thyra::reciprocal(*diag, inv_diag.ptr());
-    return rcp(new Thyra::DefaultDiagonalLinearOp<double>(inv_diag));
-  }
+  *
+  * Get the inverse of the diagonal of a linear operator.
+  * Currently it is assumed that the underlying operator is
+  * an Epetra_RowMatrix.
+  *
+  * \param[in] op The operator whose diagonal is to be
+  *               extracted and inverted
+  *
+  * \returns An diagonal operator.
+  */
+const ModifiableLinearOp getInvDiagonalOp(const LinearOp & op)
+{
+   // if this is a diagonal linear op already, just take the reciprocal
+   auto diagonal_op = rcp_dynamic_cast<const Thyra::DiagonalLinearOpBase<double>>(op);
+   if(diagonal_op != Teuchos::null){
+     auto diag = diagonal_op->getDiag();
+     auto inv_diag = diag->clone_v();
+     Thyra::reciprocal(*diag,inv_diag.ptr());
+     return rcp(new Thyra::DefaultDiagonalLinearOp<double>(inv_diag));
+   }
 
-  // if this is a blocked operator, extract diagonals block by block
-  RCP<const Thyra::PhysicallyBlockedLinearOpBase<double>> blocked_op =
-      rcp_dynamic_cast<const Thyra::PhysicallyBlockedLinearOpBase<double>>(op);
-  if (blocked_op != Teuchos::null) {
-    int numRows = blocked_op->productRange()->numBlocks();
-    TEUCHOS_ASSERT(blocked_op->productDomain()->numBlocks() == numRows);
-    RCP<Thyra::PhysicallyBlockedLinearOpBase<double>> blocked_diag =
-        Thyra::defaultBlockedLinearOp<double>();
-    blocked_diag->beginBlockFill(numRows, numRows);
-    for (int r = 0; r < numRows; ++r) {
-      for (int c = 0; c < numRows; ++c) {
-        if (r == c)
-          blocked_diag->setNonconstBlock(r, c, getInvDiagonalOp(blocked_op->getBlock(r, c)));
-        else
-          blocked_diag->setBlock(r, c,
-                                 Thyra::zero<double>(blocked_op->getBlock(r, c)->range(),
-                                                     blocked_op->getBlock(r, c)->domain()));
-      }
-    }
-    blocked_diag->endBlockFill();
-    return blocked_diag;
-  }
+   // if this is a blocked operator, extract diagonals block by block
+   RCP<const Thyra::PhysicallyBlockedLinearOpBase<double> > blocked_op = rcp_dynamic_cast<const Thyra::PhysicallyBlockedLinearOpBase<double> >(op);
+   if(blocked_op != Teuchos::null){
+     int numRows = blocked_op->productRange()->numBlocks();
+     TEUCHOS_ASSERT(blocked_op->productDomain()->numBlocks() == numRows);
+     RCP<Thyra::PhysicallyBlockedLinearOpBase<double> > blocked_diag = Thyra::defaultBlockedLinearOp<double>();
+     blocked_diag->beginBlockFill(numRows,numRows);
+     for(int r = 0; r < numRows; ++r){
+       for(int c = 0; c < numRows; ++c){
+         if(r==c)
+           blocked_diag->setNonconstBlock(r,c,getInvDiagonalOp(blocked_op->getBlock(r,c)));
+         else {
+#ifdef TEKO_HAVE_EPETRA
+           ModifiableLinearOp zero = Teuchos::rcp_const_cast<Thyra::LinearOpBase<double> >(blocked_op->getBlock(r,c));
+           putScalar(zero, 0.0);
+           blocked_diag->setBlock(r, c, zero);
+#else
+           blocked_diag->setBlock(r,c,Thyra::zero<double>(blocked_op->getBlock(r,c)->range(),blocked_op->getBlock(r,c)->domain()));
+#endif
+         }
+       }
+     }
+     blocked_diag->endBlockFill();
+     return blocked_diag;
+   }
 
-  if (Teko::TpetraHelpers::isTpetraLinearOp(op)) {
-    ST scalar   = 0.0;
-    bool transp = false;
-    RCP<const Tpetra::CrsMatrix<ST, LO, GO, NT>> tCrsOp =
-        Teko::TpetraHelpers::getTpetraCrsMatrix(op, &scalar, &transp);
+   if (Teko::TpetraHelpers::isTpetraLinearOp(op)){
+     ST scalar = 0.0;
+     bool transp = false;
+     RCP<const Tpetra::CrsMatrix<ST,LO,GO,NT> > tCrsOp = Teko::TpetraHelpers::getTpetraCrsMatrix(op, &scalar, &transp);
 
-    // extract diagonal
-    const RCP<Tpetra::Vector<ST, LO, GO, NT>> diag =
-        Tpetra::createVector<ST, LO, GO, NT>(tCrsOp->getRowMap());
-    diag->scale(scalar);
-    tCrsOp->getLocalDiagCopy(*diag);
-    diag->reciprocal(*diag);
+     // extract diagonal
+     const RCP<Tpetra::Vector<ST,LO,GO,NT> > diag = Tpetra::createVector<ST,LO,GO,NT>(tCrsOp->getRowMap());
+     diag->scale(scalar);
+     tCrsOp->getLocalDiagCopy(*diag);
+     diag->reciprocal(*diag);
 
-    // build Thyra diagonal operator
-    return Teko::TpetraHelpers::thyraDiagOp(diag, *tCrsOp->getRowMap(),
-                                            "inv(diag( " + op->getObjectLabel() + " ))");
+     // build Thyra diagonal operator
+     return Teko::TpetraHelpers::thyraDiagOp(diag,*tCrsOp->getRowMap(),"inv(diag( " + op->getObjectLabel() + " ))");
 
-  } else {
+   }
+   else {
 #ifdef TEKO_HAVE_EPETRA
     RCP<const Thyra::EpetraLinearOp> eOp = rcp_dynamic_cast<const Thyra::EpetraLinearOp>(op, true);
     RCP<const Epetra_CrsMatrix> eCrsOp =
