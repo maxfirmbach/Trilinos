@@ -61,6 +61,7 @@ RCP<const ParameterList> FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalO
 
   // Variable name (e.g. A or P or Coordinates)
   validParamList->set<std::string>("Variable", std::string("A"), "Variable name on all coarse levels (except the finest level).");
+  validParamList->set<std::string>("Fine level variable", std::string("A"), "Variable name on fine level.");
 
   // Names of generating factories (on finest level and coarse levels)
   validParamList->set<RCP<const FactoryBase> >("Fine level factory", Teuchos::null, "Generating factory of the fine level variable");
@@ -77,8 +78,13 @@ void FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Decla
   const ParameterList& pL = GetParameterList();
 
   std::string variableName = "";
-  if (pL.isParameter("Variable"))
-    variableName = pL.get<std::string>("Variable");
+  if (currentLevel.GetLevelID() == 0) {
+    if (pL.isParameter("Fine level variable"))
+      variableName = pL.get<std::string>("Fine level variable");
+  } else {
+    if (pL.isParameter("Variable"))
+      variableName = pL.get<std::string>("Variable");
+  }
 
   std::string factoryName = "NoFactory";
   if (currentLevel.GetLevelID() == 0) {
@@ -100,6 +106,10 @@ void FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build
 
   const ParameterList& pL = GetParameterList();
 
+  std::string fineVariableName = "";
+  if (pL.isParameter("Fine level variable"))
+    fineVariableName = pL.get<std::string>("Fine level variable");
+
   std::string variableName = "";
   if (pL.isParameter("Variable"))
     variableName = pL.get<std::string>("Variable");
@@ -116,7 +126,7 @@ void FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build
   }
   RCP<const FactoryBase> fact = GetFactory(factoryName);
 
-  GetOStream(Debug) << "Use " << variableName << " of type " << variableType << " from " << factoryName << "(" << fact.get() << ")" << std::endl;
+  GetOStream(Statistics0) << "Use " << variableName << " of type " << variableType << " from " << factoryName << "(" << fact.get() << ")" << std::endl;
 
   // check data type
   // std::string strType = currentLevel.GetTypeName(variableName, fact.get());
@@ -157,7 +167,11 @@ void FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build
       RCP<Matrix> data = currentLevel.Get<RCP<Matrix> >(variableName, fact.get());
       Set(currentLevel, variableName, data);
     } else if (variableType.find("MultiVector") != npos) {
-      RCP<MultiVector> data = currentLevel.Get<RCP<MultiVector> >(variableName, fact.get());
+      RCP<MultiVector> data = Teuchos::null;
+      if (currentLevel.GetLevelID() == 0)
+        data = currentLevel.Get<RCP<MultiVector> >(fineVariableName, fact.get());
+      else
+        data = currentLevel.Get<RCP<MultiVector> >(variableName, fact.get());
       Set(currentLevel, variableName, data);
     } else if (variableType.find("Operator") != npos) {
       RCP<Operator> data = currentLevel.Get<RCP<Operator> >(variableName, fact.get());

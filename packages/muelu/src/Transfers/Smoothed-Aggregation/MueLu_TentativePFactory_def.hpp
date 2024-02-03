@@ -116,7 +116,7 @@ void TentativePFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::DeclareInput(
   Input(fineLevel, "UnAmalgamationInfo");
   Input(fineLevel, "CoarseMap");
   if (fineLevel.GetLevelID() == 0 &&
-      fineLevel.IsAvailable("Coordinates", NoFactory::get()) &&  // we have coordinates (provided by user app)
+      //fineLevel.IsAvailable("Coordinates", NoFactory::get()) &&  // we have coordinates (provided by user app)
       pL.get<bool>("tentative: build coarse coordinates")) {     // and we want coordinates on other levels
     bTransferCoordinates_ = true;                                // then set the transfer coordinates flag to true
     Input(fineLevel, "Coordinates");
