@@ -60,6 +60,7 @@ RCP<const ParameterList> FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalO
   RCP<ParameterList> validParamList = rcp(new ParameterList());
 
   // Variable name (e.g. A or P or Coordinates)
+  validParamList->set<std::string>("Fine level variable", std::string("A"), "Variable name on finest level.");
   validParamList->set<std::string>("Variable", std::string("A"), "Variable name on all coarse levels (except the finest level).");
 
   // Names of generating factories (on finest level and coarse levels)
@@ -77,8 +78,11 @@ void FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Decla
   const ParameterList& pL = GetParameterList();
 
   std::string variableName = "";
-  if (pL.isParameter("Variable"))
-    variableName = pL.get<std::string>("Variable");
+  if (currentLevel.GetLevelID() == 0 && pL.isParameter("Fine level variable")) {
+      variableName = pL.get<std::string>("Fine level variable");
+  } else if (pL.isParameter("Variable")) {
+      variableName = pL.get<std::string>("Variable");
+  }
 
   std::string factoryName = "NoFactory";
   if (currentLevel.GetLevelID() == 0) {
@@ -100,6 +104,11 @@ void FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build
 
   const ParameterList& pL = GetParameterList();
 
+  std::string finestVariableName = "";
+  if (currentLevel.GetLevelID() == 0 && pL.isParameter("Fine level variable")) {
+    finestVariableName = pL.get<std::string>("Fine level variable");
+  }
+
   std::string variableName = "";
   if (pL.isParameter("Variable"))
     variableName = pL.get<std::string>("Variable");
@@ -116,48 +125,111 @@ void FineLevelInputDataFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build
   }
   RCP<const FactoryBase> fact = GetFactory(factoryName);
 
-  GetOStream(Debug) << "Use " << variableName << " of type " << variableType << " from " << factoryName << "(" << fact.get() << ")" << std::endl;
+  if (currentLevel.GetLevelID() == 0)
+    GetOStream(Runtime1) << "Use " << finestVariableName << " of type " << variableType << " from user input." << std::endl;
+  else
+    GetOStream(Runtime1) << "Use " << variableName << " of type " << variableType << " from " << factoryName << "(" << fact.get() << ")" << std::endl;
 
   // check data type
   // std::string strType = currentLevel.GetTypeName(variableName, fact.get());
   if (variableType == "int") {
-    int data = currentLevel.Get<int>(variableName, fact.get());
+    int data;
+    if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+      data = currentLevel.Get<int>(finestVariableName, NoFactory::get());
+    } else {
+      data = currentLevel.Get<int>(variableName, fact.get());
+    }
     Set(currentLevel, variableName, data);
   } else if (variableType == "double") {
-    double data = currentLevel.Get<double>(variableName, fact.get());
+    double data;
+    if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+      data = currentLevel.Get<double>(finestVariableName, NoFactory::get());
+    } else {
+      data = currentLevel.Get<double>(variableName, fact.get());
+    }
     Set(currentLevel, variableName, data);
   } else if (variableType == "string") {
-    std::string data = currentLevel.Get<std::string>(variableName, fact.get());
+    std::string data;
+    if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+      std::string data = currentLevel.Get<std::string>(finestVariableName, NoFactory::get());
+    } else {
+      std::string data = currentLevel.Get<std::string>(variableName, fact.get());
+    }
     Set(currentLevel, variableName, data);
   } else {
     size_t npos = std::string::npos;
 
     if (variableType.find("Aggregates") != npos) {
-      RCP<Aggregates> data = currentLevel.Get<RCP<Aggregates> >(variableName, fact.get());
+      RCP<Aggregates> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<Aggregates> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<Aggregates> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("SmootherBase") != npos) {
-      RCP<SmootherBase> data = currentLevel.Get<RCP<SmootherBase> >(variableName, fact.get());
+      RCP<SmootherBase> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<SmootherBase> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<SmootherBase> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("SmootherPrototype") != npos) {
-      RCP<SmootherPrototype> data = currentLevel.Get<RCP<SmootherPrototype> >(variableName, fact.get());
+      RCP<SmootherPrototype> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<SmootherPrototype> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<SmootherPrototype> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("Export") != npos) {
-      RCP<Export> data = currentLevel.Get<RCP<Export> >(variableName, fact.get());
+      RCP<Export> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<Export> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<Export> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("Import") != npos) {
-      RCP<Import> data = currentLevel.Get<RCP<Import> >(variableName, fact.get());
+      RCP<Import> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<Import> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<Import> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("Map") != npos) {
-      RCP<Map> data = currentLevel.Get<RCP<Map> >(variableName, fact.get());
+      RCP<Map> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<Map> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<Map> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("Matrix") != npos) {
-      RCP<Matrix> data = currentLevel.Get<RCP<Matrix> >(variableName, fact.get());
+      RCP<Matrix> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<Matrix> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<Matrix> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("MultiVector") != npos) {
-      RCP<MultiVector> data = currentLevel.Get<RCP<MultiVector> >(variableName, fact.get());
+      RCP<MultiVector> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<MultiVector> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<MultiVector> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else if (variableType.find("Operator") != npos) {
-      RCP<Operator> data = currentLevel.Get<RCP<Operator> >(variableName, fact.get());
+      RCP<Operator> data;
+      if (currentLevel.GetLevelID() == 0 && !finestVariableName.empty()) {
+        data = currentLevel.Get<RCP<Operator> >(finestVariableName, NoFactory::get());
+      } else {
+        data = currentLevel.Get<RCP<Operator> >(variableName, fact.get());
+      }
       Set(currentLevel, variableName, data);
     } else {
       // TAW: is this working with empty procs?
