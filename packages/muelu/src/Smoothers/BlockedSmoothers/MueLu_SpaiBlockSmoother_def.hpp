@@ -74,6 +74,7 @@ namespace MueLu {
     RCP<ParameterList> validParamList = rcp(new ParameterList());
 
     validParamList->set<RCP<const FactoryBase>>("A", Teuchos::null, "Generating factory of the matrix A");
+    validParamList->set<LocalOrdinal>("Sweeps", 1, "Number of Block LU sweeps (default = 1)");
 
     return validParamList;
   }
@@ -168,7 +169,7 @@ namespace MueLu {
   }
 
   template <class Scalar,class LocalOrdinal, class GlobalOrdinal, class Node>
-  void SpaiBlockSmoother<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Apply(MultiVector& X, const MultiVector& B, bool /* InitialGuessIsZero */) const
+  void SpaiBlockSmoother<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Apply(MultiVector& X, const MultiVector& B, bool InitialGuessIsZero) const
   {
     TEUCHOS_TEST_FOR_EXCEPTION(SmootherPrototype::IsSetup() == false, Exceptions::RuntimeError, "MueLu::SpaiBlockSmoother::Apply(): Setup() has not been called");
 
@@ -176,11 +177,12 @@ namespace MueLu {
 
     SC zero = Teuchos::ScalarTraits<SC>::zero(), one = Teuchos::ScalarTraits<SC>::one();
 
-    bool bRangeThyraMode  = rangeMapExtractor_->getThyraMode();
-    bool bDomainThyraMode = domainMapExtractor_->getThyraMode();
-
     // extract parameters from internal parameter list
     const ParameterList & pL = Factory::GetParameterList();
+    LocalOrdinal nSweeps = pL.get<LocalOrdinal>("Sweeps");
+
+    bool bRangeThyraMode  = rangeMapExtractor_->getThyraMode();
+    bool bDomainThyraMode = domainMapExtractor_->getThyraMode();
 
     // wrap current solution vector in RCP
     RCP<MultiVector>       rcpX = Teuchos::rcpFromRef(X);
@@ -258,32 +260,38 @@ namespace MueLu {
     RCP<MultiVector> xtilde1 = bxtilde->getMultiVector(0, bDomainThyraMode);
     RCP<MultiVector> xtilde2 = bxtilde->getMultiVector(1, bDomainThyraMode);
 
-    // 1) calculate current residual
-    residual->update(one,*rcpB,zero); // residual = B
-    A_->apply(*rcpX, *residual, Teuchos::NO_TRANS, -one, one);
+    // incrementally improve solution vector X
+    for (LocalOrdinal run = 0; run < nSweeps; ++run) {
+      // 1) calculate current residual
+      residual->update(one, *rcpB, zero); // residual = B
+      if(InitialGuessIsZero == false || run > 0)
+        A_->apply(*rcpX, *residual, Teuchos::NO_TRANS, -one, one);
 
-    // 2) predictor step: solve F * \Delta \tilde{x}_1 = r_1
-    //    start with zero guess \Delta \tilde{x}_1
-    bxtilde->putScalar(zero);
-    Smoo1_->Apply(*xtilde1,*r1);
+      // 2) predictor step: solve F * \Delta \tilde{x}_1 = r_1
+      //    start with zero guess \Delta \tilde{x}_1
+      bxtilde->putScalar(zero);
+      Smoo1_->Apply(*xtilde1, *r1);
 
-    // 3) calculate rhs for SchurComp equation
-    //    r_2 - D \Delta \tilde{x}_1
-    RCP<MultiVector> schurCompRHS = MultiVectorFactory::Build(r2->getMap(),rcpB->getNumVectors());
-    D_->apply(*xtilde1,*schurCompRHS);
-    schurCompRHS->update(one,*r2,-one);
+      // 3) calculate rhs for SchurComp equation
+      //    r_2 - D \Delta \tilde{x}_1
+      RCP<MultiVector> schurCompRHS =
+          MultiVectorFactory::Build(r2->getMap(), rcpB->getNumVectors());
+      D_->apply(*xtilde1, *schurCompRHS);
+      schurCompRHS->update(one, *r2, -one);
 
-    // 4) solve SchurComp equation
-    //    start with zero guess \Delta \tilde{x}_2
-    Smoo2_->Apply(*xtilde2,*schurCompRHS);
+      // 4) solve SchurComp equation
+      //    start with zero guess \Delta \tilde{x}_2
+      Smoo2_->Apply(*xtilde2, *schurCompRHS);
 
-    // 5) corrector step:
-    RCP<MultiVector> correctorRHS = MultiVectorFactory::Build(r1->getMap(),rcpB->getNumVectors());
-    G_->apply(*xtilde2,*correctorRHS);
-    correctorRHS->update(one,*r1,-one);
-    Smoo1_->Apply(*xtilde1, *correctorRHS);
+      // 5) corrector step:
+      RCP<MultiVector> correctorRHS =
+          MultiVectorFactory::Build(r1->getMap(), rcpB->getNumVectors());
+      G_->apply(*xtilde2, *correctorRHS);
+      correctorRHS->update(one, *r1, -one);
+      Smoo1_->Apply(*xtilde1, *correctorRHS);
 
-    rcpX->update(one, *bxtilde, one);
+      rcpX->update(one, *bxtilde, one);
+    }
 
     if (bCopyResultX) {
       RCP<MultiVector> Xmerged = bX->Merge();
