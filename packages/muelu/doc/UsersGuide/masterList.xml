@@ -505,6 +505,15 @@
     </parameter>
 
     <parameter>
+      <name>aggregation: distance laplacian metric</name>
+      <type>string</type>
+      <default>unweighted</default>
+      <description>Metric used to compute the distance laplacian</description>
+      <visible>false</visible>
+      <comment-ML>parameter not existing in ML</comment-ML>
+    </parameter>
+
+    <parameter>
       <name>aggregation: classical algo</name>
       <type>string</type>
       <default>"default"</default>
@@ -1793,7 +1802,7 @@ Only used when tentative: calculate qr is set to false.</description>
       <visible>false</visible>
     </parameter>
 
-    
+
   </rebalancing>
 
   <rap>
