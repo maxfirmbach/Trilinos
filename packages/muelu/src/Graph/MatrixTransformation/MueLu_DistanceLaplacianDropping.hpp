@@ -239,21 +239,44 @@ class TensorMaterialDistanceFunctor {
     // || x_row - x_col ||_S^2
     // where
     // S = inv(material(col))
-    magnitudeType d = magATS::zero();
 
-    auto matrix_material = Kokkos::subview(material, col, Kokkos::ALL(), Kokkos::ALL());
-    auto dist            = Kokkos::subview(lcl_dist, row, Kokkos::ALL());
-    for (size_t j = 0; j < coords.extent(1); ++j) {
-      dist(j) = coords(row, j) - ghostedCoords(col, j);
+    // row material
+    magnitudeType d_row = magATS::zero();
+    {
+      auto matrix_row_material = Kokkos::subview(material, row, Kokkos::ALL(), Kokkos::ALL());
+      auto dist                = Kokkos::subview(lcl_dist, row, Kokkos::ALL());
+
+      for (size_t j = 0; j < coords.extent(1); ++j) {
+        dist(j) = coords(row, j) - ghostedCoords(col, j);
+      }
+
+      KokkosBatched::SerialTrsv<KokkosBatched::Uplo::Lower, KokkosBatched::Trans::NoTranspose, KokkosBatched::Diag::Unit, KokkosBatched::Algo::Trsv::Unblocked>::invoke(one, matrix_row_material, dist);
+      KokkosBatched::SerialTrsv<KokkosBatched::Uplo::Upper, KokkosBatched::Trans::NoTranspose, KokkosBatched::Diag::NonUnit, KokkosBatched::Algo::Trsv::Unblocked>::invoke(one, matrix_row_material, dist);
+
+      for (size_t j = 0; j < coords.extent(1); ++j) {
+        d_row += implATS::real(dist(j)) * (coords(row, j) - ghostedCoords(col, j));
+      }
     }
-    KokkosBatched::SerialTrsv<KokkosBatched::Uplo::Lower, KokkosBatched::Trans::NoTranspose, KokkosBatched::Diag::Unit, KokkosBatched::Algo::Trsv::Unblocked>::invoke(one, matrix_material, dist);
-    KokkosBatched::SerialTrsv<KokkosBatched::Uplo::Upper, KokkosBatched::Trans::NoTranspose, KokkosBatched::Diag::NonUnit, KokkosBatched::Algo::Trsv::Unblocked>::invoke(one, matrix_material, dist);
 
-    for (size_t j = 0; j < coords.extent(1); ++j) {
-      d += implATS::real(dist(j)) * (coords(row, j) - ghostedCoords(col, j));
+    // column material
+    magnitudeType d_col = magATS::zero();
+    {
+      auto matrix_col_material = Kokkos::subview(material, col, Kokkos::ALL(), Kokkos::ALL());
+      auto dist                = Kokkos::subview(lcl_dist, row, Kokkos::ALL());
+
+      for (size_t j = 0; j < coords.extent(1); ++j) {
+        dist(j) = coords(row, j) - ghostedCoords(col, j);
+      }
+
+      KokkosBatched::SerialTrsv<KokkosBatched::Uplo::Lower, KokkosBatched::Trans::NoTranspose, KokkosBatched::Diag::Unit, KokkosBatched::Algo::Trsv::Unblocked>::invoke(one, matrix_col_material, dist);
+      KokkosBatched::SerialTrsv<KokkosBatched::Uplo::Upper, KokkosBatched::Trans::NoTranspose, KokkosBatched::Diag::NonUnit, KokkosBatched::Algo::Trsv::Unblocked>::invoke(one, matrix_col_material, dist);
+
+      for (size_t j = 0; j < coords.extent(1); ++j) {
+        d_col += implATS::real(dist(j)) * (coords(row, j) - ghostedCoords(col, j));
+      }
     }
 
-    return d;
+    return Kokkos::max(d_row, d_col);
   }
 };
 
