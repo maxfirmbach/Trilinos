@@ -98,7 +98,7 @@ IF (${PACKAGE_NAME}_HAVE_TPETRA_SOLVER_STACK OR ${PACKAGE_NAME}_HAVE_EPETRA_SOLV
 
 
   TRIBITS_COPY_FILES_TO_BINARY_DIR(Driver_cp
-    SOURCE_FILES scaling.xml scaling.yaml scaling-complex.xml scaling-withglobalconstants.xml scaling-complex-withglobalconstants.xml circ_nsp_dependency.xml isorropia.xml iso_poisson.xml conchas_milestone_zoltan.xml conchas_milestone_zoltan2.xml conchas_milestone_zoltan2_complex.xml sa_with_ilu.xml sa_with_Ifpack2_line_detection.xml rap.xml smoother.xml smoother_complex.xml tripleMatrixProduct.xml scaling-ml.xml elasticity3D.xml amgx.json amgx.xml scaling-with-rerun.xml scaling_distance2_agg.xml smooVec.mm smooVecCoalesce.xml pairwise.xml sa_enforce_constraints.xml recurMG.xml anisotropic.xml  comp_rotations.xml generalBlkSmoothing.xml GblkMap.dat GblkAmat.dat GblkRhs.dat Gblks.dat blkSmooEquivOlapSchwarz.xml oLapSchwarzEquivBlkSmoo.xml regularOverLap.dat zeroAggTest.xml blkDiag3x3And6x6.mat  coords2.mm aux1.mat aux2.mat  coords1.mat  coords2.mat  multiPhys4x4.mat multiPhys4x4.mat  null1.mat null2.mat comboP.xml
+    SOURCE_FILES scaling.xml scaling.yaml scaling-complex.xml scaling-withglobalconstants.xml scaling-complex-withglobalconstants.xml circ_nsp_dependency.xml isorropia.xml iso_poisson.xml conchas_milestone_zoltan.xml conchas_milestone_zoltan2.xml conchas_milestone_zoltan2_complex.xml sa_with_ilu.xml sa_with_Ifpack2_line_detection.xml rap.xml smoother.xml smoother_complex.xml tripleMatrixProduct.xml scaling-ml.xml elasticity3D.xml amgx.json amgx.xml scaling-with-rerun.xml scaling_distance2_agg.xml smooVec.mm smooVecCoalesce.xml pairwise.xml sa_enforce_constraints.xml recurMG.xml anisotropic.xml  comp_rotations.xml generalBlkSmoothing.xml GblkMap.dat GblkAmat.dat GblkRhs.dat Gblks.dat blkSmooEquivOlapSchwarz.xml oLapSchwarzEquivBlkSmoo.xml regularOverLap.dat zeroAggTest.xml blkDiag3x3And6x6.mat  coords2.mm aux1.mat aux2.mat  coords1.mat  coords2.mat  multiPhys4x4.mat multiPhys4x4.mat  null1.mat null2.mat comboP.xml material_aware_coarsening.xml
     CATEGORIES BASIC PERFORMANCE
    )
 
@@ -166,6 +166,16 @@ TRIBITS_ADD_TEST(
   NUM_MPI_PROCS 4
   COMM mpi # HAVE_MPI required
   PASS_REGULAR_EXPRESSION "Belos converged"
+  )
+
+  TRIBITS_ADD_TEST(
+    Driver
+    NAME MaterialAwareCoarsening
+    COMM mpi
+    ARGS "--xml=material_aware_coarsening.xml --matrix=Amat.mm --coords=coordinates.mm --material=material.mm"
+    NUM_MPI_PROCS 4
+    PASS_REGULAR_EXPRESSION "Belos converged"
+    RUN_SERIAL
   )
 
 # not very elegant. The best would probably to make Reuse.cpp work for both Epetra and Tpetra
