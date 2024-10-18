@@ -72,6 +72,7 @@ RCP<const ParameterList> CoalesceDropFactory_kokkos<Scalar, LocalOrdinal, Global
   validParamList->getEntry("aggregation: drop scheme").setValidator(rcp(new Teuchos::StringValidator(Teuchos::tuple<std::string>("signed classical sa", "classical", "distance laplacian", "signed classical", "block diagonal", "block diagonal classical", "block diagonal distance laplacian", "block diagonal signed classical", "block diagonal colored signed classical"))));
   validParamList->getEntry("aggregation: classical algo").setValidator(rcp(new Teuchos::StringValidator(Teuchos::tuple<std::string>("default", "unscaled cut", "scaled cut", "scaled cut symmetric"))));
   validParamList->getEntry("aggregation: distance laplacian algo").setValidator(rcp(new Teuchos::StringValidator(Teuchos::tuple<std::string>("default", "unscaled cut", "scaled cut", "scaled cut symmetric"))));
+  validParamList->getEntry("aggregation: distance laplacian metric").setValidator(rcp(new Teuchos::StringValidator(Teuchos::tuple<std::string>("unweighted", "material"))));
 
   validParamList->set<RCP<const FactoryBase>>("A", Teuchos::null, "Generating factory of the matrix A");
   validParamList->set<RCP<const FactoryBase>>("UnAmalgamationInfo", Teuchos::null, "Generating factory for UnAmalgamationInfo");
@@ -222,7 +223,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
   if (algo == "classical")
     GetOStream(Runtime0) << "algorithm = \"" << algo << "\" classical algorithm = \"" << classicalAlgoStr << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
   else if (algo == "distance laplacian")
-    GetOStream(Runtime0) << "algorithm = \"" << algo << "\" distance laplacian algorithm = \"" << distanceLaplacianAlgoStr << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
+    GetOStream(Runtime0) << "algorithm = \"" << algo << "\" distance laplacian algorithm = \"" << distanceLaplacianAlgoStr << "\" distance laplacian metric = \"" << distanceLaplacianMetric << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
   else
     GetOStream(Runtime0) << "algorithm = \"" << algo << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
 
@@ -837,6 +838,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
   const std::string algo               = pL.get<std::string>("aggregation: drop scheme");
   std::string classicalAlgoStr         = pL.get<std::string>("aggregation: classical algo");
   std::string distanceLaplacianAlgoStr = pL.get<std::string>("aggregation: distance laplacian algo");
+  std::string distanceLaplacianMetric  = pL.get<std::string>("aggregation: distance laplacian metric");
   MT threshold;
   // If we're doing the ML-style halving of the drop tol at each level, we do that here.
   if (pL.get<bool>("aggregation: use ml scaling of drop tol"))
@@ -858,7 +860,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
   if (algo == "classical") {
     GetOStream(Runtime0) << "algorithm = \"" << algo << "\" classical algorithm = \"" << classicalAlgoStr << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
   } else if (algo == "distance laplacian") {
-    GetOStream(Runtime0) << "algorithm = \"" << algo << "\" distance laplacian algorithm = \"" << distanceLaplacianAlgoStr << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
+    GetOStream(Runtime0) << "algorithm = \"" << algo << "\" distance laplacian algorithm = \"" << distanceLaplacianAlgoStr << "\" distance laplacian metric = \"" << distanceLaplacianMetric << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
   } else
     GetOStream(Runtime0) << "algorithm = \"" << algo << "\": threshold = " << threshold << ", blocksize = " << A->GetFixedBlockSize() << std::endl;
 

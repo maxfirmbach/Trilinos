@@ -11,12 +11,14 @@
 
     <Parameter        name="multigrid algorithm"                  type="string"   value="sa"/>
 
+    <Parameter        name="use kokkos refactor"                   type="bool"     value="true"/>
+
     <!-- reduces setup cost for symmetric problems -->
     <Parameter        name="transpose: use implicit"              type="bool"     value="false"/>
     <Parameter        name="transfers: half precision"            type="bool"     value="false"/>
 
     <!-- start of default values for general options (can be omitted) -->
-    <Parameter        name="max levels"                	          type="int"      value="10"/>
+    <Parameter        name="max levels"                	          type="int"      value="2"/>
     <Parameter        name="number of equations"                  type="int"      value="1"/>
     <Parameter        name="sa: use filtered matrix"              type="bool"     value="true"/>
     <!-- end of default values -->
@@ -30,10 +32,14 @@
     <Parameter        name="aggregation: type"                      type="string"   value="uncoupled"/>
     <Parameter        name="aggregation: drop scheme"               type="string"   value="distance laplacian"/>
     <Parameter        name="aggregation: distance laplacian metric" type="string"   value="material"/>
-    <!-- Uncomment the next line to enable dropping of weak connections, which can help AMG convergence
-         for anisotropic problems.  The exact value is problem dependent. -->
     <Parameter        name="aggregation: drop tol"                  type="double"   value="0.02"/>
+    <!-- Visualize aggregates -->
+    <Parameter        name="aggregation: export visualization data" type="bool"     value="false"/>
+    <Parameter        name="aggregation: output filename"           type="string"   value="material_aware_aggs_level_%LEVELID"/>
+    <Parameter        name="aggregation: output file: agg style"    type="string"   value="Convex Hulls"/>
 
+  <Parameter        name="filtered matrix: reuse graph"             type="bool"     value="false"/>
+  <Parameter        name="filtered matrix: use lumping"             type="bool"     value="false"/>
 
   <!-- ===========  SMOOTHING  =========== -->
     <Parameter        name="smoother: type"                       type="string"   value="CHEBYSHEV"/>
@@ -45,7 +51,7 @@
     </ParameterList>
 
   <!-- ===========  REPARTITIONING  =========== -->
-    <Parameter        name="repartition: enable"                  type="bool"     value="true"/>
+    <Parameter        name="repartition: enable"                  type="bool"     value="false"/>
     <Parameter        name="repartition: partitioner"             type="string"   value="zoltan2"/>
     <Parameter        name="repartition: start level"             type="int"      value="2"/>
     <Parameter        name="repartition: min rows per proc"       type="int"      value="800"/>

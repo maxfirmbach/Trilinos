@@ -172,7 +172,7 @@ TRIBITS_ADD_TEST(
     Driver
     NAME MaterialAwareCoarsening
     COMM mpi
-    ARGS "--matrixType=Laplace3D --xml=material_aware_coarsening.xml"
+    ARGS "--xml=material_aware_coarsening.xml --matrix=Amat.mm --coords=coordinates.mm --material=material.mm"
     NUM_MPI_PROCS 4
     PASS_REGULAR_EXPRESSION "Belos converged"
     RUN_SERIAL
