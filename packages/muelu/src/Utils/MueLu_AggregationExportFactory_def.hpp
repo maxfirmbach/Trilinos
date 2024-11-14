@@ -63,6 +63,7 @@ RCP<const ParameterList> AggregationExportFactory<Scalar, LocalOrdinal, GlobalOr
 
   validParamList->set<RCP<const FactoryBase> >("A", Teuchos::null, "Factory for A.");
   validParamList->set<RCP<const FactoryBase> >("Coordinates", Teuchos::null, "Factory for Coordinates.");
+  validParamList->set<RCP<const FactoryBase> >("Material", Teuchos::null, "Factory for Material.");
   validParamList->set<RCP<const FactoryBase> >("Graph", Teuchos::null, "Factory for Graph.");
   validParamList->set<RCP<const FactoryBase> >("Aggregates", Teuchos::null, "Factory for Aggregates.");
   validParamList->set<RCP<const FactoryBase> >("AggregateQualities", Teuchos::null, "Factory for AggregateQualities.");
@@ -95,6 +96,7 @@ void AggregationExportFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Declar
   // Only pull in coordinates if the user explicitly requests direct VTK output, so as not to break uses of old code
   if (pL.isParameter("aggregation: output filename") && pL.get<std::string>("aggregation: output filename").length()) {
     Input(fineLevel, "Coordinates");
+    Input(fineLevel, "Material");
     Input(fineLevel, "A");
     Input(fineLevel, "Graph");
     if (pL.get<bool>("aggregation: output file: coarse graph edges")) {
@@ -127,6 +129,8 @@ void AggregationExportFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(
   doCoarseGraphEdges_ = pL.get<bool>("aggregation: output file: coarse graph edges");
   doFineGraphEdges_   = pL.get<bool>("aggregation: output file: fine graph edges");
   doAggQuality_       = pL.get<bool>("aggregation: output file: aggregate qualities");
+  // TODO: fix me later
+  doMaterial_         = true;
   if (masterFilename.length()) {
     useVTK          = true;
     filenameToWrite = masterFilename;
@@ -146,6 +150,8 @@ void AggregationExportFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(
   Teuchos::RCP<CoordinateMultiVector> coordsCoarse = Teuchos::null;
   if (doAggQuality_)
     qualities_ = Get<Teuchos::RCP<MultiVector> >(coarseLevel, "AggregateQualities");
+  if (doMaterial_)
+    material_ = Get<Teuchos::RCP<MultiVector> >(fineLevel, "Material");
   Teuchos::RCP<LWGraph> fineGraph   = Teuchos::null;
   Teuchos::RCP<LWGraph> coarseGraph = Teuchos::null;
   if (doFineGraphEdges_)
@@ -587,6 +593,14 @@ void AggregationExportFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::writeF
   if (doAggQuality_)
     qualities = qualities_->getData(0);
 
+  Teuchos::ArrayRCP<Teuchos::ArrayRCP<const Scalar>> material;
+  if (doMaterial_) {
+    size_t dim = material_->getNumVectors();
+    material.resize(dim);
+    for (size_t k=0; k<dim; k++)
+      material[k] = material_->getData(k);
+  }
+
   vector<int> uniqueFine = this->makeUnique(vertices);
   string indent          = "      ";
   fout << "<!--" << styleName << " Aggregates Visualization-->" << endl;
@@ -640,6 +654,21 @@ void AggregationExportFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::writeF
       if (i % 10 == 9)
         fout << endl
              << indent;
+    }
+    fout << endl;
+    fout << "        </DataArray>" << endl;
+  }
+  // Material stuff
+  if (1) {
+    size_t dim = material_->getNumVectors();
+    fout << "        <DataArray type=\"Float64\" NumberOfComponents=\""  << dim << "\" Name=\"Material\" format=\"ascii\">" << endl;
+    fout << indent;
+    for (size_t i = 0; i < uniqueFine.size(); i++) {
+      for (size_t k = 0; k < dim; k++) {
+        fout << material[k][vertex2AggIds[uniqueFine[i]]] << " ";
+      }
+      fout << endl
+           << indent;
     }
     fout << endl;
     fout << "        </DataArray>" << endl;
