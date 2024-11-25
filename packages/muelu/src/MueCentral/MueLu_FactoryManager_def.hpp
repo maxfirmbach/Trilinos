@@ -21,7 +21,7 @@
 #include "MueLu_DirectSolver.hpp"
 #include "MueLu_InitialBlockNumberFactory.hpp"
 #include "MueLu_LineDetectionFactory.hpp"
-// #include "MueLu_MultiVectorTransferFactory.hpp"
+#include "MueLu_MultiVectorTransferFactory.hpp"
 #include "MueLu_NoFactory.hpp"
 #include "MueLu_NullspaceFactory.hpp"
 #include "MueLu_PatternFactory.hpp"
@@ -120,7 +120,7 @@ const RCP<const FactoryBase> FactoryManager<Scalar, LocalOrdinal, GlobalOrdinal,
       return SetAndReturnDefaultFactory(varName, factory);
     }
     if (varName == "Scaled Nullspace") return SetAndReturnDefaultFactory(varName, rcp(new ScaledNullspaceFactory()));
-    if (varName == "Material") return NoFactory::getRCP();
+    if (varName == "Material") return rcp(new MultiVectorTransferFactory("Material"));
     if (varName == "Coordinates") return GetFactory("Ptent");
     if (varName == "Node Comm") return GetFactory("Ptent");
 
