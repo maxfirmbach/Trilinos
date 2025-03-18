@@ -43,6 +43,18 @@
 #include <Galeri_XpetraProblemFactory.hpp>
 #include <Galeri_XpetraMatrixTypes.hpp>
 
+namespace Galeri {
+  namespace Xpetra {
+    template <class LocalOrdinal, class GlobalOrdinal, class Map>
+    RCP<Map> CreateMap(const std::string& mapType, const Teuchos::RCP<const Teuchos::Comm<int>>& comm, Teuchos::ParameterList& list);
+
+#ifdef HAVE_GALERI_XPETRA
+    template <class LocalOrdinal, class GlobalOrdinal, class Node>
+    Teuchos::RCP<::Xpetra::Map<LocalOrdinal, GlobalOrdinal, Node>> CreateMap(::Xpetra::UnderlyingLib lib, const std::string& mapType, const Teuchos::RCP<const Teuchos::Comm<int>>& comm, Teuchos::ParameterList& list);
+#endif
+  }  // namespace Xpetra
+}  // namespace Galeri
+
 #include "MueLu_NoFactory.hpp"
 
 // Conditional Tpetra stuff
@@ -71,8 +83,6 @@ using Teuchos::RCP;
 using Teuchos::rcp_dynamic_cast;
 using Teuchos::rcp_implicit_cast;
 using Teuchos::rcpFromRef;
-
-#include <MueLu_TestHelpers_Common_kokkos.hpp>
 
 namespace TestHelpers_kokkos {
 
@@ -315,6 +325,65 @@ class TestFactory {
 
     return BuildMatrix(matrixList, lib);
   }
+
+  // Create a 2D Elasticity matrix with the specified number of rows, as well as the respective coordinate and nullspace vector
+  // nx: global number of rows
+  // ny: global number of rows
+  static RCP<Matrix> Build2DElasticity(GO nx, GO ny = -1, Xpetra::UnderlyingLib lib = Xpetra::NotSpecified) {  // global_size_t
+
+    if (lib == Xpetra::NotSpecified)
+      lib = TestHelpers_kokkos::Parameters::getLib();
+
+    RCP<const Teuchos::Comm<int>> comm = Parameters::getDefaultComm();
+
+    if (ny == -1) ny = nx;
+
+    Teuchos::ParameterList galeriList;
+    galeriList.set("nx", nx);
+    galeriList.set("ny", ny);
+
+    RCP<const Map> map = Galeri::Xpetra::CreateMap<LocalOrdinal, GlobalOrdinal, Node>(lib, "Cartesian2D", comm, galeriList);
+    map                = Xpetra::MapFactory<LocalOrdinal, GlobalOrdinal, Node>::Build(map, 2);  // expand map for 2 DOFs per node
+
+    RCP<Galeri::Xpetra::Problem<Map, CrsMatrixWrap, MultiVector>> Pr =
+        Galeri::Xpetra::BuildProblem<SC, LO, GO, Map, CrsMatrixWrap, MultiVector>("Elasticity2D", map, galeriList);
+
+    RCP<Matrix> A = Pr->BuildMatrix();
+    A->SetFixedBlockSize(2);
+
+    return A;
+  }  // Build2DElasticity()
+
+  // Create a 3D Elasticity matrix with the specified number of rows and mesh stretch
+  // nx: global number of rows
+  // ny: global number of rows
+  // nz: global number of rows
+  static RCP<Matrix> Build3DElasticity(GO nx, GO ny = -1, GO nz = -1, Xpetra::UnderlyingLib lib = Xpetra::NotSpecified) {  // global_size_t
+
+    if (lib == Xpetra::NotSpecified)
+      lib = TestHelpers_kokkos::Parameters::getLib();
+
+    RCP<const Teuchos::Comm<int> > comm = TestHelpers_kokkos::Parameters::getDefaultComm();
+
+    if (ny == -1) ny = nx;
+    if (nz == -1) nz = nx;
+
+    ParameterList galeriList;
+    galeriList.set("nx", nx);
+    galeriList.set("ny", ny);
+    galeriList.set("nz", nz);
+
+    RCP<const Map> map = Galeri::Xpetra::CreateMap<LocalOrdinal, GlobalOrdinal, Node>(lib, "Cartesian3D", comm, galeriList);
+    map                = Xpetra::MapFactory<LocalOrdinal, GlobalOrdinal, Node>::Build(map, 2);  // expand map for 3 DOFs per node
+
+    RCP<Galeri::Xpetra::Problem<Map, CrsMatrixWrap, MultiVector>> Pr =
+        Galeri::Xpetra::BuildProblem<SC, LO, GO, Map, CrsMatrixWrap, MultiVector>("Elasticity3D", map, galeriList);
+
+    RCP<Matrix> A = Pr->BuildMatrix();
+    A->SetFixedBlockSize(3);
+
+    return A;
+  }  // Build3DElasticity()
 
   // Create a tridiagonal matrix (stencil = [b,a,c]) with the specified number of rows
   static RCP<Matrix> BuildTridiag(RCP<const Map> rowMap, SC a, SC b, SC c, Xpetra::UnderlyingLib lib = Xpetra::NotSpecified) {
