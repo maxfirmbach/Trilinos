@@ -32,7 +32,6 @@ RCP<const ParameterList> MultiVectorTransferFactory<Scalar, LocalOrdinal, Global
   validParamList->set<bool>("Normalize", false, "If a row sum normalization should be applied to preserve the mean value of the vector.");
   validParamList->set<RCP<const FactoryBase>>("Vector factory", Teuchos::null, "Factory of the vector");
   validParamList->set<RCP<const FactoryBase>>("Transfer factory", Teuchos::null, "Factory of the transfer operator");
-  validParamList->set<RCP<const FactoryBase>>("A", Teuchos::null, "Generating factory for coarse A");
   validParamList->set<RCP<const FactoryBase>>("CoarseMap", Teuchos::null, "Generating factory of the coarse map");
 
   return validParamList;
@@ -49,7 +48,6 @@ void MultiVectorTransferFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Decl
   const bool isUncoupledAggFact = !Teuchos::rcp_dynamic_cast<const UncoupledAggregationFactory>(transferFact).is_null();
   if (isUncoupledAggFact) {
     fineLevel.DeclareInput(transferName, transferFact.get(), this);
-    Input(coarseLevel, "A");
     Input(fineLevel, "CoarseMap");
   } else
     coarseLevel.DeclareInput(transferName, transferFact.get(), this);
@@ -115,7 +113,6 @@ void MultiVectorTransferFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Buil
 
     auto aggregates = fineLevel.Get<RCP<Aggregates>>(transferName, GetFactory("Transfer factory").get());
     TEUCHOS_ASSERT(!aggregates->AggregatesCrossProcessors());
-    RCP<Matrix> A = Get<RCP<Matrix>>(coarseLevel, "A");
     RCP<const Map> coarseMap = Get<RCP<const Map>>(fineLevel, "CoarseMap");
 
     auto aggGraph = aggregates->GetGraph();
