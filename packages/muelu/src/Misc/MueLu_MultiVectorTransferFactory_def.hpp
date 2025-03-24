@@ -14,9 +14,11 @@
 #include "Xpetra_Access.hpp"
 #include "Xpetra_MultiVectorFactory.hpp"
 
+#include "MueLu_Aggregates.hpp"
+#include "MueLu_AmalgamationInfo.hpp"
+#include "MueLu_AmalgamationFactory.hpp"
 #include "MueLu_Level.hpp"
 #include "MueLu_UncoupledAggregationFactory.hpp"
-#include "MueLu_Aggregates.hpp"
 #include "MueLu_Monitor.hpp"
 
 namespace MueLu {
@@ -30,6 +32,7 @@ RCP<const ParameterList> MultiVectorTransferFactory<Scalar, LocalOrdinal, Global
   validParamList->set<bool>("Normalize", false, "If a row sum normalization should be applied to preserve the mean value of the vector.");
   validParamList->set<RCP<const FactoryBase>>("Vector factory", Teuchos::null, "Factory of the vector");
   validParamList->set<RCP<const FactoryBase>>("Transfer factory", Teuchos::null, "Factory of the transfer operator");
+  validParamList->set<RCP<const FactoryBase>>("A", Teuchos::null, "Generating factory for coarse A");
   validParamList->set<RCP<const FactoryBase>>("CoarseMap", Teuchos::null, "Generating factory of the coarse map");
 
   return validParamList;
@@ -46,6 +49,7 @@ void MultiVectorTransferFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Decl
   const bool isUncoupledAggFact = !Teuchos::rcp_dynamic_cast<const UncoupledAggregationFactory>(transferFact).is_null();
   if (isUncoupledAggFact) {
     fineLevel.DeclareInput(transferName, transferFact.get(), this);
+    Input(coarseLevel, "A");
     Input(fineLevel, "CoarseMap");
   } else
     coarseLevel.DeclareInput(transferName, transferFact.get(), this);
@@ -111,36 +115,25 @@ void MultiVectorTransferFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Buil
 
     auto aggregates = fineLevel.Get<RCP<Aggregates>>(transferName, GetFactory("Transfer factory").get());
     TEUCHOS_ASSERT(!aggregates->AggregatesCrossProcessors());
+    RCP<Matrix> A = Get<RCP<Matrix>>(coarseLevel, "A");
     RCP<const Map> coarseMap = Get<RCP<const Map>>(fineLevel, "CoarseMap");
 
     auto aggGraph = aggregates->GetGraph();
     auto numAggs  = aggGraph.numRows();
 
+    RCP<const Map> coarseVectorMap;
+
     LO blkSize = 1;
     if (rcp_dynamic_cast<const StridedMap>(coarseMap) != Teuchos::null)
       blkSize = rcp_dynamic_cast<const StridedMap>(coarseMap)->getFixedBlockSize();
 
-    RCP<const Map> coarseVectorMap;
     if (blkSize == 1) {
       // Scalar system
       // No amalgamation required, we can use the coarseMap
       coarseVectorMap = coarseMap;
     } else {
       // Vector system
-      using range_policy      = Kokkos::RangePolicy<typename Node::execution_space>;
-      array_type elementAList = coarseMap->getMyGlobalIndicesDevice();
-      GO indexBase            = coarseMap->getIndexBase();
-      auto numElements        = elementAList.size() / blkSize;
-      typename array_type::non_const_type elementList_nc("elementList", numElements);
-
-      // Amalgamate the map
-      Kokkos::parallel_for(
-          "Amalgamate Element List", range_policy(0, numElements), KOKKOS_LAMBDA(LO i) {
-            elementList_nc[i] = (elementAList[i * blkSize] - indexBase) / blkSize + indexBase;
-          });
-      array_type elementList = elementList_nc;
-      coarseVectorMap        = MapFactory::Build(coarseMap->lib(), Teuchos::OrdinalTraits<Xpetra::global_size_t>::invalid(),
-                                                 elementList, indexBase, coarseMap->getComm());
+      AmalgamationFactory<SC, LO, GO, NO>::AmalgamateMap(rcp_dynamic_cast<const StridedMap>(coarseMap), coarseVectorMap);
     }
 
     coarseVector = MultiVectorFactory::Build(coarseVectorMap, fineVector->getNumVectors());
