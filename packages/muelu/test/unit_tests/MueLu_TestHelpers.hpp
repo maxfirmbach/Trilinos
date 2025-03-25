@@ -310,7 +310,7 @@ class TestFactory {
   // Create a 2D Elasticity matrix with the specified number of rows, as well as the respective coordinate and nullspace vector
   // nx: global number of rows
   // ny: global number of rows
-  static std::tuple<RCP<Matrix>, RCP<MultiVector>, RCP<MultiVector>> Build2DElasticity(GO nx, GO ny = -1, Xpetra::UnderlyingLib lib = Xpetra::NotSpecified) {  // global_size_t
+  static std::tuple<RCP<Matrix>, RCP<RealValuedMultiVector>, RCP<MultiVector>> Build2DElasticity(GO nx, GO ny = -1, Xpetra::UnderlyingLib lib = Xpetra::NotSpecified) {  // global_size_t
 
     if (lib == Xpetra::NotSpecified)
       lib = TestHelpers::Parameters::getLib();
@@ -331,8 +331,8 @@ class TestFactory {
 
     RCP<Matrix> A = Pr->BuildMatrix();
     A->SetFixedBlockSize(2);
-    RCP<MultiVector> coords = Pr->BuildCoords();
     RCP<MultiVector> nullspace = Pr->BuildNullspace();
+    RCP<RealValuedMultiVector> coords = Pr->BuildCoords();
 
     return std::make_tuple(A, coords, nullspace);
   }  // Build2DElasticity()
