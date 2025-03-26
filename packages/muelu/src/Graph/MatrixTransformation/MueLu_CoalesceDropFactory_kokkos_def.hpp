@@ -505,7 +505,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
           auto BlockNumbers      = GetBlockNumberMVs(currentLevel);
           auto block_diagonalize = Misc::BlockDiagonalizeFunctor(*A, *std::get<0>(BlockNumbers), *std::get<1>(BlockNumbers), results);
 
-          auto dist2 = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords);
+          auto dist2 = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords, A->getRowMap(), A->getColMap());
 
           if (distanceLaplacianAlgoStr == "default") {
             auto dist_laplacian_dropping = DistanceLaplacian::DropFunctor(*A, threshold, dist2, results);
@@ -556,7 +556,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
         } else {
           if (distanceLaplacianAlgoStr == "default") {
             if (distanceLaplacianMetric == "unweighted") {
-              auto dist2                   = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords);
+              auto dist2                   = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords, A->getRowMap(), A->getColMap());
               auto dist_laplacian_dropping = DistanceLaplacian::DropFunctor(*A, threshold, dist2, results);
 
               if (aggregationMayCreateDirichlet) {
@@ -623,7 +623,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
 
           } else if (distanceLaplacianAlgoStr == "unscaled cut") {
             if (distanceLaplacianMetric == "unweighted") {
-              auto dist2      = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords);
+              auto dist2      = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords, A->getRowMap(), A->getColMap());
               auto comparison = CutDrop::UnscaledDistanceLaplacianComparison(*A, dist2, results);
               auto cut_drop   = CutDrop::CutDropFunctor(comparison, threshold);
 
@@ -671,7 +671,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
             }
           } else if (distanceLaplacianAlgoStr == "scaled cut") {
             if (distanceLaplacianMetric == "unweighted") {
-              auto dist2      = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords);
+              auto dist2      = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords, A->getRowMap(), A->getColMap());
               auto comparison = CutDrop::ScaledDistanceLaplacianComparison(*A, dist2, results);
               auto cut_drop   = CutDrop::CutDropFunctor(comparison, threshold);
 
@@ -719,7 +719,7 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
             }
           } else if (distanceLaplacianAlgoStr == "scaled cut symmetric") {
             if (distanceLaplacianMetric == "unweighted") {
-              auto dist2      = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords);
+              auto dist2      = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords, A->getRowMap(), A->getColMap());
               auto comparison = CutDrop::ScaledDistanceLaplacianComparison(*A, dist2, results);
               auto cut_drop   = CutDrop::CutDropFunctor(comparison, threshold);
 
@@ -1153,10 +1153,10 @@ std::tuple<GlobalOrdinal, typename MueLu::LWGraph_kokkos<LocalOrdinal, GlobalOrd
         using doubleMultiVector = Xpetra::MultiVector<typename Teuchos::ScalarTraits<Scalar>::magnitudeType, LO, GO, NO>;
         auto coords             = Get<RCP<doubleMultiVector>>(currentLevel, "Coordinates");
 
-        auto dist2 = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords);
+        auto dist2 = DistanceLaplacian::UnweightedDistanceFunctor(*A, coords, uniqueMap, nonUniqueMap);
 
         if (distanceLaplacianAlgoStr == "default") {
-          auto dist_laplacian_dropping = DistanceLaplacian::DropFunctor(*A, threshold, dist2, results);
+          auto dist_laplacian_dropping = DistanceLaplacian::VectorDropFunctor(*A, blkPartSize, colTranslation, threshold, dist2, results);
 
           if (aggregationMayCreateDirichlet) {
             MueLu_runDroppingFunctors(dist_laplacian_dropping,

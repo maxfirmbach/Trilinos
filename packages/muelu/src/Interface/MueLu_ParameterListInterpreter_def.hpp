@@ -1215,6 +1215,7 @@ void ParameterListInterpreter<Scalar, LocalOrdinal, GlobalOrdinal, Node>::
   manager.SetFactory("CoarseMap", coarseMap);
 
   // Tentative P
+  // TODO: Should we avoid TentativePFactory_kokkos
   MUELU_KOKKOS_FACTORY(Ptent, TentativePFactory, TentativePFactory_kokkos);
   ParameterList ptentParams;
   if (paramList.isSublist("matrixmatrix: kernel params"))

@@ -33,6 +33,7 @@ template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
 class UnweightedDistanceFunctor {
  private:
   using matrix_type        = Xpetra::Matrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>;
+  using map_type           = Xpetra::Map<LocalOrdinal, GlobalOrdinal, Node>;
   using local_matrix_type  = typename matrix_type::local_matrix_type;
   using scalar_type        = typename local_matrix_type::value_type;
   using local_ordinal_type = LocalOrdinal;
@@ -51,9 +52,11 @@ class UnweightedDistanceFunctor {
   local_coords_type ghostedCoords;
 
  public:
-  UnweightedDistanceFunctor(matrix_type& A, Teuchos::RCP<coords_type>& coords_) {
+  UnweightedDistanceFunctor(matrix_type& A, Teuchos::RCP<coords_type>& coords_, const RCP<const map_type>& sourceMap, const RCP<const map_type>& targetMap) {
     coordsMV      = coords_;
-    auto importer = A.getCrsGraph()->getImporter();
+
+    auto importer = Xpetra::ImportFactory<LocalOrdinal, GlobalOrdinal, Node>::Build(sourceMap, targetMap);
+
     if (!importer.is_null()) {
       ghostedCoordsMV = Xpetra::MultiVectorFactory<magnitudeType, LocalOrdinal, GlobalOrdinal, Node>::Build(importer->getTargetMap(), coordsMV->getNumVectors());
       ghostedCoordsMV->doImport(*coordsMV, *importer, Xpetra::INSERT);
@@ -406,6 +409,157 @@ class DropFunctor {
       results(offset + k) = Kokkos::max((aij2 <= eps * eps * aiiajj) ? DROP : KEEP,
                                         results(offset + k));
     }
+  }
+};
+
+/*!
+Method to compute ghosted distance Laplacian diagonal.
+*/
+template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node, class BlockIndicesType, class DistanceFunctorType>
+Teuchos::RCP<Xpetra::MultiVector<Scalar, LocalOrdinal, GlobalOrdinal, Node> >
+getVectorDiagonal(Xpetra::Matrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>& A,
+            LocalOrdinal blockSize,
+            BlockIndicesType ghosted_point_to_block,
+            DistanceFunctorType& distFunctor) {
+  using scalar_type         = Scalar;
+  using local_ordinal_type  = LocalOrdinal;
+  using global_ordinal_type = GlobalOrdinal;
+  using node_type           = Node;
+  using ATS                 = Kokkos::ArithTraits<scalar_type>;
+  using impl_scalar_type    = typename ATS::val_type;
+  using implATS             = Kokkos::ArithTraits<impl_scalar_type>;
+  using magnitudeType       = typename implATS::magnitudeType;
+  using execution_space     = typename Node::execution_space;
+  using range_type          = Kokkos::RangePolicy<LocalOrdinal, execution_space>;
+
+  auto diag = Xpetra::MultiVectorFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(A.getRowMap(), 1);
+  {
+    auto lclA    = A.getLocalMatrixDevice();
+    auto lclDiag = diag->getDeviceLocalView(Xpetra::Access::OverwriteAll);
+
+    Kokkos::parallel_for(
+        "MueLu:CoalesceDropF:Build:scalar_filter:laplacian_diag",
+        range_type(0, lclA.numRows()),
+        KOKKOS_LAMBDA(const local_ordinal_type& row) {
+          auto rowView = lclA.rowConst(row);
+          auto length  = rowView.length;
+
+          magnitudeType d;
+          impl_scalar_type d2 = implATS::zero();
+          for (local_ordinal_type colID = 0; colID < length; colID=colID+blockSize) {
+            auto col = rowView.colidx(colID);
+            auto bcol = ghosted_point_to_block(col);
+            auto brow = ghosted_point_to_block(row);
+            if (brow != bcol) {
+#ifdef MUELU_COALESCE_DROP_DEBUG
+              Kokkos::printf("[%d,%d] Unweighted Distance = %6.4e\n", brow, bcol, distFunctor.distance2(brow, bcol));
+#endif
+              d = distFunctor.distance2(brow, bcol);
+              d2 += implATS::one() / d;
+            }
+          }
+          lclDiag(row, 0) = d2;
+        });
+  }
+  auto importer = A.getCrsGraph()->getImporter();
+  if (!importer.is_null()) {
+    auto ghostedDiag = Xpetra::MultiVectorFactory<Scalar, LocalOrdinal, GlobalOrdinal, Node>::Build(A.getColMap(), 1);
+    ghostedDiag->doImport(*diag, *importer, Xpetra::INSERT);
+    return ghostedDiag;
+  } else {
+    return diag;
+  }
+}
+
+/*!
+@class VectorDropFunctor
+@brief Drops entries the unscaled distance Laplacian.
+
+Evaluates the dropping criterion
+\f[
+\frac{|d_{ij}|^2}{|d_{ii}| |d_{jj}|} \le \theta^2
+\f]
+where \f$d_{ij}\f$ is a distance metric.
+*/
+template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node, class DistanceFunctorType>
+class VectorDropFunctor {
+ private:
+  using matrix_type        = Xpetra::Matrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>;
+  using local_matrix_type  = typename matrix_type::local_matrix_type;
+  using scalar_type        = typename local_matrix_type::value_type;
+  using local_ordinal_type = typename local_matrix_type::ordinal_type;
+  using memory_space       = typename local_matrix_type::memory_space;
+  using diag_vec_type      = Xpetra::MultiVector<Scalar, LocalOrdinal, GlobalOrdinal, Node>;
+  using diag_view_type     = typename Kokkos::DualView<const scalar_type*, Kokkos::LayoutStride, typename Node::device_type, Kokkos::MemoryUnmanaged>::t_dev;
+
+  using block_indices_view_type = Kokkos::View<local_ordinal_type*, memory_space>;
+  using results_view = Kokkos::View<DecisionType*, memory_space>;
+
+  using ATS                 = Kokkos::ArithTraits<scalar_type>;
+  using magnitudeType       = typename ATS::magnitudeType;
+  using boundary_nodes_view = Kokkos::View<const bool*, memory_space>;
+
+  local_matrix_type A;
+  local_ordinal_type blockSize;
+  block_indices_view_type ghosted_point_to_block;
+  magnitudeType eps;
+  Teuchos::RCP<diag_vec_type> diagVec;
+  diag_view_type diag;  // corresponds to overlapped diagonal
+  DistanceFunctorType dist2;
+  results_view results;
+  const scalar_type one = ATS::one();
+
+ public:
+  VectorDropFunctor(matrix_type& A_, local_ordinal_type blockSize_, block_indices_view_type ghosted_point_to_block_, magnitudeType threshold, DistanceFunctorType& dist2_, results_view& results_)
+    : A(A_.getLocalMatrixDevice())
+    , blockSize(blockSize_)
+    , ghosted_point_to_block(ghosted_point_to_block_)
+    , eps(threshold)
+    , dist2(dist2_)
+    , results(results_) {
+    diagVec        = getVectorDiagonal(A_, blockSize, ghosted_point_to_block, dist2);
+    auto lclDiag2d = diagVec->getDeviceLocalView(Xpetra::Access::ReadOnly);
+    diag           = Kokkos::subview(lclDiag2d, Kokkos::ALL(), 0);
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  void operator()(local_ordinal_type rlid) const {
+    auto row            = A.rowConst(rlid);
+    const size_t offset = A.graph.row_map(rlid);
+
+#ifdef MUELU_COALESCE_DROP_DEBUG
+    Kokkos::printf("strength:  ");
+#endif
+
+    for (local_ordinal_type k = 0; k < row.length; ++k) {
+      auto clid = row.colidx(k);
+      auto bclid = ghosted_point_to_block(clid);
+      auto brlid = ghosted_point_to_block(rlid);
+
+      scalar_type val;
+      if (brlid != bclid) {
+        val = one / dist2.distance2(brlid, bclid);
+      } else {
+        val = diag(rlid);
+      }
+      auto aiiajj = ATS::magnitude(diag(rlid)) * ATS::magnitude(diag(clid));  // |a_ii|*|a_jj|
+      auto aij2   = ATS::magnitude(val) * ATS::magnitude(val);                // |a_ij|^2
+
+      if (aiiajj == 0) continue;
+      if (std::abs(aij2/aiiajj-1.0) < 1e-8) continue;
+
+#ifdef MUELU_COALESCE_DROP_DEBUG
+      Kokkos::printf("%e ", aij2/aiiajj);
+#endif
+
+      results(offset + k) = Kokkos::max((aij2 <= eps * eps * aiiajj) ? DROP : KEEP,
+                                        results(offset + k));
+    }
+
+#ifdef MUELU_COALESCE_DROP_DEBUG
+    Kokkos::printf("\n");
+#endif
+
   }
 };
 
