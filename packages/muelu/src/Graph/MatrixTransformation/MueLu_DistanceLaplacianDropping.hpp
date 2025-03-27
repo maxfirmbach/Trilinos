@@ -84,6 +84,7 @@ template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
 class ScalarMaterialDistanceFunctor {
  private:
   using matrix_type         = Xpetra::Matrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>;
+  using map_type           = Xpetra::Map<LocalOrdinal, GlobalOrdinal, Node>;
   using local_matrix_type   = typename matrix_type::local_matrix_type;
   using scalar_type         = typename local_matrix_type::value_type;
   using local_ordinal_type  = LocalOrdinal;
@@ -110,10 +111,12 @@ class ScalarMaterialDistanceFunctor {
   local_material_type ghostedMaterial;
 
  public:
-  ScalarMaterialDistanceFunctor(matrix_type& A, Teuchos::RCP<coords_type>& coords_, Teuchos::RCP<material_type>& material_) {
+  ScalarMaterialDistanceFunctor(matrix_type& A, Teuchos::RCP<coords_type>& coords_, Teuchos::RCP<material_type>& material_, const RCP<const map_type>& sourceMap, const RCP<const map_type>& targetMap) {
     coordsMV      = coords_;
     materialMV    = material_;
-    auto importer = A.getCrsGraph()->getImporter();
+
+    auto importer = Xpetra::ImportFactory<LocalOrdinal, GlobalOrdinal, Node>::Build(sourceMap, targetMap);
+
     if (!importer.is_null()) {
       ghostedCoordsMV = Xpetra::MultiVectorFactory<magnitudeType, LocalOrdinal, GlobalOrdinal, Node>::Build(importer->getTargetMap(), coordsMV->getNumVectors());
       ghostedCoordsMV->doImport(*coordsMV, *importer, Xpetra::INSERT);
@@ -182,6 +185,7 @@ template <class Scalar, class LocalOrdinal, class GlobalOrdinal, class Node>
 class TensorMaterialDistanceFunctor {
  private:
   using matrix_type        = Xpetra::Matrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>;
+  using map_type           = Xpetra::Map<LocalOrdinal, GlobalOrdinal, Node>;
   using local_matrix_type  = typename matrix_type::local_matrix_type;
   using scalar_type        = typename local_matrix_type::value_type;
   using local_ordinal_type = LocalOrdinal;
@@ -211,10 +215,11 @@ class TensorMaterialDistanceFunctor {
   const scalar_type one = ATS::one();
 
  public:
-  TensorMaterialDistanceFunctor(matrix_type& A, Teuchos::RCP<coords_type>& coords_, Teuchos::RCP<material_type>& material_) {
+  TensorMaterialDistanceFunctor(matrix_type& A, Teuchos::RCP<coords_type>& coords_, Teuchos::RCP<material_type>& material_, const RCP<const map_type>& sourceMap, const RCP<const map_type>& targetMap) {
     coordsMV = coords_;
 
-    auto importer = A.getCrsGraph()->getImporter();
+    auto importer = Xpetra::ImportFactory<LocalOrdinal, GlobalOrdinal, Node>::Build(sourceMap, targetMap);
+
     if (!importer.is_null()) {
       ghostedCoordsMV = Xpetra::MultiVectorFactory<magnitudeType, LocalOrdinal, GlobalOrdinal, Node>::Build(importer->getTargetMap(), coordsMV->getNumVectors());
       ghostedCoordsMV->doImport(*coordsMV, *importer, Xpetra::INSERT);
