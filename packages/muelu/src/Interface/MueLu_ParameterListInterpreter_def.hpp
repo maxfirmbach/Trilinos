@@ -1216,7 +1216,7 @@ void ParameterListInterpreter<Scalar, LocalOrdinal, GlobalOrdinal, Node>::
 
   // Tentative P
   // TODO: Should we avoid TentativePFactory_kokkos
-  MUELU_KOKKOS_FACTORY(Ptent, TentativePFactory, TentativePFactory_kokkos);
+  MUELU_KOKKOS_FACTORY(Ptent, TentativePFactory, TentativePFactory);
   ParameterList ptentParams;
   if (paramList.isSublist("matrixmatrix: kernel params"))
     ptentParams.sublist("matrixmatrix: kernel params", false) = paramList.sublist("matrixmatrix: kernel params");
