@@ -321,14 +321,19 @@ getDiagonal(Xpetra::Matrix<Scalar, LocalOrdinal, GlobalOrdinal, Node>& A,
 
           magnitudeType d;
           impl_scalar_type d2 = implATS::zero();
+          bool haveAddedToDiag = false;
           for (local_ordinal_type colID = 0; colID < length; colID++) {
             auto col = rowView.colidx(colID);
             if (row != col) {
               d = distFunctor.distance2(row, col);
               d2 += implATS::one() / d;
+              haveAddedToDiag = true;
             }
           }
-          lclDiag(row, 0) = d2;
+
+          // Deal with the situation where boundary conditions have only been enforced on rows, but not on columns.
+          // We enforce dropping of these entries by assigning a very large number to the diagonal entries corresponding to BCs.
+          lclDiag(row, 0) = !haveAddedToDiag ? implATS::squareroot(implATS::rmax()) : d2;
         });
   }
   auto importer = A.getCrsGraph()->getImporter();
